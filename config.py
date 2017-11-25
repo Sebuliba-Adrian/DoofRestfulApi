@@ -4,6 +4,7 @@ class BaseConfig:
     """Base configuration"""
     DEBUG = False
     TESTING = False
+    SECRET_KEY = 'XMLZODSHE8N6NFOZDPZA2HULWSIYJU45K6N4ZO9M'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
 
