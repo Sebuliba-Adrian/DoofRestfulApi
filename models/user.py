@@ -1,4 +1,9 @@
 from db import db
+"""
+UserModel
+This class represents the user model
+"""
+
 
 class UserModel(db.Model):
     __tablename__ = 'users'
@@ -10,14 +15,17 @@ class UserModel(db.Model):
     def __init__(self, username, password):
         self.username = username
         self.password = password
+    # Instance method to save user to db
 
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()
+    # class method to find user by username
 
     @classmethod
     def find_by_username(cls, username):
         return cls.query.filter_by(username=username).first()
+    # class method to find user by id
 
     @classmethod
     def find_by_id(cls, _id):
