@@ -3,9 +3,8 @@ import os
 from flask import current_app
 from unittest import TestCase
 from config import basedir
-
 from app import app
-from db import db
+
 
 """
     Class contains test that verify the app created with
@@ -17,6 +16,7 @@ class TestDevelopmentConfig(TestCase):
 
     @staticmethod
     def create_app():
+        """Application factory method"""
         app.config.from_object('config.DevelopmentConfig')
         return app
 
@@ -48,6 +48,8 @@ class TestTestingConfig(TestCase):
     """
     @staticmethod
     def create_app():
+        """Application factory method"""
+
         app.config.from_object('config.TestingConfig')
         return app
 
@@ -71,7 +73,33 @@ class TestTestingConfig(TestCase):
             'sqlite:///' + os.path.join(basedir, 'testdb.sqlite'))
 
 
-
 class TestProductionConfig(TestCase):
-    pass
-               
+    """
+    Class contains test that verify the app created with
+    production configurations
+    """
+    @staticmethod
+    def create_app():
+        """Application factory method"""
+        app.config.from_object('config.ProductionConfig')
+        return app
+
+    def setUp(self):
+        """
+        Sets up the default configurations
+        """
+        self.app = self.create_app()
+
+    def tearDown(self):
+        pass
+
+    def test_app_is_production(self):
+        self.assertTrue(self.app.config['SECRET_KEY'] ==
+                        'XMLZODSHE8N6NFOZDPZA2HULWSIYJU45K6N4ZO9M')
+        self.assertFalse(self.app.config['DEBUG'])
+        self.assertFalse(self.app.config['TESTING'])
+
+
+
+if __name__ == '__main__':
+    unittest.main()
