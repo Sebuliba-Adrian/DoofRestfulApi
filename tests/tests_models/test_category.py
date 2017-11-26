@@ -4,9 +4,9 @@ from unittest import TestCase
 
 class CategoryTest(TestCase):
     def test_create_category(self):
-        category = CategoryModel('test')
+        category = CategoryModel('categoryname')
 
-        self.assertEqual(category.name, 'test',
-                         "The name of the category after creation does not equal the constructor argument.")
+        self.assertEqual(category.name, 'categoryname',
+                         "The name of the category after creation in wrong!!.")
 
     
