@@ -69,3 +69,9 @@ class TestTestingConfig(TestCase):
         self.assertTrue(
             self.app.config['SQLALCHEMY_DATABASE_URI'] ==
             'sqlite:///' + os.path.join(basedir, 'testdb.sqlite'))
+
+
+
+class TestProductionConfig(TestCase):
+    pass
+               
