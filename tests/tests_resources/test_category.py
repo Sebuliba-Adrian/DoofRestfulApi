@@ -30,4 +30,11 @@ class CategoryTest(BaseTestCase):
 
     def test_delete_category(self):
         """Ensure that a category gets deleted from storage """
-        pass
+        with self.app() as client:
+            with self.app_context():
+                CategoryModel('somecategory').save_to_db()
+                resp = client.delete('/category/somecategory')
+
+                self.assertEqual(resp.status_code, 200)
+                self.assertDictEqual({'message': 'Category deleted'},
+                                     json.loads(resp.data))
