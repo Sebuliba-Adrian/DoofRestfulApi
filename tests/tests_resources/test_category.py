@@ -40,4 +40,11 @@ class CategoryTest(BaseTestCase):
                                      json.loads(resp.data))
     def test_find_category(self):
         """Ensure that a category can be found """
-        pass
+        with self.app() as client:
+            with self.app_context():
+                CategoryModel('somecategory').save_to_db()
+                resp = client.get('/category/somecategory')
+
+                self.assertEqual(resp.status_code, 200)
+                self.assertDictEqual({'id': 1, 'name': 'somecategory', 'recipes': []},
+                                     json.loads(resp.data))
