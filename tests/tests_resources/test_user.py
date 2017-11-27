@@ -4,8 +4,10 @@ from tests.base import BaseTestCase
 import json
 
 class UserResourceTest(BaseTestCase):
+    """Ensure a new user resource can be added to the database."""
     def test_register_user(self):
-                client=BaseTestCase.create_app().test_client()
+         with self.app() as client:
+            with self.app_context():
                 response = client.post('/register', data={'username': 'testusername', 'password': 'testpassword'})
 
                 self.assertEqual(response.status_code, 201)
