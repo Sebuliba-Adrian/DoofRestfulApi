@@ -7,7 +7,7 @@ class UserResourceTest(BaseTestCase):
     """Ensure a new user resource can be added to the database."""
     def test_register_user(self):
         """Ensure that user resource  is registered"""
-         with self.app() as client:
+        with self.app() as client:
             with self.app_context():
                 response = client.post('/register', data={'username': 'testusername', 'password': 'testpassword'})
 
