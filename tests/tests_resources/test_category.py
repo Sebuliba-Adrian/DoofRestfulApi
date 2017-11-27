@@ -18,3 +18,12 @@ class CategoryTest(BaseTestCase):
                     CategoryModel.find_by_name('somerecipecategory'))
                 self.assertDictEqual({'id': 1, 'name': 'somerecipecategory', 'recipes': []},
                                      json.loads(resp.data))
+
+    def test_create_duplicate_store(self):
+        """Ensure that no duplicate categories are created"""
+        with self.app() as client:
+            with self.app_context():
+                client.post('/category/somerecipecategory')
+                resp = client.post('/category/somerecipecategory')
+
+                self.assertEqual(resp.status_code, 400)
