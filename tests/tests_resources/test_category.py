@@ -38,3 +38,6 @@ class CategoryTest(BaseTestCase):
                 self.assertEqual(resp.status_code, 200)
                 self.assertDictEqual({'message': 'Category deleted'},
                                      json.loads(resp.data))
+    def test_find_category(self):
+        """Ensure that a category can be found """
+        pass
