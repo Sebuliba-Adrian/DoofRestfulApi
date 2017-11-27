@@ -16,5 +16,7 @@ class CategoryTest(BaseTestCase):
                 self.assertEqual(resp.status_code, 201)
                 self.assertIsNotNone(
                     CategoryModel.find_by_name('somerecipecategory'))
-                self.assertDictEqual({'id': 1, 'name': 'somerecipecategory', 'recipies': []},
+                self.assertDictEqual({'id': 1, 'name': 'somerecipecategory', 'recipes': []},
                                      json.loads(resp.data))
+    
+    
