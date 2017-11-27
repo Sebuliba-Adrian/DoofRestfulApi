@@ -17,3 +17,13 @@ class UserResourceTest(BaseTestCase):
                                      json.loads(response.data))
             
     
+
+    def test_register_duplicate_user(self):
+        with self.app() as client:
+            with self.app_context():
+                client.post('/register', data={'username': 'testusername', 'password': 'testpassword'})
+                response = client.post('/register', data={'username': 'testusername', 'password': 'testpassword'})
+
+                self.assertEqual(response.status_code, 400)
+                self.assertDictEqual({'message': 'A user with that username already exists'},
+                                     json.loads(response.data))
