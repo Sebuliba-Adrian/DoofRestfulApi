@@ -24,7 +24,11 @@ class Category(Resource):
 
     def delete(self, name):
         """This method deletes a particular category resource from the storage"""
-        pass
+        category = CategoryModel.find_by_name(name)
+        if category:
+            category.delete_from_db()
+
+        return {'message': 'Category deleted'}
 
 
 class CategoryList(Resource):
