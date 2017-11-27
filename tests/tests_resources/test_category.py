@@ -18,5 +18,3 @@ class CategoryTest(BaseTestCase):
                     CategoryModel.find_by_name('somerecipecategory'))
                 self.assertDictEqual({'id': 1, 'name': 'somerecipecategory', 'recipes': []},
                                      json.loads(resp.data))
-    
-    
