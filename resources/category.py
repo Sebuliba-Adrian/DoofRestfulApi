@@ -10,9 +10,17 @@ class Category(Resource):
         pass
 
     def post(self, name):
-        """This post request method adds a category resource of a particular name to a the storage"""
+        """This post request method adds a category resource of a particular name to the storage"""
+        if CategoryModel.find_by_name(name):
+            return {'message': "A category with name '{}' already exists.".format(name)}, 400
 
-        pass
+        category = CategoryModel(name)
+        try:
+            category.save_to_db()
+        except:
+            return {"message": "An error occurred creating the category."}, 500
+
+        return category.json(), 201
 
     def delete(self, name):
         """This method deletes a particular category resource from the storage"""
@@ -21,6 +29,7 @@ class Category(Resource):
 
 class CategoryList(Resource):
     """This is a category list class, it handles requests that involve retrieving lists of  resources"""
+
     def get(self):
         """This method gets a list of resources from the storage"""
         pass
