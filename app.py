@@ -4,6 +4,7 @@ from flask_jwt import JWT, JWTError
 from security import authenticate, identity
 from db import db
 
+from resources.category import Category
 from resources.user import UserRegister
 
 import logging
@@ -22,8 +23,11 @@ jwt = JWT(app, authenticate, identity)  # /auth
 # logger.setLevel(logging.INFO)
 # logging.warning(app.config['SQLALCHEMY_DATABASE_URI'])
 
-# Register UserRegister resource with flask_restful api
+# Register Category endpoint with flask_restful api
+api.add_resource(Category, '/category/<string:name>')
+# Register UserRegister endpoint with flask_restful api
 api.add_resource(UserRegister, '/register')
+
 
 
 @app.errorhandler(JWTError)
