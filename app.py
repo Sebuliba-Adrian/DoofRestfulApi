@@ -25,6 +25,13 @@ jwt = JWT(app, authenticate, identity)  # /auth
 # Register UserRegister resource with flask_restful api
 api.add_resource(UserRegister, '/register')
 
+
+@app.errorhandler(JWTError)
+def auth_error_handler(err):
+    """Handles errors that arise as a result of unauthorization or illegal token"""
+    return jsonify({'message': 'Could not authorize. Did you include a valid Authorization header?'}), 401
+
+
 db.init_app(app)
 
 
