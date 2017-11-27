@@ -3,6 +3,16 @@ from unittest import TestCase
 
 
 class RecipeTest(TestCase):
-    pass
+     def test_create_recipe(self):
+        recipe = RecipeModel('African Tea', "Add two spoonful of tea leaves... ", 1)
+
+        self.assertEqual(recipe.name, 'test',
+                         "The name of the recipe after creation does not equal the constructor argument.")
+        self.assertEqual(recipe.description, 19.99,
+                         "The description of the recipe after creation is wrong!.")
+        self.assertEqual(recipe.category_id, 1,
+                         "The category_id of the recipe after creation does not equal the constructor argument.")
+        self.assertIsNone(recipe.category, "The recipe's category was not None even though it was not created.")
+
    
     
