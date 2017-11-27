@@ -19,7 +19,7 @@ class CategoryTest(BaseTestCase):
                 self.assertDictEqual({'id': 1, 'name': 'somerecipecategory', 'recipes': []},
                                      json.loads(resp.data))
 
-    def test_create_duplicate_store(self):
+    def test_create_duplicate_category(self):
         """Ensure that no duplicate categories are created"""
         with self.app() as client:
             with self.app_context():
@@ -27,3 +27,7 @@ class CategoryTest(BaseTestCase):
                 resp = client.post('/category/somerecipecategory')
 
                 self.assertEqual(resp.status_code, 400)
+
+    def test_delete_category(self):
+        """Ensure that a category gets deleted from storage """
+        pass
