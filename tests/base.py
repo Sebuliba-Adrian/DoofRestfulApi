@@ -10,9 +10,17 @@ class BaseTestCase(TestCase):
         return app
 
     def setUp(self):
-        db.create_all()
-        db.session.commit()
+        # Make sure database exists
+        with app.app_context():
+            db.create_all()
+        # Get a test client
+        self.app = app.test_client
+        self.app_context = app.app_context
 
     def tearDown(self):
-        db.session.remove()
-        db.drop_all()
+        # Database is blank
+        with app.app_context():
+            db.session.remove()
+            db.drop_all()
+
+       
