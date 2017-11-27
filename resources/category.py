@@ -22,5 +22,5 @@ class Category(Resource):
 class CategoryList(Resource):
     """This is a category list class, it handles requests that involve retrieving lists of  resources"""
     def get(self):
-    """This method gets a list of resources from the storage"""
-    pass
+        """This method gets a list of resources from the storage"""
+        pass
