@@ -32,3 +32,17 @@ class UserResourceTest(BaseTestCase):
                 self.assertEqual(response.status_code, 400)
                 self.assertDictEqual({'message': 'A user with that username already exists'},
                                      json.loads(response.data))
+
+    def test_register_and_login(self):
+        """Ensure that user can register and then login """
+        with self.app() as client:
+            with self.app_context():
+                client.post(
+                    '/register', data={'username': 'testusername', 'password': 'testpassword'})
+                auth_response = client.post('/auth',
+                                            data=json.dumps(
+                                                {'username': 'testusername', 'password': 'testpassword'}),
+                                            headers={'Content-Type': 'application/json'})
+
+                self.assertIn('access_token', json.loads(
+                    auth_response.data).keys())
