@@ -50,6 +50,12 @@ class CategoryTest(BaseTestCase):
                 self.assertDictEqual({'id': 1, 'name': 'somecategory', 'recipes': []},
                                      json.loads(resp.data))
 
+    def test_category_not_found(self):
+        """Test whethet a category ca not be found"""
+        pass
+      
+
+
     def test_category_list(self):
         """Ensure that a category list is retrieved """
         with self.app() as client:
