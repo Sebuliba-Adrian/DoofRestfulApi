@@ -123,4 +123,13 @@ class RecipeTest(BaseTestCase):
 
     def test_recipe_list(self):
         """Tests for getting a list of recipes"""
-        pass
+        with self.app() as client:
+            with self.app_context():
+                CategoryModel('Beverages').save_to_db()
+                RecipeModel('African tea',
+                            'Add two spoonfuls of...', 1).save_to_db()
+
+                resp = client.get('/recipes')
+
+                self.assertDictEqual({'recipes': [{'name': 'African tea', 'description': 'Add two spoonfuls of...'}]},
+                                     json.loads(resp.data))
