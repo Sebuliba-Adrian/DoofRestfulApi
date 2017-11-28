@@ -49,7 +49,18 @@ class Recipe(Resource):
 
     def put(self, name):
         """This method handles requests for updating a recipe """
-        pass
+        data = Recipe.parser.parse_args()
+
+        recipe = RecipeModel.find_by_name(name)
+
+        if recipe is None:
+            recipe = RecipeModel(name, **data)
+        else:
+            recipe.description = data['description']
+
+        recipe.save_to_db()
+
+        return recipe.json()
 
 
 class RecipeList(Resource):
