@@ -52,4 +52,10 @@ class CategoryTest(BaseTestCase):
 
     def test_category_list(self):
         """Ensure that a category list is retrieved """
-        pass
+        with self.app() as client:
+            with self.app_context():
+                CategoryModel('somecategory').save_to_db()
+
+                resp = client.get('/categories')
+                self.assertDictEqual({'categories': [{'id': 1, 'name': 'somecategory', 'recipes': []}]},
+                                     json.loads(resp.data))
