@@ -61,7 +61,3 @@ class CategoryTest(BaseTestCase):
             }
 
             self.assertDictEqual(category.json(), expected)
-
-
-
-
