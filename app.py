@@ -47,6 +47,7 @@ db.init_app(app)
 
 @app.before_first_request
 def create_tables():
+    """Creates a database on every start if there is none"""
     db.create_all()
 
 
