@@ -39,4 +39,4 @@ class CategoryList(Resource):
 
     def get(self):
         """This method gets a list of resources from the storage"""
-        pass
+        return {'categories': [category.json() for category in CategoryModel.query.all()]}
