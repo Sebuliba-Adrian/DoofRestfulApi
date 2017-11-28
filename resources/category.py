@@ -7,7 +7,10 @@ class Category(Resource):
 
     def get(self, name):
         """This request method gets category resource by name from the storage  """
-        pass
+        category = CategoryModel.find_by_name(name)
+        if category:
+            return category.json()
+        return {'message': 'Category not found'}, 404
 
     def post(self, name):
         """This post request method adds a category resource of a particular name to the storage"""
