@@ -66,13 +66,13 @@ class CategoryTest(BaseTestCase):
         with self.app() as client:
             with self.app_context():
                 CategoryModel('Beverage').save_to_db()
-                RecipeModel('African Tea',"Add two spoonfuls of tea leaves..." , 1).save_to_db()
+                RecipeModel(
+                    'African Tea', "Add two spoonfuls of tea leaves...", 1).save_to_db()
 
                 resp = client.get('/category/Beverage')
                 self.assertEqual(resp.status_code, 200)
                 self.assertDictEqual({'id': 1, 'name': 'Beverage', 'recipes': [{'name': 'African Tea', 'description': 'Add two spoonfuls of tea leaves...'}]},
                                      json.loads(resp.data))
-                                     
 
     def test_category_list(self):
         """Ensure that a category list is retrieved """
@@ -83,3 +83,8 @@ class CategoryTest(BaseTestCase):
                 resp = client.get('/categories')
                 self.assertDictEqual({'categories': [{'id': 1, 'name': 'somecategory', 'recipes': []}]},
                                      json.loads(resp.data))
+
+    def test_category_list_with_recipes(self):
+        """Ensure that the category list has recipes """
+        pass
+                                 
