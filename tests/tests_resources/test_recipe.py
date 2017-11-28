@@ -64,7 +64,7 @@ class RecipeTest(BaseTestCase):
         """Tests for creation of a recipe"""
         with self.app() as client:
             with self.app_context():
-                CategoryModel('test').save_to_db()
+                CategoryModel('Beverages').save_to_db()
 
                 resp = client.post('/recipe/African tea', data={'description': 'Add two spoonfuls of...', 'category_id': 1})
 
