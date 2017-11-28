@@ -48,7 +48,17 @@ class RecipeTest(BaseTestCase):
 
     def test_delete_recipe(self):
         """Tests for deleting recipe"""
-        pass
+        with self.app() as client:
+            with self.app_context():
+                CategoryModel('Beverages').save_to_db()
+                RecipeModel('African Tea', 'Add two spoonfuls of tea leaves...', 1).save_to_db()
+
+                resp = client.delete('/recipe/African Tea')
+                self.assertEqual(resp.status_code, 200)
+                self.assertDictEqual({'message': 'Recipe deleted'},
+                                     json.loads(resp.data))
+
+        
 
     def test_create_recipe(self):
         """Tests for creation of a recipe"""
