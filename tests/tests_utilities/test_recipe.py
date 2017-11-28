@@ -1,16 +1,31 @@
 from tests.base import BaseTestCase
-from models.user import UserModel
+from models.recipe import RecipeModel
+from models.category import CategoryModel
 
 
-class UserTest(BaseTestCase):
+class RecipeTest(BaseTestCase):
     def test_crud(self):
         with self.app_context():
-            user = UserModel('testusername', 'testpassword')
+            CategoryModel('Beverages').save_to_db()
+            recipe = RecipeModel('African tea', 'add stuf', 1)
 
-            self.assertIsNone(UserModel.find_by_username('testusername'))
-            self.assertIsNone(UserModel.find_by_id(1))
+            self.assertIsNone(RecipeModel.find_by_name(''),
+                              "Found a recipe with name {}, but expected not to.".format(recipe.name))
 
-            user.save_to_db()
+            recipe.save_to_db()
 
-            self.assertIsNotNone(UserModel.find_by_username('testusername'))
-            self.assertIsNotNone(UserModel.find_by_id(1))
+            self.assertIsNotNone(RecipeModel.find_by_name('African tea'))
+
+            recipe.delete_from_db()
+
+            self.assertIsNone(RecipeModel.find_by_name('African tea'))
+
+    def test_category_relationship(self):
+        with self.app_context():
+            category = CategoryModel('test_category')
+            recipe = RecipeModel('test_recipe', 'Add stuff', 1)
+
+            category.save_to_db()
+            recipe.save_to_db()
+
+            self.assertEqual(recipe.category.name, 'test_category')
