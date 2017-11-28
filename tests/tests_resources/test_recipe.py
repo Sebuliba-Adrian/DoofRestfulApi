@@ -7,12 +7,18 @@ import json
 
 class RecipeTest(BaseTestCase):
     """This class handles test cases for recipes """
+
     def setUp(self):
         BaseTestCase.setUp()
         with self.app() as client:
             with self.app_context():
-                pass
-
+                UserModel('testusername', 'testpassword').save_to_db()
+                auth_request = client.post('/auth',
+                                           data=json.dumps(
+                                               {'username': 'testusername', 'password': 'testpassword'}),
+                                           headers={'Content-Type': 'application/json'})
+                auth_token = json.loads(auth_request.data)['access_token']
+                self.access_token = 'JWT {auth_token}'
 
     def test_get_recipe_no_auth(self):
         """Tests for getting recipes without authentication"""
