@@ -86,5 +86,12 @@ class CategoryTest(BaseTestCase):
 
     def test_category_list_with_recipes(self):
         """Ensure that the category list has recipes """
-        pass
-                                 
+        with self.app() as client:
+            with self.app_context():
+                CategoryModel('Beverages').save_to_db()
+                RecipeModel(
+                    'African Tea', 'Add two spoonfuls of tea leaves...', 1).save_to_db()
+
+                resp = client.get('/categories')
+                self.assertDictEqual({'categories': [{'id': 1, 'name': 'Beverages', 'recipes': [{'name': 'African Tea', 'description': 'Add two spoonfuls of tea leaves...'}]}]},
+                                     json.loads(resp.data))
