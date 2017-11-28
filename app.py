@@ -2,11 +2,11 @@ from flask import Flask, jsonify
 from flask_restful import Api
 from flask_jwt import JWT, JWTError
 from security import authenticate, identity
-from .db import db
+from db import db
 
-from .resources.category import Category, CategoryList
-from .resources.user import UserRegister
-from .resources.recipe import Recipe, RecipeList
+from resources.category import Category, CategoryList
+from resources.user import UserRegister
+from resources.recipe import Recipe, RecipeList
 
 import logging
 
