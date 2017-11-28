@@ -51,7 +51,7 @@ class CategoryTest(BaseTestCase):
                                      json.loads(resp.data))
 
     def test_category_not_found(self):
-        """Test whethet a category ca not be found"""
+        """Test whether a category cannot be found"""
         with self.app() as client:
             with self.app_context():
                 resp = client.get('/category/somecategory')
