@@ -92,7 +92,19 @@ class RecipeTest(BaseTestCase):
 
     def test_put_update_recipe(self):
         """"""
-        pass
+        with self.app() as client:
+            with self.app_context():
+                CategoryModel('Beverages').save_to_db()
+                RecipeModel('African tea', 'Add two spoonfuls of...', 1).save_to_db()
+
+                self.assertEqual(RecipeModel.find_by_name('African tea').description, 'Add two spoonfuls of...' )
+
+                resp = client.put('/recipe/African tea', data={'description': 'Add one spoonfuls of...', 'category_id': 1})
+
+                self.assertEqual(resp.status_code, 200)
+                self.assertEqual(RecipeModel.find_by_name('African tea').description, 'Add one spoonfuls of...')
+                self.assertDictEqual({'name': 'African tea', 'description': 'Add one spoonfuls of...'},
+                                     json.loads(resp.data))
 
     def test_recipe_list(self):
         """Tests for getting a list of recipes"""
