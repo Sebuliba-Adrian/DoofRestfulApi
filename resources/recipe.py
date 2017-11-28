@@ -68,4 +68,4 @@ class RecipeList(Resource):
 
     def get(self):
         """This method handles requests for retrieving a list of recipes"""
-        pass
+        return {'recipes': [recipe.json() for recipe in RecipeModel.query.all()]}
