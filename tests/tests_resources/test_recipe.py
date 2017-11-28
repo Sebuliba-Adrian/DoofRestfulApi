@@ -29,7 +29,11 @@ class RecipeTest(BaseTestCase):
 
     def test_get_recipe_not_found(self):
         """Tests for recipe not found"""
-        pass
+        with self.app() as client:
+            with self.app_context():
+                resp = client.get(
+                    '/recipe/African Tea', headers={'Authorization': self.access_token})
+                self.assertEqual(resp.status_code, 404)
 
     def test_get_recipe(self):
         """Tests for getting recipe"""
