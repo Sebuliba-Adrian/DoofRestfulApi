@@ -51,14 +51,13 @@ class RecipeTest(BaseTestCase):
         with self.app() as client:
             with self.app_context():
                 CategoryModel('Beverages').save_to_db()
-                RecipeModel('African Tea', 'Add two spoonfuls of tea leaves...', 1).save_to_db()
+                RecipeModel(
+                    'African Tea', 'Add two spoonfuls of tea leaves...', 1).save_to_db()
 
                 resp = client.delete('/recipe/African Tea')
                 self.assertEqual(resp.status_code, 200)
                 self.assertDictEqual({'message': 'Recipe deleted'},
                                      json.loads(resp.data))
-
-        
 
     def test_create_recipe(self):
         """Tests for creation of a recipe"""
@@ -66,12 +65,12 @@ class RecipeTest(BaseTestCase):
             with self.app_context():
                 CategoryModel('Beverages').save_to_db()
 
-                resp = client.post('/recipe/African tea', data={'description': 'Add two spoonfuls of...', 'category_id': 1})
+                resp = client.post(
+                    '/recipe/African tea', data={'description': 'Add two spoonfuls of...', 'category_id': 1})
 
                 self.assertEqual(resp.status_code, 201)
                 self.assertDictEqual({'name': 'African tea', 'description': 'Add two spoonfuls of...'},
                                      json.loads(resp.data))
-
 
     def test_create_duplicate_recipe(self):
         """Ensures that there are no duplicate recipes"""
@@ -79,7 +78,17 @@ class RecipeTest(BaseTestCase):
 
     def test_put_recipe(self):
         """Tests for editting a recipe"""
-        pass
+        with self.app() as client:
+            with self.app_context():
+                CategoryModel('Beverages').save_to_db()
+                resp = client.put(
+                    '/recipe/African tea', data={'description': 'Add two spoonfuls of...', 'category_id': 1})
+
+                self.assertEqual(resp.status_code, 200)
+                self.assertEqual(RecipeModel.find_by_name(
+                    'African tea').description, 'Add two spoonfuls of...')
+                self.assertDictEqual({'name': 'African tea', 'description':  'Add two spoonfuls of...'},
+                                     json.loads(resp.data))
 
     def test_put_update_recipe(self):
         """"""
