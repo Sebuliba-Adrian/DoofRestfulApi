@@ -9,7 +9,7 @@ class RecipeTest(BaseTestCase):
     """This class handles test cases for recipes """
 
     def setUp(self):
-        BaseTestCase.setUp()
+        super(RecipeTest, self).setUp()
         with self.app() as client:
             with self.app_context():
                 UserModel('testusername', 'testpassword').save_to_db()
@@ -30,7 +30,14 @@ class RecipeTest(BaseTestCase):
 
     def test_get_recipe(self):
         """Tests for getting recipe"""
-        pass
+        with self.app() as client:
+            with self.app_context():
+                CategoryModel('Beverages').save_to_db()
+                RecipeModel(
+                    'African Tea', 'Add two spoonfuls of tea leaves...', 1).save_to_db()
+                resp = client.get('/recipe/African Tea',
+                                  headers={'Authorization': self.access_token})
+                self.assertEqual(resp.status_code, 200)
 
     def test_delete_recipe(self):
         """Tests for deleting recipe"""
