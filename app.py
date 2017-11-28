@@ -28,6 +28,8 @@ jwt = JWT(app, authenticate, identity)  # /auth
 api.add_resource(Recipe, '/recipe/<string:name>')
 # Register Category endpoint with flask_restful api
 api.add_resource(Category, '/category/<string:name>')
+# Register recipe list end point with the flask_restful api
+api.add_resource(RecipeList, '/recipes')
 # Register category list endpoint with flask_resful api
 api.add_resource(CategoryList, '/categories')
 # Register UserRegister endpoint with flask_restful api
