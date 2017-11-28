@@ -7,7 +7,7 @@ class Recipe(Resource):
     """This class represents a Recipe resource  """
     parser = reqparse.RequestParser()
     parser.add_argument('description',
-                        type=float,
+                        type=str,
                         required=True,
                         help="This field cannot be left blank!")
     parser.add_argument('category_id',
@@ -25,11 +25,27 @@ class Recipe(Resource):
 
     def post(self, name):
         """This method handles requests for adding recipe to storage by name"""
-        pass
+        if RecipeModel.find_by_name(name):
+            return {'message': "A recipe with name '{}' already exists.".format(name)}, 400
+
+        data = Recipe.parser.parse_args()
+
+        recipe = RecipeModel(name, **data)
+
+        try:
+            recipe.save_to_db()
+        except:
+            return {"message": "An error occurred inserting the recipe."}, 500
+
+        return recipe.json(), 201
 
     def delete(self, name):
         """This method handles requests for deleting recipe by name"""
-        pass
+        recipe = RecipeModel.find_by_name(name)
+        if recipe:
+            recipe.delete_from_db()
+
+        return {'message': 'Recipe deleted'}
 
     def put(self, name):
         """This method handles requests for updating a recipe """
