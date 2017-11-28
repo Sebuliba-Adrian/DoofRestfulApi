@@ -1,6 +1,7 @@
 import json
 from tests.base import BaseTestCase
 from models.category import CategoryModel
+from models.category import RecipeModel
 
 
 class CategoryTest(BaseTestCase):
@@ -59,6 +60,10 @@ class CategoryTest(BaseTestCase):
                 self.assertEqual(resp.status_code, 404)
                 self.assertDictEqual({'message': 'Category not found'},
                                      json.loads(resp.data))
+
+    def test_category_found_with_recipes(self):
+        """Ensure that a category can be found with recipes"""
+        pass
 
     def test_category_list(self):
         """Ensure that a category list is retrieved """
