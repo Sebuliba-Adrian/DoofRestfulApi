@@ -18,11 +18,14 @@ class RecipeTest(BaseTestCase):
                                                {'username': 'testusername', 'password': 'testpassword'}),
                                            headers={'Content-Type': 'application/json'})
                 auth_token = json.loads(auth_request.data)['access_token']
-                self.access_token = 'JWT {auth_token}'
+                self.access_token = 'JWT {0}'.format(auth_token)
 
     def test_get_recipe_no_auth(self):
         """Tests for getting recipes without authentication"""
-        pass
+        with self.app() as client:
+            with self.app_context():
+                resp = client.get('/recipe/African Tea')
+                self.assertEqual(resp.status_code, 401)
 
     def test_get_recipe_not_found(self):
         """Tests for recipe not found"""
