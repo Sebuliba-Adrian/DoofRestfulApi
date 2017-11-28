@@ -74,7 +74,18 @@ class RecipeTest(BaseTestCase):
 
     def test_create_duplicate_recipe(self):
         """Ensures that there are no duplicate recipes"""
-        pass
+        with self.app() as client:
+            with self.app_context():
+                CategoryModel('Beverages').save_to_db()
+                RecipeModel('African tea',
+                            "Add two spoonfuls of...", 1).save_to_db()
+
+                resp = client.post(
+                    '/recipe/African tea', data={'description': 'Add two spoonfuls of...', 'category_id': 1})
+
+                self.assertEqual(resp.status_code, 400)
+                self.assertDictEqual({'message': 'A recipe with name \'African tea\' already exists.'},
+                                     json.loads(resp.data))
 
     def test_put_recipe(self):
         """Tests for editting a recipe"""
