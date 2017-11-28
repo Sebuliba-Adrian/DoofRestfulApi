@@ -6,6 +6,7 @@ from db import db
 
 from resources.category import Category , CategoryList
 from resources.user import UserRegister
+from resources.recipe import Recipe, RecipeList
 
 import logging
 
@@ -23,6 +24,7 @@ jwt = JWT(app, authenticate, identity)  # /auth
 # logger.setLevel(logging.INFO)
 # logging.warning(app.config['SQLALCHEMY_DATABASE_URI'])
 
+api.add_resource(Recipe, '/recipe/<string:name>')
 # Register Category endpoint with flask_restful api
 api.add_resource(Category, '/category/<string:name>')
 #Register category list endpoint with flask_resful api
