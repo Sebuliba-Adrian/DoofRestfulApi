@@ -4,7 +4,7 @@ from models.category import CategoryModel
 from tests.base import BaseTestCase
 
 
-class StoreTest(BaseTestCase):
+class CategoryTest(BaseTestCase):
     def test_create_category_recipes_empty(self):
         category = CategoryModel('Beverages')
 
