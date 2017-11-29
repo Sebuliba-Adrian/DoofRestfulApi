@@ -1,10 +1,8 @@
 from flask_script import Manager
-from flask_migrate import Migrate, MigrateCommand
 import unittest
-import coverage
+
 from app import app
 from db import db
-
 
 
 db.init_app(app)
@@ -23,6 +21,7 @@ def test():
     if result.wasSuccessful():
         return 0
     return 1
+
 
 @manager.command
 def recreate_db():
