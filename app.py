@@ -8,7 +8,7 @@ from resources.category import Category, CategoryList
 from resources.user import UserRegister
 from resources.recipe import Recipe, RecipeList
 
-import logging
+
 
 
 # Instantiate the app
