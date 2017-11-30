@@ -13,6 +13,7 @@ class BaseConfig:
     SQLALCHEMY_DATABASE_URI = ""
     SECRET_KEY = 'XMLZODSHE8N6NFOZDPZA2HULWSIYJU45K6N4ZO9M'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    JWT_AUTH_URL_RULE = '/login'
 
 
 class DevelopmentConfig(BaseConfig):
