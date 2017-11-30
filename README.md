@@ -22,6 +22,8 @@ You should have [git](https://git-scm.com/), [python](https://docs.python.org/),
 6. You can run tests using the command `nose2 --with-cov --coverage tests`
 7. To launch the application you should first apply migrations in order to create the database whose process is shown below
 8. Run the application using `python manage.py runserver or python app.py`
+10. Access to the api documentation  `coming soon!`
+
 
 
 ### Command for creation of the database and applying migrations to it
@@ -41,3 +43,5 @@ $ python manage.py db --help
 | [ GET /categories/ ](#) | List all the created recipe categories | TRUE |
 | [ GET /category/\<name> ](#) | Get single recipe category | TRUE |
 | [ DELETE /category/\<name> ](#) | Delete this single recipe category | TRUE |
+
+Others specs coming soon
