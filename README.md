@@ -13,11 +13,11 @@ coming soon!
 
 ### Set up
 You should have [git](https://git-scm.com/), [python](https://docs.python.org/), [pip](https://pypi.python.org/pypi/pip), [sqlite3](https://www.sqlite.org/), [virtualenv](https://virtualenv.pypa.io/en/stable/) installed
-##### These instractions are specific to a linux or unix based machine
+##### These instractions are specific to a linux or unix and windows based machine
 1. Open your terminal
 2. Clone the project using `git clone https://github.com/sebuliba-adrian/DoofRestfulApi`
 3. Change to the project directory using `cd DoofRestfulApi`
-4. Create a virtual environment for the project using the command `virtualenv venv` and start it using `source .venv/bin/activate` and using the command `deactivate` to stop the virtual environment
+4. Create a virtual environment for the project using the command `virtualenv venv` and start it using `source venv/bin/activate` for unix or `venv\Scripts\activate`  and using the command `deactivate` to stop the virtual environment
 5. Install packages using `pip install -r requirements.txt`
 6. You can run tests using the command `nose2 --with-cov --coverage tests`
 7. To launch the application you should first apply migrations in order to create the database whose process is shown below
