@@ -1,10 +1,11 @@
 from flask_restful import Resource
+from flask_jwt import jwt_required
 from models.category import CategoryModel
 
 
 class Category(Resource):
     """This is a Category resource class """
-
+    @jwt_required()
     def get(self, name):
         """This request method gets category resource by name from the storage  """
         category = CategoryModel.find_by_name(name)
@@ -12,6 +13,7 @@ class Category(Resource):
             return category.json()
         return {'message': 'Category not found'}, 404
 
+    @jwt_required()
     def post(self, name):
         """This post request method adds a category resource of a particular name to the storage"""
         if CategoryModel.find_by_name(name):
@@ -25,6 +27,7 @@ class Category(Resource):
 
         return category.json(), 201
 
+    @jwt_required()
     def delete(self, name):
         """This method deletes a particular category resource from the storage"""
         category = CategoryModel.find_by_name(name)
@@ -36,7 +39,7 @@ class Category(Resource):
 
 class CategoryList(Resource):
     """This is a category list class, it handles requests that involve retrieving lists of  resources"""
-
+    @jwt_required()
     def get(self):
         """This method gets a list of resources from the storage"""
         return {'categories': [category.json() for category in CategoryModel.query.all()]}
