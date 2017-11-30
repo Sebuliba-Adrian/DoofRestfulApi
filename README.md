@@ -43,5 +43,9 @@ $ python manage.py db --help
 | [ GET /categories/ ](#) | List all the created recipe categories | TRUE |
 | [ GET /category/\<name> ](#) | Get single recipe category | TRUE |
 | [ DELETE /category/\<name> ](#) | Delete this single recipe category | TRUE |
+| [ POST /recipe/\<name> ](#) | Create a new recipe | TRUE |
+| [ GET /recipies/ ](#) | List all the created recipes | TRUE |
+| [ PUT /recipe/\<name> ](#) | Update a recipe | TRUE |
+| [ DELETE /recipe/\<name> ](#) | Delete a recipe | TRUE |
 
 Others specs coming soon
