@@ -24,7 +24,7 @@ class RecipeTest(BaseTestCase):
         """Tests for getting recipes without authentication"""
         with self.app() as client:
             with self.app_context():
-                resp = client.get('/recipe/African Tea', headers={'Authorization': self.access_token})
+                resp = client.get('/recipe/African Tea')
                 self.assertEqual(resp.status_code, 401)
 
     def test_get_recipe_not_found(self):
