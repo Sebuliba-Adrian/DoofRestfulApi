@@ -13,7 +13,7 @@ class RecipeTest(BaseTestCase):
         with self.app() as client:
             with self.app_context():
                 UserModel('testusername', 'testpassword').save_to_db()
-                auth_request = client.post('/auth',
+                auth_request = client.post('/login',
                                            data=json.dumps(
                                                {'username': 'testusername', 'password': 'testpassword'}),
                                            headers={'Content-Type': 'application/json'})

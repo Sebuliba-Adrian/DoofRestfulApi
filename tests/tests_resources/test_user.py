@@ -39,7 +39,7 @@ class UserResourceTest(BaseTestCase):
             with self.app_context():
                 client.post(
                     '/register', data={'username': 'testusername', 'password': 'testpassword'})
-                auth_response = client.post('/auth',
+                auth_response = client.post('/login',
                                             data=json.dumps(
                                                 {'username': 'testusername', 'password': 'testpassword'}),
                                             headers={'Content-Type': 'application/json'})
