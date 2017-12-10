@@ -15,14 +15,16 @@ db.init_app(app)
 manager = Manager(app)
 
 
+
 @manager.command
 def test():
-    """Runs the unit tests without test coverage."""
-    tests = unittest.TestLoader().discover('tests', pattern='test*.py')
+    """Runs the unit tests without coverage."""
+    tests = unittest.TestLoader().discover('tests')
     result = unittest.TextTestRunner(verbosity=2).run(tests)
     if result.wasSuccessful():
         return 0
-    return 1
+    else:
+        return 1
 
 
 manager = Manager(app)
