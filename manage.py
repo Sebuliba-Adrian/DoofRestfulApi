@@ -2,9 +2,12 @@
 Script contains commands that can be called from the command line
 to a Manager instance, for the flask application
 """
-from flask_script import Manager
-from flask_migrate import MigrateCommand
+import os
 import unittest
+
+import coverage
+from flask_migrate import MigrateCommand, Migrate
+from flask_script import Manager
 
 from app import app
 from db import db
@@ -12,8 +15,11 @@ from db import db
 app.config.from_object('config.DevelopmentConfig')
 db.init_app(app)
 
+migrate = Migrate(app, db)
 manager = Manager(app)
 
+# migrations
+manager.add_command('db', MigrateCommand)
 
 
 @manager.command
@@ -27,9 +33,22 @@ def test():
         return 1
 
 
-manager = Manager(app)
-
-manager.add_command('db', MigrateCommand)
+@manager.command
+def cov():
+    """Runs the unit tests with coverage."""
+    cov = coverage.coverage(branch=True, include='./*')
+    cov.start()
+    tests = unittest.TestLoader().discover('tests')
+    unittest.TextTestRunner(verbosity=2).run(tests)
+    cov.stop()
+    cov.save()
+    print('Coverage Summary:')
+    cov.report()
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    covdir = os.path.join(basedir, 'tmp/coverage')
+    cov.html_report(directory=covdir)
+    print('HTML version: file://%s/index.html' % covdir)
+    cov.erase()
 
 
 @manager.command
@@ -37,6 +56,12 @@ def create_db():
     db.drop_all()
     db.create_all()
     db.session.commit()
+
+
+@manager.command
+def drop_db():
+    """Drops the db tables."""
+    db.drop_all()
 
 
 if __name__ == '__main__':
