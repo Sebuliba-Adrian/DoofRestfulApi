@@ -31,7 +31,7 @@ api.add_resource(RecipeList, '/recipes')
 api.add_resource(CategoryList, '/categories')
 # Register UserRegister endpoint with flask_restful api
 api.add_resource(UserRegister, '/register')
-api.add_resource(UserLogin,'/login')
+api.add_resource(UserLogin, '/login')
 
 
 db.init_app(app)
