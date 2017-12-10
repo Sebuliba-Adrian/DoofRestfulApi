@@ -14,22 +14,26 @@ class BaseConfig:
     SECRET_KEY = 'XMLZODSHE8N6NFOZDPZA2HULWSIYJU45K6N4ZO9M'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     JWT_AUTH_URL_RULE = '/login'
+    JWT_SECRET_KEY  = "my precious"
+
 
 
 class DevelopmentConfig(BaseConfig):
     """Development configuration"""
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.environ.get(
-        'DATABASE_URL') or 'sqlite:///' + os.path.join(basedir, 'devdb.sqlite')
+        'DATABASE_URL') or 'postgresql://adrian:andela@localhost/develop_db'
+        #'sqlite:///' + os.path.join(basedir, 'devdb.sqlite')
     SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')
 
-
+    
 class TestingConfig(BaseConfig):
     """Testing configuration"""
     DEBUG = True
     TESTING = True
     SQLALCHEMY_DATABASE_URI = os.environ.get(
-        'DATABASE_TEST_URL') or 'sqlite:///' + os.path.join(basedir, 'testdb.sqlite')
+        'DATABASE_TEST_URL') or 'postgresql://adrian:andela@localhost/develop_db'
+        #'sqlite:///' + os.path.join(basedir, 'testdb.sqlite')
     SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')
 
 
