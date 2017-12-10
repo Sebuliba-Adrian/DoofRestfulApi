@@ -1,15 +1,11 @@
 from flask import Flask, jsonify
+from flask_jwt_extended import JWTManager
 from flask_restful import Api
-from flask_jwt import JWT, JWTError
-from security import authenticate, identity
+
 from db import db
-
 from resources.category import Category, CategoryList
-from resources.user import UserRegister
 from resources.recipe import Recipe, RecipeList
-
-
-
+from resources.user import UserLogin, UserRegister
 
 # Instantiate the app
 app = Flask(__name__)
@@ -17,7 +13,8 @@ app.config.from_object('config.DevelopmentConfig')
 
 # instantiate flask_restful Api class
 api = Api(app)
-jwt = JWT(app, authenticate, identity)  # /auth
+#access_token = create_access_token(identity=username)
+jwt = JWTManager(app)
 
 # Add logger for sanity check
 # logger = logging.getLogger(__name__)
@@ -34,12 +31,7 @@ api.add_resource(RecipeList, '/recipes')
 api.add_resource(CategoryList, '/categories')
 # Register UserRegister endpoint with flask_restful api
 api.add_resource(UserRegister, '/register')
-
-
-@app.errorhandler(JWTError)
-def auth_error_handler(err):
-    """Handles errors that arise as a result of unauthorization or illegal token"""
-    return jsonify({'message': 'Could not authorize. Did you include a valid Authorization header?'}), 401
+api.add_resource(UserLogin,'/login')
 
 
 db.init_app(app)
