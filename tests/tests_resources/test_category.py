@@ -1,8 +1,8 @@
-import json
 from tests.base import BaseTestCase
 from models.category import CategoryModel
 from models.recipe import RecipeModel
 from models.user import UserModel
+import json
 
 
 class CategoryTest(BaseTestCase):
@@ -18,14 +18,15 @@ class CategoryTest(BaseTestCase):
                                                {'username': 'testusername', 'password': 'testpassword'}),
                                            headers={'Content-Type': 'application/json'})
                 auth_token = json.loads(auth_request.data)['access_token']
-                self.access_token = 'JWT {0}'.format(auth_token)
+                self.access_token = 'Bearer {0}'.format(auth_token)
 
     def test_create_category(self):
         """Ensure that a recipe category is created """
 
         with self.app() as client:
             with self.app_context():
-                resp = client.post('/category/somerecipecategory',headers={'Authorization': self.access_token})
+                resp = client.post('/category/somerecipecategory',
+                                   headers={'Authorization': self.access_token})
 
                 self.assertEqual(resp.status_code, 201)
                 self.assertIsNotNone(
@@ -37,8 +38,10 @@ class CategoryTest(BaseTestCase):
         """Ensure that no duplicate categories are created"""
         with self.app() as client:
             with self.app_context():
-                client.post('/category/somerecipecategory', headers={'Authorization': self.access_token})
-                resp = client.post('/category/somerecipecategory', headers={'Authorization': self.access_token})
+                client.post('/category/somerecipecategory',
+                            headers={'Authorization': self.access_token})
+                resp = client.post('/category/somerecipecategory',
+                                   headers={'Authorization': self.access_token})
 
                 self.assertEqual(resp.status_code, 400)
 
@@ -47,7 +50,8 @@ class CategoryTest(BaseTestCase):
         with self.app() as client:
             with self.app_context():
                 CategoryModel('somecategory').save_to_db()
-                resp = client.delete('/category/somecategory', headers={'Authorization': self.access_token})
+                resp = client.delete(
+                    '/category/somecategory', headers={'Authorization': self.access_token})
 
                 self.assertEqual(resp.status_code, 200)
                 self.assertDictEqual({'message': 'Category deleted'},
@@ -58,7 +62,8 @@ class CategoryTest(BaseTestCase):
         with self.app() as client:
             with self.app_context():
                 CategoryModel('somecategory').save_to_db()
-                resp = client.get('/category/somecategory', headers={'Authorization': self.access_token})
+                resp = client.get('/category/somecategory',
+                                  headers={'Authorization': self.access_token})
 
                 self.assertEqual(resp.status_code, 200)
                 self.assertDictEqual({'id': 1, 'name': 'somecategory', 'recipes': []},
@@ -68,7 +73,8 @@ class CategoryTest(BaseTestCase):
         """Test whether a category cannot be found"""
         with self.app() as client:
             with self.app_context():
-                resp = client.get('/category/somecategory', headers={'Authorization': self.access_token})
+                resp = client.get('/category/somecategory',
+                                  headers={'Authorization': self.access_token})
 
                 self.assertEqual(resp.status_code, 404)
                 self.assertDictEqual({'message': 'Category not found'},
@@ -82,7 +88,8 @@ class CategoryTest(BaseTestCase):
                 RecipeModel(
                     'African Tea', "Add two spoonfuls of tea leaves...", 1).save_to_db()
 
-                resp = client.get('/category/Beverage', headers={'Authorization': self.access_token})
+                resp = client.get('/category/Beverage',
+                                  headers={'Authorization': self.access_token})
                 self.assertEqual(resp.status_code, 200)
                 self.assertDictEqual({'id': 1, 'name': 'Beverage', 'recipes': [{'name': 'African Tea', 'description': 'Add two spoonfuls of tea leaves...'}]},
                                      json.loads(resp.data))
@@ -93,7 +100,8 @@ class CategoryTest(BaseTestCase):
             with self.app_context():
                 CategoryModel('somecategory').save_to_db()
 
-                resp = client.get('/categories', headers={'Authorization': self.access_token})
+                resp = client.get(
+                    '/categories', headers={'Authorization': self.access_token})
                 self.assertDictEqual({'categories': [{'id': 1, 'name': 'somecategory', 'recipes': []}]},
                                      json.loads(resp.data))
 
@@ -105,6 +113,7 @@ class CategoryTest(BaseTestCase):
                 RecipeModel(
                     'African Tea', 'Add two spoonfuls of tea leaves...', 1).save_to_db()
 
-                resp = client.get('/categories', headers={'Authorization': self.access_token})
+                resp = client.get(
+                    '/categories', headers={'Authorization': self.access_token})
                 self.assertDictEqual({'categories': [{'id': 1, 'name': 'Beverages', 'recipes': [{'name': 'African Tea', 'description': 'Add two spoonfuls of tea leaves...'}]}]},
                                      json.loads(resp.data))
