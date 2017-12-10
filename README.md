@@ -27,10 +27,14 @@ You should have [git](https://git-scm.com/), [python](https://docs.python.org/),
 
 
 ### Command for creation of the database and applying migrations to it
+
+```sh
+$ python manage.py create_db
 $ python manage.py db init
 $ python manage.py db migrate
 $ python manage.py db upgrade
 $ python manage.py db --help
+```
 
 
 ### Specifications for the API are shown below
