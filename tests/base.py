@@ -5,6 +5,12 @@ from db import db
 
 
 class BaseTestCase(TestCase):
+    
+
+    non_json_data = 'some non json data'
+    wrong_keys_data = {
+            "wrong": "Value",
+            "key": "Value"}
     def create_app(self):
         app.config.from_object('config.TestingConfig')
         return app
