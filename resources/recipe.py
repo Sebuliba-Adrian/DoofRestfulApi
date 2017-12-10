@@ -1,5 +1,5 @@
 from flask_restful import Resource, reqparse
-from flask_jwt import jwt_required
+from flask_jwt_extended import jwt_required
 from models.recipe import RecipeModel
 
 
@@ -15,14 +15,14 @@ class Recipe(Resource):
                         required=True,
                         help="Every recipe needs a category id.")
 
-    @jwt_required()
+    @jwt_required
     def get(self, name):
         """This method handles requests for getting a recipe by name"""
         recipe = RecipeModel.find_by_name(name)
         if recipe:
             return recipe.json()
         return {'message': 'Recipe not found'}, 404
-    @jwt_required()
+    @jwt_required
     def post(self, name):
         """This method handles requests for adding recipe to storage by name"""
         if RecipeModel.find_by_name(name):
@@ -38,7 +38,7 @@ class Recipe(Resource):
             return {"message": "An error occurred inserting the recipe."}, 500
 
         return recipe.json(), 201
-    @jwt_required()
+    @jwt_required
     def delete(self, name):
         """This method handles requests for deleting recipe by name"""
         recipe = RecipeModel.find_by_name(name)
@@ -46,7 +46,7 @@ class Recipe(Resource):
             recipe.delete_from_db()
 
         return {'message': 'Recipe deleted'}
-    @jwt_required()
+    @jwt_required
     def put(self, name):
         """This method handles requests for updating a recipe """
         data = Recipe.parser.parse_args()
@@ -65,7 +65,7 @@ class Recipe(Resource):
 
 class RecipeList(Resource):
     """This class represents alist of recipe resources"""
-    @jwt_required()
+    @jwt_required
     def get(self):
         """This method handles requests for retrieving a list of recipes"""
         return {'recipes': [recipe.json() for recipe in RecipeModel.query.all()]}
