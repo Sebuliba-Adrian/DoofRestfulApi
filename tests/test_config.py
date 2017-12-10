@@ -39,6 +39,8 @@ class TestDevelopmentConfig(TestCase):
         self.assertFalse(current_app is None)
         self.assertTrue(self.app.config['SQLALCHEMY_DATABASE_URI'] ==
                         'postgresql://adrian:andela@localhost/develop_db')
+        self.assertTrue(self.app.config['JWT_SECRET_KEY'] ==
+                        'my precious')
 
 
 class TestTestingConfig(TestCase):
@@ -71,6 +73,8 @@ class TestTestingConfig(TestCase):
         self.assertTrue(
             self.app.config['SQLALCHEMY_DATABASE_URI'] ==
             'postgresql://adrian:andela@localhost/develop_db')
+        self.assertTrue(self.app.config['JWT_SECRET_KEY'] ==
+                        'my precious')    
 
 
 class TestProductionConfig(TestCase):
@@ -98,6 +102,8 @@ class TestProductionConfig(TestCase):
                         'XMLZODSHE8N6NFOZDPZA2HULWSIYJU45K6N4ZO9M')
         self.assertFalse(self.app.config['DEBUG'])
         self.assertFalse(self.app.config['TESTING'])
+        self.assertTrue(self.app.config['JWT_SECRET_KEY'] ==
+                        'my precious')
 
 
 
