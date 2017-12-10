@@ -38,7 +38,7 @@ class TestDevelopmentConfig(TestCase):
         self.assertTrue(self.app.config['DEBUG'] is True)
         self.assertFalse(current_app is None)
         self.assertTrue(self.app.config['SQLALCHEMY_DATABASE_URI'] ==
-                        'sqlite:///' + os.path.join(basedir, 'devdb.sqlite'))
+                        'postgresql://adrian:andela@localhost/develop_db')
 
 
 class TestTestingConfig(TestCase):
@@ -70,7 +70,7 @@ class TestTestingConfig(TestCase):
         self.assertFalse(self.app.config['PRESERVE_CONTEXT_ON_EXCEPTION'])
         self.assertTrue(
             self.app.config['SQLALCHEMY_DATABASE_URI'] ==
-            'sqlite:///' + os.path.join(basedir, 'testdb.sqlite'))
+            'postgresql://adrian:andela@localhost/develop_db')
 
 
 class TestProductionConfig(TestCase):
