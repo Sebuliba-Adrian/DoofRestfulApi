@@ -2,7 +2,7 @@ from flask_jwt_extended import jwt_required
 from flask_restful import Resource, reqparse
 
 from models.recipe import RecipeModel
-
+from utilities import paginate
 
 
 class Recipe(Resource):
@@ -73,5 +73,5 @@ class RecipeList(Resource):
     @jwt_required
     def get(self):
         """This method handles requests for retrieving a list of recipes"""
-        
+        result = RecipeModel.query
         return {'recipes': [recipe.json() for recipe in RecipeModel.query.all()]}
