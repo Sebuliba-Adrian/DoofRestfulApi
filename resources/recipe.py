@@ -19,7 +19,34 @@ class Recipe(Resource):
 
     @jwt_required
     def get(self, name):
-        """This method handles requests for getting a recipe by name"""
+        """
+        Get a recipe by name
+        ---
+        tags:
+          - recipes
+        parameters:
+          - in: path
+            name: id
+            required: true
+            description: An id of the recipe to retrieve
+            type: string
+
+        security: 
+          - TokenHeader: []
+        responses:
+          200:
+            description: The recipe has been successfully retrieved
+            schema:
+              id: recipe
+              properties:
+                name:
+                  type: string
+                  default: Tea
+                description:
+                    type: string
+                    default: Tea and specifically black
+
+        """
         recipe = RecipeModel.find_by_name(name)
         if recipe:
             return recipe.json()
@@ -27,7 +54,36 @@ class Recipe(Resource):
 
     @jwt_required
     def post(self, name):
-        """This method handles requests for adding recipe to storage by name"""
+        """
+        This method handles requests for adding recipe to storage by name
+        ---
+        tags:
+          - recipes
+        parameters:
+          - in: path
+            name: recipe name
+            required: true
+            description: A name of the recipe
+            type: string
+
+          - in: body
+            name: recipe details
+            required: true
+            description: Recipe details
+            type: string
+
+        security:
+          TokenHeader: []  
+
+        responses:
+          201:
+            description:  The recipe has been created successfully
+            schema:
+              id: recipe
+
+
+        """
+
         if RecipeModel.find_by_name(name):
             return {'message': "A recipe with name '{}' already exists.".format(name)}, 400
 
@@ -44,7 +100,28 @@ class Recipe(Resource):
 
     @jwt_required
     def delete(self, name):
-        """This method handles requests for deleting recipe by name"""
+        """
+        This method handles requests for deleting recipe by name
+        ---
+        tags:
+          - recipes
+        parameters:
+          - in: path
+            name: recipe name
+            required: true
+            description: A name of a recipe
+            type: string
+
+        security:
+          TokenHeader: []    
+
+        responses:
+          200:
+            description: Successfully deleted
+          204:
+            description: No recipes
+
+        """
         recipe = RecipeModel.find_by_name(name)
         if recipe:
             recipe.delete_from_db()
@@ -53,7 +130,37 @@ class Recipe(Resource):
 
     @jwt_required
     def put(self, name):
-        """This method handles requests for updating a recipe """
+        """
+        This method handles requests for updating a recipe
+        ---
+        tags:
+          - recipes
+        parameters:
+          - in: path
+            name: recipe name
+            required: true
+            description: A name of a recipe
+            type: string
+
+          - in: body
+            name: body
+            required: true
+            description: The details of the recipe
+            type: string  
+
+
+        security:
+          - TokenHeader: []    
+
+        responses:
+          200:
+            description: Successfuly updated
+          204:
+            description: No content
+            schema:
+              id: recipe
+
+        """
         data = Recipe.parser.parse_args()
 
         recipe = RecipeModel.find_by_name(name)
@@ -71,7 +178,31 @@ class Recipe(Resource):
 class RecipeList(Resource):
     """This class represents alist of recipe resources"""
     @jwt_required
+    #@paginate('recipes')
     def get(self):
-        """This method handles requests for retrieving a list of recipes"""
+        """
+        This method handles requests for retrieving a list of recipes
+        ---
+        tags:
+         - recipes
+        parameters:
+          - in: path
+            name: per_page
+            description: The number of recipes to be displayed in a single page
+            required: true
+            type: string
+          - in: path
+            name: page
+            description: The page to be displayed
+            required: true
+        security:
+          - TokenHeader: []
+        responses:
+          200:
+            description: A list of recipes
+          404:
+            description: Not found
+        """
         result = RecipeModel.query
+        # return result
         return {'recipes': [recipe.json() for recipe in RecipeModel.query.all()]}
