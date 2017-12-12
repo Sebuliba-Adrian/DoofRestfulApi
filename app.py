@@ -1,6 +1,7 @@
 from flask import Flask, jsonify
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
+from flasgger import Swagger
 
 from db import db
 from resources.category import Category, CategoryList
@@ -10,6 +11,28 @@ from resources.user import UserLogin, UserRegister
 # Instantiate the app
 app = Flask(__name__)
 app.config.from_object('config.DevelopmentConfig')
+swag = Swagger(app,
+                template={
+    "info": {
+    "title": "Doof! Recipes Api",
+    "description": "An API for the yummies recipe called Doof!",
+    "contact": {
+      "responsibleOrganization": "Andela",
+      "responsibleDeveloper": "Adrian Sebuliba",
+      "email": "adrian.sebuliba@andela.com",
+      "url": "www.andela.com",
+    },
+    "termsOfService": "http://andela.com/terms",
+    "version": "1.0"
+  },
+                    "securityDefinitions": {
+                        "TokenHeader": {
+                            "type":"apiKey",
+                            "name": "Authorization",
+                            "in": "header"
+                        }
+                    }
+                })
 
 # instantiate flask_restful Api class
 api = Api(app)
@@ -37,10 +60,10 @@ api.add_resource(UserLogin, '/login')
 db.init_app(app)
 
 
-@app.before_first_request
-def create_tables():
-    """Creates a database on every start if there is none"""
-    db.create_all()
+# @app.before_first_request
+# def create_tables():
+#     """Creates a database on every start if there is none"""
+#     db.create_all()
 
 
 if __name__ == "__main__":
