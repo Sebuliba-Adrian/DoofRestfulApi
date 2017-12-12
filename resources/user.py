@@ -1,7 +1,7 @@
 from flask import jsonify, request, make_response
 from flask_restful import Resource, reqparse
 from flask_jwt_extended import (
-    JWTManager, jwt_required, create_access_token,
+    jwt_required, create_access_token,
     get_jwt_identity
 )
 
@@ -24,6 +24,22 @@ class UserRegister(Resource):
                         help="This field cannot be blank.")
 
     def post(self):
+        """
+        Register a new user
+        ---
+        tags:
+          - auth
+        parameters:
+          - in: body
+            name: body
+            required: true
+            type: string
+        responses:
+          200:
+            description: A user is successfully logged in
+            schema:
+              id: user
+        """
         data = UserRegister.parser.parse_args()
 
         if UserModel.find_by_username(data['username']):
@@ -36,10 +52,6 @@ class UserRegister(Resource):
 
 
 class UserLogin(Resource):
-    """
-    This resource allows users to login by sending a
-    POST request with their username and password.
-    """
     parser = reqparse.RequestParser()
     parser.add_argument('username',
                         type=str,
@@ -51,7 +63,32 @@ class UserLogin(Resource):
                         help="This field cannot be blank.")
 
     def post(self):
+        """
+        Log in a user
+        ---
+        tags:
+          - auth
+        parameters:
+          - in: body
+            name: body
+            required: true
+            type: string
+            description: Username and password of the user
 
+
+        responses:
+          200:
+            description: User is successfully logged in and token generated
+            schema:
+              id: user
+              properties:
+                username:
+                  type: string
+                  default: testusername
+                password:
+                  type: string
+                  default: testpassword
+            """
         data = UserLogin.parser.parse_args()
 
         try:
