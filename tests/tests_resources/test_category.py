@@ -25,7 +25,7 @@ class CategoryTest(BaseTestCase):
 
         with self.app() as client:
             with self.app_context():
-                resp = client.post('/category/somerecipecategory',
+                resp = client.post('/categories/somerecipecategory',
                                    headers={'Authorization': self.access_token})
 
                 self.assertEqual(resp.status_code, 201)
@@ -38,9 +38,9 @@ class CategoryTest(BaseTestCase):
         """Ensure that no duplicate categories are created"""
         with self.app() as client:
             with self.app_context():
-                client.post('/category/somerecipecategory',
+                client.post('/categories/somerecipecategory',
                             headers={'Authorization': self.access_token})
-                resp = client.post('/category/somerecipecategory',
+                resp = client.post('/categories/somerecipecategory',
                                    headers={'Authorization': self.access_token})
 
                 self.assertEqual(resp.status_code, 400)
@@ -51,7 +51,7 @@ class CategoryTest(BaseTestCase):
             with self.app_context():
                 CategoryModel('somecategory').save_to_db()
                 resp = client.delete(
-                    '/category/somecategory', headers={'Authorization': self.access_token})
+                    '/categories/somecategory', headers={'Authorization': self.access_token})
 
                 self.assertEqual(resp.status_code, 200)
                 self.assertDictEqual({'message': 'Category deleted'},
@@ -62,7 +62,7 @@ class CategoryTest(BaseTestCase):
         with self.app() as client:
             with self.app_context():
                 CategoryModel('somecategory').save_to_db()
-                resp = client.get('/category/somecategory',
+                resp = client.get('/categories/somecategory',
                                   headers={'Authorization': self.access_token})
 
                 self.assertEqual(resp.status_code, 200)
@@ -73,7 +73,7 @@ class CategoryTest(BaseTestCase):
         """Test whether a category cannot be found"""
         with self.app() as client:
             with self.app_context():
-                resp = client.get('/category/somecategory',
+                resp = client.get('/categories/somecategory',
                                   headers={'Authorization': self.access_token})
 
                 self.assertEqual(resp.status_code, 404)
@@ -88,7 +88,7 @@ class CategoryTest(BaseTestCase):
                 RecipeModel(
                     'African Tea', "Add two spoonfuls of tea leaves...", 1).save_to_db()
 
-                resp = client.get('/category/Beverage',
+                resp = client.get('/categories/Beverage',
                                   headers={'Authorization': self.access_token})
                 self.assertEqual(resp.status_code, 200)
                 self.assertDictEqual({'id': 1, 'name': 'Beverage', 'recipes': [{'name': 'African Tea', 'description': 'Add two spoonfuls of tea leaves...'}]},
@@ -117,3 +117,27 @@ class CategoryTest(BaseTestCase):
                     '/categories', headers={'Authorization': self.access_token})
                 self.assertDictEqual({'categories': [{'id': 1, 'name': 'Beverages', 'recipes': [{'name': 'African Tea', 'description': 'Add two spoonfuls of tea leaves...'}]}]},
                                      json.loads(resp.data))
+    # def test_pagination(self):
+    #     """Ensure that the category list has recipes """
+    #     with self.app() as client:
+    #         with self.app_context():
+    #             categories = []
+    #             for i in range(0, 55):
+    #                 categories.append(CategoryModel(name='category_{0:02d}'.format(i)))
+    #                 CategoryModel.save_all_db(categories)
+                
+    #             rv = client.get('/categories', headers={'Authorization': self.access_token})
+    #             self.assertTrue(rv.status_code == 200)
+    #             self.assertTrue(rv['categories'][0] == categories[0].get_url())
+
+    #             print(rv)
+        # define 55 categories (3 pages at 25 per page)
+        # categories = []
+        # for i in range(0, 55):
+        #     categories.append(CategoryModel(name='category_{0:02d}'.format(i)))
+        #     db.session.add_all(categories)
+        #     db.session.commit()
+
+        # get first page of category list
+        
+        
