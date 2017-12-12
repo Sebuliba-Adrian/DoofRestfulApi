@@ -1,4 +1,5 @@
 from db import db
+from flask import url_for, request
 
 
 class RecipeModel(db.Model):
@@ -20,6 +21,9 @@ class RecipeModel(db.Model):
     def json(self):
         """This method jsonifies the recipe model"""
         return {'name': self.name, 'description': self.description}
+
+    def get_url(self):
+        return url_for(request.endpoint, _external=True)
 
     @classmethod
     def find_by_name(cls, name):
