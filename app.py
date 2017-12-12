@@ -45,9 +45,9 @@ jwt = JWTManager(app)
 # logging.warning(app.config['SQLALCHEMY_DATABASE_URI'])
 
 # Register Recipe endpoint with flask_restful api
-api.add_resource(Recipe, '/recipe/<string:name>')
+api.add_resource(Recipe, '/recipes/<string:name>')
 # Register Category endpoint with flask_restful api
-api.add_resource(Category, '/category/<string:name>')
+api.add_resource(Category, '/categories/<string:name>')
 # Register recipe list end point with the flask_restful api
 api.add_resource(RecipeList, '/recipes')
 # Register category list endpoint with flask_resful api
@@ -60,10 +60,10 @@ api.add_resource(UserLogin, '/login')
 db.init_app(app)
 
 
-# @app.before_first_request
-# def create_tables():
-#     """Creates a database on every start if there is none"""
-#     db.create_all()
+@app.before_first_request
+def create_tables():
+    """Creates a database on every start if there is none"""
+    db.create_all()
 
 
 if __name__ == "__main__":
