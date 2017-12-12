@@ -57,7 +57,7 @@ def paginate(collection, max_per_page=25):
             if expanded:
                 results = [item.json() for item in p.items]
             else:
-                results = [item.json() for item in p.items]
+                results = [item.get_url() for item in p.items]
 
             # return a dictionary as a response
             return {collection: results, 'pages': pages}
