@@ -43,13 +43,13 @@ $ python manage.py db --help
 | -------- | ------------- | ------------- |
 | [ POST /login ](#) | Logs a user in | FALSE |
 | [ POST /register ](#) | Register a user | FALSE |
-| [ POST /category/\<name> ](#) | Create a new recipe category | TRUE |
+| [ POST /categories/\<name> ](#) | Create a new recipe category | TRUE |
 | [ GET /categories/ ](#) | List all the created recipe categories | TRUE |
-| [ GET /category/\<name> ](#) | Get single recipe category | TRUE |
-| [ DELETE /category/\<name> ](#) | Delete this single recipe category | TRUE |
-| [ POST /recipe/\<name> ](#) | Create a new recipe | TRUE |
+| [ GET /categories/\<name> ](#) | Get single recipe category | TRUE |
+| [ DELETE /categories/\<name> ](#) | Delete this single recipe category | TRUE |
+| [ POST /recipes/\<name> ](#) | Create a new recipe | TRUE |
 | [ GET /recipies/ ](#) | List all the created recipes | TRUE |
-| [ PUT /recipe/\<name> ](#) | Update a recipe | TRUE |
-| [ DELETE /recipe/\<name> ](#) | Delete a recipe | TRUE |
+| [ PUT /recipes/\<name> ](#) | Update a recipe | TRUE |
+| [ DELETE /recipes/\<name> ](#) | Delete a recipe | TRUE |
 
 Others specs coming soon
