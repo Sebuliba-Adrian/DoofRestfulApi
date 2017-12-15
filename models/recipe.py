@@ -30,6 +30,11 @@ class RecipeModel(db.Model):
         """This class method returns the recipe by name"""
         return cls.query.filter_by(name=name).first()
 
+    @classmethod
+    def find_by_id(cls, id):
+        """This class method returns the recipe by id"""
+        return cls.query.filter_by(id=id).first()
+
     def save_to_db(self):
         """This method  saves recipe to the database"""
         db.session.add(self)
