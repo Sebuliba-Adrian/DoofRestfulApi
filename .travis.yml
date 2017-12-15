@@ -3,6 +3,12 @@ python:
   - 2.7
  
   
+services:
+  - postgresql
+
+before_script:
+  - createdb test_db 
+  - createdb dev_db 
 
 
 install:
