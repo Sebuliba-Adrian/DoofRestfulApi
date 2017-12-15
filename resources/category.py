@@ -1,14 +1,18 @@
+from flask import abort
 from flask_jwt_extended import jwt_required
-from flask_restful import Resource
+from flask_restful import Resource, fields, marshal_with, reqparse
 
+from db import db
 from models.category import CategoryModel
+from parsers import category_put_parser
 from utilities import paginate
 
 
 class Category(Resource):
     """This is a Category resource class """
+
     @jwt_required
-    def get(self, name):
+    def get(self, id):
         """
         This request method gets category resource by name from the storage
         ---
@@ -16,10 +20,10 @@ class Category(Resource):
           - Recipe Categories
         parameters:
           - in: path
-            name: category name
+            name: id
             required: true
             description: A name of the recipe to retrieve
-            type: string
+            type: integer
 
 
         security: 
@@ -30,30 +34,123 @@ class Category(Resource):
 
 
         """
-        category = CategoryModel.find_by_name(name)
+
+        category = CategoryModel.find_by_id(id)
+        print category
         if category:
             return category.json()
         return {'message': 'Category not found'}, 404
 
     @jwt_required
-    def post(self, name):
+    def put(self, id=None):
+        """"This method updates a particular category from the storage
+        ---
+        tags:
+          - Recipe Categories
+        parameters:
+          - in: path
+            name: id
+            required: true
+            description: An id of the recipe to update
+            type: integer
+
+          - in: body
+            name: Details of the new recipe
+            required: true
+            description: An id of the recipe to update
+            type: string  
+
+        security:
+          - TokenHeader: []
+
+        responses:
+          200:
+            description: The recipe category has been sucessfully changed
+            schema:
+              id: categories
+              properties:
+                name:
+                  Type: string
+                  default: Tea
+        """
+
+        args = category_put_parser.parse_args()
+        print id
+
+        category = CategoryModel.find_by_id(id)
+
+        if category and args['name']:
+            category.name = args['name']
+        category.save_to_db()
+        return category.json()
+
+    @jwt_required
+    def delete(self, id):
+        """
+        This method deletes a particular category resource from the storage
+        ---
+        tags:
+          - Recipe Categories
+        parameters:
+          - in: path
+            name: id
+            required: true
+            description: A name of the recipe to delete
+            type: integer
+
+
+        security: 
+          - TokenHeader: []
+        responses:
+          200:
+            description: The recipe category has been successfully deleted
+        """
+
+        # if not id:
+        #       abort(400)
+        # category= CategoryModel.query.filter_by(id=id).first()
+
+        # db.session.delete(category)
+        # db.session.commit()
+
+        # return {'message': "Category deleted"}
+
+        category = CategoryModel.find_by_id(id)
+        if category:
+            category.delete_from_db()
+        return {'message': "Category deleted"}
+
+        # category = CategoryModel.query.filter_by(id=id).first()
+
+        # if category:
+        #       db.session.delete(category)
+        #       db.session.commit()
+        # return {"message": "Sucessfully deleted"}
+
+
+class CategoryList(Resource):
+    """
+        This is a category list class, it handles requests that involve retrieving lists of  resources
+    """
+    parser = reqparse.RequestParser()
+    parser.add_argument('name',
+                        type=str,
+                        required=True,
+                        help="This field cannot be left blank!")
+
+    @jwt_required
+    def post(self):
         """
         This post request method adds a category resource of a particular name to the storage
         ---
         tags:
           - Recipe Categories
         parameters:
-          - in: path
+          - in: body
             name: category name
             required: true
             type: string
             description: Category name
-
-          - in: body
-            name: category details
-            required: true
-            type: string
-            description: Category details
 
         security: 
           - TokenHeader: []  
@@ -70,10 +167,15 @@ class Category(Resource):
                   default: Tea
 
         """
+
+        args = CategoryList.parser.parse_args(strict=True)
+        name = args['name']
+
         if CategoryModel.find_by_name(name):
-            return {'message': "A category with name '{}' already exists.".format(name)}, 400
+            return {'message': "A category with name '{0}' already exists.".format(name)}, 400
 
         category = CategoryModel(name)
+
         try:
             category.save_to_db()
         except:
@@ -81,43 +183,6 @@ class Category(Resource):
 
         return category.json(), 201
 
-    @jwt_required
-    def delete(self, name):
-        """
-        This method deletes a particular category resource from the storage
-        ---
-        tags:
-          - Recipe Categories
-        parameters:
-          - in: path
-            name: category name
-            required: true
-            description: A name of the recipe to delete
-            type: string
-
-
-        security: 
-          - TokenHeader: []
-        responses:
-          200:
-            description: The recipe category has been successfully deleted
-
-
-
-        """
-        category = CategoryModel.find_by_name(name)
-        if category:
-            category.delete_from_db()
-
-        return {'message': 'Category deleted'}
-
-
-class CategoryList(Resource):
-    """
-        This is a category list class, it handles requests that involve retrieving lists of  resources
-
-
-    """
     @jwt_required
     #@paginate('categories')
     def get(self):
