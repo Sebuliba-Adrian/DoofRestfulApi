@@ -72,9 +72,9 @@ class TestTestingConfig(TestCase):
         self.assertFalse(self.app.config['PRESERVE_CONTEXT_ON_EXCEPTION'])
         self.assertTrue(
             self.app.config['SQLALCHEMY_DATABASE_URI'] ==
-            'postgresql://adrian:andela@localhost/develop_db')
+            'postgresql://adrian:andela@localhost/test_db')
         self.assertTrue(self.app.config['JWT_SECRET_KEY'] ==
-                        'my precious')    
+                        'my precious')
 
 
 class TestProductionConfig(TestCase):
@@ -106,6 +106,3 @@ class TestProductionConfig(TestCase):
                         'my precious')
 
 
-
-if __name__ == '__main__':
-    unittest.main()
