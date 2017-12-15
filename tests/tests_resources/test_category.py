@@ -25,7 +25,7 @@ class CategoryTest(BaseTestCase):
 
         with self.app() as client:
             with self.app_context():
-                resp = client.post('/categories/somerecipecategory',
+                resp = client.post('/categories', data={'name': 'somerecipecategory'},
                                    headers={'Authorization': self.access_token})
 
                 self.assertEqual(resp.status_code, 201)
@@ -38,31 +38,48 @@ class CategoryTest(BaseTestCase):
         """Ensure that no duplicate categories are created"""
         with self.app() as client:
             with self.app_context():
-                client.post('/categories/somerecipecategory',
+                client.post('/categories', data={'name': 'somerecipecategory'},
                             headers={'Authorization': self.access_token})
-                resp = client.post('/categories/somerecipecategory',
+
+                resp = client.post('/categories', data={'name': 'somerecipecategory'},
                                    headers={'Authorization': self.access_token})
 
                 self.assertEqual(resp.status_code, 400)
+
+    def test_put_category(self):
+        """Ensure that a category gets created for a put request"""
+        with self.app() as client:
+            with self.app_context():
+                CategoryModel('somerecipecategory').save_to_db()
+                category = 1
+                resp = client.put('/categories/{0}'.format(category),
+                                  data={'name': 'somenewrecipecategory'}, headers={'Authorization': self.access_token})
+                self.assertEqual(resp.status_code, 200)
+                self.assertEqual(CategoryModel.find_by_id(
+                    category).name, 'somenewrecipecategory')
+                self.assertDictEqual({'id': 1, 'name': 'somenewrecipecategory', 'recipes': []},
+                                     json.loads(resp.data))
 
     def test_delete_category(self):
         """Ensure that a category gets deleted from storage """
         with self.app() as client:
             with self.app_context():
-                CategoryModel('somecategory').save_to_db()
+                category = 1
+                CategoryModel(category).save_to_db()
                 resp = client.delete(
-                    '/categories/somecategory', headers={'Authorization': self.access_token})
+                    '/categories/{0}'.format(category), headers={'Authorization': self.access_token})
 
                 self.assertEqual(resp.status_code, 200)
-                self.assertDictEqual({'message': 'Category deleted'},
+                self.assertDictEqual({'message': "Category deleted"},
                                      json.loads(resp.data))
 
     def test_find_category(self):
         """Ensure that a category can be found """
         with self.app() as client:
             with self.app_context():
+                category = 1
                 CategoryModel('somecategory').save_to_db()
-                resp = client.get('/categories/somecategory',
+                resp = client.get('/categories/{0}'.format(category),
                                   headers={'Authorization': self.access_token})
 
                 self.assertEqual(resp.status_code, 200)
@@ -73,7 +90,8 @@ class CategoryTest(BaseTestCase):
         """Test whether a category cannot be found"""
         with self.app() as client:
             with self.app_context():
-                resp = client.get('/categories/somecategory',
+                category = 1
+                resp = client.get('/categories/{0}'.format(category),
                                   headers={'Authorization': self.access_token})
 
                 self.assertEqual(resp.status_code, 404)
@@ -87,8 +105,8 @@ class CategoryTest(BaseTestCase):
                 CategoryModel('Beverage').save_to_db()
                 RecipeModel(
                     'African Tea', "Add two spoonfuls of tea leaves...", 1).save_to_db()
-
-                resp = client.get('/categories/Beverage',
+                category = 1
+                resp = client.get('/categories/{0}'.format(category),
                                   headers={'Authorization': self.access_token})
                 self.assertEqual(resp.status_code, 200)
                 self.assertDictEqual({'id': 1, 'name': 'Beverage', 'recipes': [{'name': 'African Tea', 'description': 'Add two spoonfuls of tea leaves...'}]},
@@ -125,7 +143,7 @@ class CategoryTest(BaseTestCase):
     #             for i in range(0, 55):
     #                 categories.append(CategoryModel(name='category_{0:02d}'.format(i)))
     #                 CategoryModel.save_all_db(categories)
-                
+
     #             rv = client.get('/categories', headers={'Authorization': self.access_token})
     #             self.assertTrue(rv.status_code == 200)
     #             self.assertTrue(rv['categories'][0] == categories[0].get_url())
@@ -139,5 +157,3 @@ class CategoryTest(BaseTestCase):
         #     db.session.commit()
 
         # get first page of category list
-        
-        
