@@ -28,7 +28,7 @@ class UserRegister(Resource):
         Register a new user
         ---
         tags:
-          - auth
+          - Authentication
         parameters:
           - in: body
             name: body
@@ -67,7 +67,7 @@ class UserLogin(Resource):
         Log in a user
         ---
         tags:
-          - auth
+          - Authentication
         parameters:
           - in: body
             name: body
