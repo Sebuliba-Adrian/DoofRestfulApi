@@ -13,7 +13,6 @@ class BaseConfig:
     SQLALCHEMY_DATABASE_URI = ""
     SECRET_KEY = 'XMLZODSHE8N6NFOZDPZA2HULWSIYJU45K6N4ZO9M'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    JWT_AUTH_URL_RULE = '/login'
     JWT_SECRET_KEY  = "my precious"
 
 
@@ -32,7 +31,7 @@ class TestingConfig(BaseConfig):
     DEBUG = True
     TESTING = True
     SQLALCHEMY_DATABASE_URI = os.environ.get(
-        'DATABASE_TEST_URL') or 'postgresql://adrian:andela@localhost/develop_db'
+        'DATABASE_TEST_URL') or 'postgresql://adrian:andela@localhost/test_db'
         #'sqlite:///' + os.path.join(basedir, 'testdb.sqlite')
     SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')
 
