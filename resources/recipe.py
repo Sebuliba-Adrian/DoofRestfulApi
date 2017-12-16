@@ -1,26 +1,14 @@
 from flask_jwt_extended import jwt_required
 from flask_restful import Resource, reqparse
+from parsers import recipe_put_parser, recipe_post_parser
 
 from models.recipe import RecipeModel
+from models.category import CategoryModel
 from utilities import paginate
 
 
 class Recipe(Resource):
     """This class represents a Recipe resource  """
-    parser = reqparse.RequestParser()
-    parser.add_argument('name',
-                        type=str,
-                        required=True,
-                        help="This field cannot be left blank!")
-
-    parser.add_argument('description',
-                        type=str,
-                        required=True,
-                        help="This field cannot be left blank!")
-    parser.add_argument('category_id',
-                        type=int,
-                        required=True,
-                        help="Every recipe needs a category id.")
 
     @jwt_required
     def get(self, id):
@@ -120,7 +108,31 @@ class Recipe(Resource):
               id: recipe
 
         """
-        data = Recipe.parser.parse_args()
+
+        # data = recipe_put_parser.parse_args(strict=True)
+        # name = data['name']
+        # description = data['description']
+        # category_id = data['category_id']
+        # recipe = RecipeModel.find_by_id(id)
+        # if RecipeModel.find_by_name(name):
+        #     return {'message': "A recipe with name '{0}' already exists.".format(name)}, 400
+        # if recipe is None:
+        #     recipe = RecipeModel(**data)
+        # else:
+        #     if name:
+        #         recipe.name = name
+        #     if description:
+        #         recipe.description = description
+        #     if category_id:
+        #         category = CategoryModel.find_by_id(category_id)
+        #         if category is None:
+        #             return {'message': "A Category with id '{0}' does not exist".format(category_id)}, 400
+
+        # recipe.save_to_db()
+
+        # return recipe.json()
+
+        data = recipe_put_parser.parse_args()
 
         recipe = RecipeModel.find_by_id(id)
 
@@ -136,20 +148,6 @@ class Recipe(Resource):
 
 class RecipeList(Resource):
     """This class represents a list of recipe resources"""
-    parser = reqparse.RequestParser()
-    parser.add_argument('name',
-                        type=str,
-                        required=True,
-                        help="This field cannot be left blank!")
-
-    parser.add_argument('description',
-                        type=str,
-                        required=True,
-                        help="This field cannot be left blank!")
-    parser.add_argument('category_id',
-                        type=int,
-                        required=True,
-                        help="Every recipe needs a category id.")
 
     @jwt_required
     def post(self):
@@ -165,7 +163,7 @@ class RecipeList(Resource):
             description: Recipe details go here
             type: string
 
-      
+
         security:
           TokenHeader: []  
 
@@ -177,7 +175,7 @@ class RecipeList(Resource):
 
 
         """
-        data = RecipeList.parser.parse_args()
+        data = recipe_post_parser.parse_args()
         name = data['name']
 
         if RecipeModel.find_by_name(name):
