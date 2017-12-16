@@ -216,6 +216,6 @@ class RecipeList(Resource):
           404:
             description: Not found
         """
-        result = RecipeModel.query
+        resultx = RecipeModel.query
         # return result
         return {'recipes': [recipe.json() for recipe in RecipeModel.query.all()]}
