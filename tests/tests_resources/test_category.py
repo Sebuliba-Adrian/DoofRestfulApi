@@ -47,6 +47,20 @@ class CategoryTest(BaseTestCase):
                 self.assertEqual(resp.status_code, 400)
 
     def test_put_category(self):
+        """Tests for editting a recipe"""
+        with self.app() as client:
+            with self.app_context():
+                category = 1
+                resp = client.put(
+                    '/categories/{0}'.format(category), data={'name': 'Tea'}, headers={'Authorization': self.access_token})
+
+                self.assertEqual(resp.status_code, 200)
+                self.assertEqual(CategoryModel.find_by_id(
+                    category).name, 'Tea')
+                self.assertDictEqual({'id': category, 'name': 'Tea', 'recipes': []},
+                                     json.loads(resp.data))
+
+    def test_put_update_category(self):
         """Ensure that a category gets created for a put request"""
         with self.app() as client:
             with self.app_context():
@@ -59,6 +73,19 @@ class CategoryTest(BaseTestCase):
                     category).name, 'somenewrecipecategory')
                 self.assertDictEqual({'id': 1, 'name': 'somenewrecipecategory', 'recipes': []},
                                      json.loads(resp.data))
+
+    def test_put_duplicate_category(self):
+        """Ensure that no duplicate categories are created for a put request"""
+        with self.app() as client:
+            with self.app_context():
+                category = 1
+                client.post('/categories', data={'name': 'somerecipecategory'},
+                            headers={'Authorization': self.access_token})
+
+                resp = client.put('/categories/{0}'.format(category), data={'name': 'somerecipecategory'},
+                                  headers={'Authorization': self.access_token})
+
+                self.assertEqual(resp.status_code, 400)
 
     def test_delete_category(self):
         """Ensure that a category gets deleted from storage """
