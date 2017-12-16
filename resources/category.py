@@ -4,7 +4,7 @@ from flask_restful import Resource, fields, marshal_with, reqparse
 
 from db import db
 from models.category import CategoryModel
-from parsers import category_put_parser
+from parsers import category_put_parser, category_post_parser
 from utilities import paginate
 
 
@@ -163,12 +163,7 @@ class CategoryList(Resource):
     """
         This is a category list class, it handles requests that involve retrieving lists of  resources
     """
-    parser = reqparse.RequestParser()
-    parser.add_argument('name',
-                        type=str,
-                        required=True,
-                        help="This field cannot be left blank!")
-
+    
     @jwt_required
     def post(self):
         """
@@ -199,7 +194,7 @@ class CategoryList(Resource):
 
         """
 
-        args = CategoryList.parser.parse_args(strict=True)
+        args = category_post_parser.parse_args(strict=True)
         name = args['name']
 
         if CategoryModel.find_by_name(name):
