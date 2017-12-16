@@ -86,6 +86,8 @@ class CategoryTest(BaseTestCase):
                                   headers={'Authorization': self.access_token})
 
                 self.assertEqual(resp.status_code, 400)
+                self.assertDictEqual({'message': 'A category with name \'somerecipecategory\' already exists.'},
+                                     json.loads(resp.data))
 
     def test_delete_category(self):
         """Ensure that a category gets deleted from storage """
