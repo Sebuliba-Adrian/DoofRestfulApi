@@ -74,15 +74,46 @@ class Category(Resource):
                   default: Tea
         """
 
-        args = category_put_parser.parse_args()
-        print id
+        # args = category_put_parser.parse_args()
+        # print id
 
+        # category = CategoryModel.find_by_id(id)
+
+        # if category and args['name']:
+        #     category.name = args['name']
+        # category.save_to_db()
+        # return category.json()
+
+        data = category_put_parser.parse_args(strict=True)
+        name = data['name']
         category = CategoryModel.find_by_id(id)
+        if CategoryModel.find_by_name(name):
+            return {'message': "A category with name '{0}' already exists.".format(name)}, 400
+        if category is None:
+            category = CategoryModel(**data)
+        else:
+            category.name = name
 
-        if category and args['name']:
-            category.name = args['name']
         category.save_to_db()
+
         return category.json()
+
+        # args = CategoryList.parser.parse_args(strict=True)
+        # name = args['name']
+
+        # if CategoryModel.find_by_name(name):
+        #     return {'message': "A category with name '{0}' already exists.".format(name)}, 400
+
+        # category = CategoryModel(name)
+
+        # try:
+        #     category.name = args['name']
+
+        #     category.save_to_db()
+        # except:
+        #     return {"message": "An error occurred creating the category."}, 500
+
+        # return category.json(), 201
 
     @jwt_required
     def delete(self, id):
