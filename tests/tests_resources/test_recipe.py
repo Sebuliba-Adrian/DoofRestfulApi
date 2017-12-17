@@ -93,6 +93,19 @@ class RecipeTest(BaseTestCase):
                 self.assertDictEqual({'message': 'A recipe with name \'African tea\' already exists.'},
                                      json.loads(resp.data))
 
+    def test_create_recipe_non_existing_category(self):
+        """Ensures that a recipe with no category is not created"""
+        with self.app() as client:
+            with self.app_context():
+                category_id = 2
+                CategoryModel('Beverages').save_to_db()
+
+                RecipeModel('African tea',
+                            "Add two spoonfuls of...", 1).save_to_db()
+                resp = client.post(
+                    '/recipes', data={'name': 'African Tea', 'description': 'Add two spoonfuls of...', 'category_id': category_id}, headers={'Authorization': self.access_token})
+                pass
+
     def test_put_recipe(self):
         """Tests for editting a recipe"""
         with self.app() as client:
