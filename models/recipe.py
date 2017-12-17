@@ -1,5 +1,6 @@
 from db import db
 from flask import url_for, request
+from sqlalchemy import func
 
 
 class RecipeModel(db.Model):
@@ -34,6 +35,10 @@ class RecipeModel(db.Model):
     def find_by_id(cls, id):
         """This class method returns the recipe by id"""
         return cls.query.filter_by(id=id).first()
+    @classmethod
+    def row_count(cls):
+        """This class method returns the number of rows"""
+        return cls.query.count()
 
     def save_to_db(self):
         """This method  saves recipe to the database"""
