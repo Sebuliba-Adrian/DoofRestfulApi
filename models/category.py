@@ -30,6 +30,15 @@ class CategoryModel(db.Model):
         """This class method queries the database and returns the category model by id"""
         return cls.query.filter_by(id=id).first()
 
+    @classmethod
+    def row_count(cls):
+        """This class method returns the number of rows"""
+        return cls.query.count()
+
+    @staticmethod
+    def roll_back():
+        """This static method rolles back database session """
+        db.session().rollback()
 
     def save_to_db(self):
         db.session.add(self)
