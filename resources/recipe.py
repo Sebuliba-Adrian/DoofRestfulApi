@@ -1,5 +1,5 @@
 from flask_jwt_extended import jwt_required
-from flask_restful import Resource, reqparse
+from flask_restful import Resource, reqparse, abort
 from parsers import recipe_put_parser, recipe_post_parser
 
 from models.recipe import RecipeModel
@@ -139,7 +139,20 @@ class Recipe(Resource):
         if recipe is None:
             recipe = RecipeModel(**data)
         else:
-            recipe.description = data['description']
+            if data['name']:
+                recipe.name = data['name']
+            if data['description']:
+                recipe.description = data['description']
+            if data['category_id']:
+                category_id = data['category_id']
+                category = CategoryModel.find_by_id(category_id)
+
+                if category is None:
+                    return{'message': 'Category with id {0} doesnot exist'.format(category_id)}, 400
+                recipe.category = category
+                # return{'message': 'Category with id {0} doesnot exist'.format(category_id)},500
+
+                print CategoryModel.row_count()
 
         recipe.save_to_db()
 
