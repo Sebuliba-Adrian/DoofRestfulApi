@@ -121,7 +121,7 @@ class PasswordReset(Resource):
     @jwt_required
     def put(self):
         """
-        Register a new user
+        Reset a user's password
         ---
         tags:
           - Authentication
@@ -136,12 +136,28 @@ class PasswordReset(Resource):
             schema:
               id: user
         """
+        # data = user_put_parser.parse_args(strict=True)
+        # username = data['username']
+        # user = UserModel.find_by_username(username)
+        # if UserModel.find_by_username(username):
+        #     return {'message': "A user with name '{0}' already exists.".format(username)}, 400
+
+        # else:
+        #     if data['username']:
+        #         user.username = data['username']
+        #     if data['password']:
+        #         user.password = data['password']
+
+        # user.save_to_db()
+
+        # return {'message': 'User password has been reset successfully.'}, 201
+
         data = user_put_parser.parse_args()
 
         user = UserModel.find_by_username(data['username'])
 
         if user is None:
-            user = UserModel(**data)
+            return {'message': 'User {0} does not exist in the database.'.format(data['username'])}, 400
         else:
             if data['username']:
                 user.username = data['username']
@@ -150,3 +166,8 @@ class PasswordReset(Resource):
         user.save_to_db()
 
         return {'message': 'User password has been reset successfully.'}, 201
+
+
+class LogoutUser(Resource):
+
+    pass
