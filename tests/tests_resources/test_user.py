@@ -12,7 +12,7 @@ class UserResourceTest(BaseTestCase):
         with self.app() as client:
             with self.app_context():
                 response = client.post(
-                    '/register', data={'username': 'testusername', 'password': 'testpassword'})
+                    '/auth/register', data={'username': 'testusername', 'password': 'testpassword'})
 
                 self.assertEqual(response.status_code, 201)
                 self.assertIsNotNone(
@@ -25,9 +25,9 @@ class UserResourceTest(BaseTestCase):
         with self.app() as client:
             with self.app_context():
                 client.post(
-                    '/register', data={'username': 'testusername', 'password': 'testpassword'})
+                    '/auth/register', data={'username': 'testusername', 'password': 'testpassword'})
                 response = client.post(
-                    '/register', data={'username': 'testusername', 'password': 'testpassword'})
+                    '/auth/register', data={'username': 'testusername', 'password': 'testpassword'})
 
                 self.assertEqual(response.status_code, 400)
                 self.assertDictEqual({'message': 'A user with that username already exists'},
@@ -38,8 +38,8 @@ class UserResourceTest(BaseTestCase):
         with self.app() as client:
             with self.app_context():
                 client.post(
-                    '/register', data={'username': 'testusername', 'password': 'testpassword'})
-                auth_response = client.post('/login',
+                    '/auth/register', data={'username': 'testusername', 'password': 'testpassword'})
+                auth_response = client.post('/auth/login',
                                             data=json.dumps(
                                                 {'username': 'testusername', 'password': 'testpassword'}),
                                             headers={'Content-Type': 'application/json'})
@@ -47,14 +47,29 @@ class UserResourceTest(BaseTestCase):
                 self.assertIn('access_token', json.loads(
                     auth_response.data).keys())
 
+    def test_reset_user_password(self):
+        """Ensure that user credentials are reset """
+        with self.app() as client:
+            with self.app_context():
+                user = 1
+                UserModel('testusername', 'testpassword').save_to_db()
+                resp = client.put(
+                    '/auth/reset', data={'username': 'testusername', 'password': 'newtestpassword'})
+
+                self.assertEqual(resp.status_code, 201)
+                self.assertEqual(UserModel.find_by_id(
+                    user).password, 'newtestpassword')
+                self.assertDictEqual({'message': 'User password has been reset successfully.'},
+                                     json.loads(resp.data))
+
     def test_missing_username_at_login(self):
         """Ensure that username is not missing at login"""
         with self.app() as client:
             with self.app_context():
-                auth_response = client.post('/login',
-                                              data=json.dumps(
-                                                  {'username': '', 'password': 'testpassword'}),
-                                              headers={'Content-Type': 'application/json'})
+                auth_response = client.post('/auth/login',
+                                            data=json.dumps(
+                                                {'username': '', 'password': 'testpassword'}),
+                                            headers={'Content-Type': 'application/json'})
 
                 self.assertEqual(auth_response.status_code, 400)
                 self.assertDictEqual({'message': 'Missing username parameter'},
@@ -64,10 +79,10 @@ class UserResourceTest(BaseTestCase):
         """Ensure that password is not missing at login"""
         with self.app() as client:
             with self.app_context():
-                auth_response = client.post('/login',
-                                              data=json.dumps(
-                                                  {'username': 'testusername', 'password': ''}),
-                                              headers={'Content-Type': 'application/json'})
+                auth_response = client.post('/auth/login',
+                                            data=json.dumps(
+                                                {'username': 'testusername', 'password': ''}),
+                                            headers={'Content-Type': 'application/json'})
 
                 self.assertEqual(auth_response.status_code, 400)
                 self.assertDictEqual({'message': 'Missing password parameter'},
@@ -77,10 +92,10 @@ class UserResourceTest(BaseTestCase):
         """Ensure that the username and password are not wrong"""
         with self.app() as client:
             with self.app_context():
-                auth_response = client.post('/login',
-                                              data=json.dumps(
-                                                  {'username': 'wrongusername', 'password': 'wrongpassword'}),
-                                              headers={'Content-Type': 'application/json'})
+                auth_response = client.post('/auth/login',
+                                            data=json.dumps(
+                                                {'username': 'wrongusername', 'password': 'wrongpassword'}),
+                                            headers={'Content-Type': 'application/json'})
 
                 self.assertEqual(auth_response.status_code, 401)
                 self.assertDictEqual({'message': 'Bad username or password'},
@@ -90,17 +105,15 @@ class UserResourceTest(BaseTestCase):
         """Ensure that only json input is taken in"""
         with self.app() as client:
             with self.app_context():
-                response = client.post('/login', data=self.non_json_data,
-                                         content_type='application/json')
+                response = client.post('/auth/login', data=self.non_json_data,
+                                       content_type='application/json')
                 self.assertEqual(response.status_code, 400)
 
     def test_login_invalid_json_keys(self):
         """Ensure that json keys are not invalid"""
         with self.app() as client:
             with self.app_context():
-                response = client.post('/login',
-                                         data=json.dumps(self.wrong_keys_data),
-                                         content_type='application/json')
+                response = client.post('/auth/login',
+                                       data=json.dumps(self.wrong_keys_data),
+                                       content_type='application/json')
                 self.assertEqual(response.status_code, 400)
-
-                
