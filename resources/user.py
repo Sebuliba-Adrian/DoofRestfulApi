@@ -6,6 +6,7 @@ from flask_jwt_extended import (
 )
 
 from models.user import UserModel
+from parsers import user_put_parser
 
 
 class UserRegister(Resource):
@@ -113,3 +114,22 @@ class UserLogin(Resource):
         except Exception as e:
             response = {'message': str(e)}
             return response, 500
+
+
+class PasswordReset(Resource):
+
+    def put(self):
+        data = user_put_parser.parse_args()
+
+        user = UserModel.find_by_username(data['username'])
+
+        if user is None:
+            user = UserModel(**data)
+        else:
+            if data['username']:
+                user.username = data['username']
+            if data['password']:
+                user.password = data['password']
+        user.save_to_db()
+
+        return {'message': 'User password has been reset successfully.'}, 201
