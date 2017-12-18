@@ -1,9 +1,9 @@
 from flask_jwt_extended import jwt_required
-from flask_restful import Resource, reqparse, abort
-from parsers import recipe_put_parser, recipe_post_parser
+from flask_restful import Resource, abort, reqparse
 
-from models.recipe import RecipeModel
 from models.category import CategoryModel
+from models.recipe import RecipeModel
+from parsers import recipe_post_parser, recipe_put_parser
 from utilities import paginate
 
 
@@ -11,18 +11,24 @@ class Recipe(Resource):
     """This class represents a Recipe resource  """
 
     @jwt_required
-    def get(self, id):
+    def get(self, category_id, recipe_id):
         """
         Get a recipe by name
         ---
         tags:
-          - recipes
+          - Recipes
         parameters:
           - in: path
-            name: id
-            required: true
+            name: category_id
+            required: false
             description: The id of the recipe to retrieve
             type: integer
+
+          - in: path
+            name: recipe_id
+            required: false
+            description: The id of the recipe to retrieve
+            type: integer  
 
         security: 
           - TokenHeader: []
@@ -40,24 +46,34 @@ class Recipe(Resource):
                     default: Tea and specifically black
 
         """
-        recipe = RecipeModel.find_by_id(id)
+        recipe = RecipeModel.find_by_category(
+            category_id).find_by_id(recipe_id)
+
+        print recipe.name
+        # recipe = RecipeModel.find_by_id(recipe_id)
         if recipe:
             return recipe.json()
         return {'message': 'Recipe not found'}, 404
 
     @jwt_required
-    def delete(self, id):
+    def delete(self, category_id, recipe_id):
         """
         This method handles requests for deleting recipe by name
         ---
         tags:
-          - recipes
+          - Recipes
         parameters:
           - in: path
-            name: id
+            name: category_id
             required: true
             description: The id of the recipe to delete
             type: integer
+
+          - in: path
+            name: recipe_id
+            required: true
+            description: The id of the recipe to delete
+            type: integer  
 
         security:
           TokenHeader: []    
@@ -69,30 +85,37 @@ class Recipe(Resource):
             description: No recipes
 
         """
-        recipe = RecipeModel.find_by_id(id)
+        recipe = RecipeModel.find_by_category(
+            category_id).find_by_id(recipe_id)
         if recipe:
             recipe.delete_from_db()
 
         return {'message': 'Recipe deleted'}
 
     @jwt_required
-    def put(self, id):
+    def put(self, category_id, recipe_id):
         """
         This method handles requests for updating a recipe
         ---
         tags:
-          - recipes
+          - Recipes
         parameters:
           - in: path
-            name: id
+            name: category_id
             required: true
-            description: The id of the recipe to update
-            type: string
+            description: The category id of the recipe to update goes here
+            type: integer
+
+          - in: path
+            name: recipe_id
+            required: true
+            description: The id of the recipe to update goes here
+            type: integer  
 
           - in: body
             name: body
             required: true
-            description: The details of the new recipe
+            description: The details of the new recipe goes here
             type: string  
 
 
@@ -133,8 +156,9 @@ class Recipe(Resource):
         # return recipe.json()
 
         data = recipe_put_parser.parse_args()
+        data['category_id'] = category_id
 
-        recipe = RecipeModel.find_by_id(id)
+        recipe = RecipeModel.find_by_id(recipe_id)
 
         if recipe is None:
             recipe = RecipeModel(**data)
@@ -143,8 +167,8 @@ class Recipe(Resource):
                 recipe.name = data['name']
             if data['description']:
                 recipe.description = data['description']
-            if data['category_id']:
-                category_id = data['category_id']
+            if category_id:
+
                 category = CategoryModel.find_by_id(category_id)
 
                 if category is None:
@@ -163,17 +187,23 @@ class RecipeList(Resource):
     """This class represents a list of recipe resources"""
 
     @jwt_required
-    def post(self):
+    def post(self, category_id):
         """
         This method handles requests for adding recipe to storage by name
         ---
         tags:
-          - recipes
+          - Recipes
         parameters:
+          - in: path
+            name: category_id
+            required: true
+            description: Recipe category id goes here
+            type: integer
+
           - in: body
             name: name
             required: true
-            description: Recipe details go here
+            description: Recipe details goes here
             type: string
 
 
@@ -186,9 +216,10 @@ class RecipeList(Resource):
             schema:
               id: recipe
 
-
         """
+
         data = recipe_post_parser.parse_args()
+        data['category_id'] = category_id
         name = data['name']
 
         if RecipeModel.find_by_name(name):
@@ -197,6 +228,8 @@ class RecipeList(Resource):
         recipe = RecipeModel(**data)
 
         try:
+            category = CategoryModel.find_by_id(category_id)
+            recipe.category = category
             recipe.save_to_db()
         except:
             return {"message": "An error occurred inserting the recipe."}, 500
@@ -205,22 +238,36 @@ class RecipeList(Resource):
 
     @jwt_required
     #@paginate('recipes')
-    def get(self):
+    def get(self, category_id):
         """
         This method handles requests for retrieving a list of recipes
         ---
         tags:
-         - recipes
+         - Recipes
         parameters:
+
+          - in: path
+            name: category_id
+            description: The category id goes here
+            required: true
+            type: string
+
+
           - in: path
             name: per_page
             description: The number of recipes to be displayed in a single page
-            required: true
+            required: false
             type: string
+
           - in: path
             name: page
             description: The page to be displayed
-            required: true
+            required: false
+            type: string
+
+
+
+
         security:
           - TokenHeader: []
         responses:
@@ -229,6 +276,8 @@ class RecipeList(Resource):
           404:
             description: Not found
         """
+        category = CategoryModel.find_by_id(category_id)
         resultx = RecipeModel.query
         # return result
-        return {'recipes': [recipe.json() for recipe in RecipeModel.query.all()]}
+        # print {'recipes': [recipe.json() for recipe in category.recipes]}
+        return {'recipes': [recipe.json() for recipe in category.recipes]}
