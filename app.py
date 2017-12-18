@@ -6,7 +6,7 @@ from flasgger import Swagger
 from db import db
 from resources.category import Category, CategoryList
 from resources.recipe import Recipe, RecipeList
-from resources.user import UserLogin, UserRegister
+from resources.user import UserLogin, UserRegister, PasswordReset
 
 # Instantiate the app
 app = Flask(__name__)
@@ -32,7 +32,7 @@ swag = Swagger(app,
                            "in": "header"
                        }
                    },
-                   "Consumes":"Application/json"
+                   "Consumes": "Application/json"
                })
 
 # instantiate flask_restful Api class
@@ -46,16 +46,17 @@ jwt = JWTManager(app)
 # logging.warning(app.config['SQLALCHEMY_DATABASE_URI'])
 
 # Register Recipe endpoint with flask_restful api
-api.add_resource(Recipe, '/recipes/<int:id>')
+api.add_resource(Recipe, '/categories/<int:category_id>/recipes/<int:recipe_id>')
 # Register Category endpoint with flask_restful api
-api.add_resource(Category, '/categories/<int:id>')
+api.add_resource(Category, '/categories/<int:category_id>')
 # Register recipe list end point with the flask_restful api
-api.add_resource(RecipeList, '/recipes')
+api.add_resource(RecipeList, '/categories/<int:category_id>/recipes')
 # Register category list endpoint with flask_resful api
 api.add_resource(CategoryList, '/categories')
 # Register UserRegister endpoint with flask_restful api
-api.add_resource(UserRegister, '/register')
-api.add_resource(UserLogin, '/login')
+api.add_resource(UserRegister, '/auth/register')
+api.add_resource(UserLogin, '/auth/login')
+api.add_resource(PasswordReset, '/auth/reset')
 
 
 db.init_app(app)
