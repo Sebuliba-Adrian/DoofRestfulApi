@@ -13,7 +13,7 @@ class RecipeTest(BaseTestCase):
         with self.app() as client:
             with self.app_context():
                 UserModel('testusername', 'testpassword').save_to_db()
-                auth_request = client.post('/login',
+                auth_request = client.post('/auth/login',
                                            data=json.dumps(
                                                {'username': 'testusername', 'password': 'testpassword'}),
                                            headers={'Content-Type': 'application/json'})
@@ -24,8 +24,10 @@ class RecipeTest(BaseTestCase):
         """Tests for getting recipes without authentication"""
         with self.app() as client:
             with self.app_context():
+                category = 1
                 recipe = 1
-                resp = client.get('/recipes/{0}'.format(recipe))
+                resp = client.get(
+                    '/categories/{0}/recipes/{1}'.format(category, recipe))
                 self.assertEqual(resp.status_code, 401)
 
     def test_get_recipe_not_found(self):
@@ -41,11 +43,13 @@ class RecipeTest(BaseTestCase):
         """Tests for getting recipe"""
         with self.app() as client:
             with self.app_context():
+                category = 1
                 recipe = 1
                 CategoryModel('Beverages').save_to_db()
+
                 RecipeModel(
                     'African Tea', 'Add two spoonfuls of tea leaves...', 1).save_to_db()
-                resp = client.get('/recipes/{0}'.format(1),
+                resp = client.get('/categories/{0}/recipes/{1}'.format(category, recipe),
                                   headers={'Authorization': self.access_token})
                 self.assertEqual(resp.status_code, 200)
 
@@ -53,6 +57,7 @@ class RecipeTest(BaseTestCase):
         """Tests for deleting recipe"""
         with self.app() as client:
             with self.app_context():
+                category = 1
                 recipe = 1
 
                 CategoryModel('Beverages').save_to_db()
@@ -60,7 +65,7 @@ class RecipeTest(BaseTestCase):
                     'African Tea', 'Add two spoonfuls of tea leaves...', 1).save_to_db()
 
                 resp = client.delete(
-                    '/recipes/{0}'.format(recipe), headers={'Authorization': self.access_token})
+                    '/categories/{0}/recipes/{1}'.format(category, recipe), headers={'Authorization': self.access_token})
                 self.assertEqual(resp.status_code, 200)
                 self.assertDictEqual({'message': 'Recipe deleted'},
                                      json.loads(resp.data))
@@ -69,10 +74,11 @@ class RecipeTest(BaseTestCase):
         """Tests for creation of a recipe"""
         with self.app() as client:
             with self.app_context():
+                category = 1
                 CategoryModel('Beverages').save_to_db()
 
                 resp = client.post(
-                    '/recipes', data={'name': 'African tea', 'description': 'Add two spoonfuls of...', 'category_id': 1}, headers={'Authorization': self.access_token})
+                    '/categories/{0}/recipes'.format(category), data={'name': 'African tea', 'description': 'Add two spoonfuls of...'}, headers={'Authorization': self.access_token})
 
                 self.assertEqual(resp.status_code, 201)
                 self.assertDictEqual({'name': 'African tea', 'description': 'Add two spoonfuls of...'},
@@ -82,12 +88,13 @@ class RecipeTest(BaseTestCase):
         """Ensures that there are no duplicate recipes"""
         with self.app() as client:
             with self.app_context():
+                category = 1
                 CategoryModel('Beverages').save_to_db()
                 RecipeModel('African tea',
                             "Add two spoonfuls of...", 1).save_to_db()
 
                 resp = client.post(
-                    '/recipes', data={'name': 'African tea', 'description': 'Add two spoonfuls of...', 'category_id': 1}, headers={'Authorization': self.access_token})
+                    '/categories/{0}/recipes'.format(category), data={'name': 'African tea', 'description': 'Add two spoonfuls of...'}, headers={'Authorization': self.access_token})
 
                 self.assertEqual(resp.status_code, 400)
                 self.assertDictEqual({'message': 'A recipe with name \'African tea\' already exists.'},
@@ -103,17 +110,18 @@ class RecipeTest(BaseTestCase):
                 RecipeModel('African tea',
                             "Add two spoonfuls of...", 1).save_to_db()
                 resp = client.post(
-                    '/recipes', data={'name': 'African Tea', 'description': 'Add two spoonfuls of...', 'category_id': category_id}, headers={'Authorization': self.access_token})
+                    '/recipes', data={'name': 'African Tea', 'description': 'Add two spoonfuls of...'}, headers={'Authorization': self.access_token})
                 pass
 
     def test_put_recipe(self):
         """Tests for editting a recipe"""
         with self.app() as client:
             with self.app_context():
+                category = 1
                 recipe = 1
                 CategoryModel('Beverages').save_to_db()
                 resp = client.put(
-                    '/recipes/{0}'.format(recipe), data={'name': 'African Tea', 'description': 'Add two spoonfuls of...', 'category_id': 1}, headers={'Authorization': self.access_token})
+                    '/categories/{0}/recipes/{1}'.format(category, recipe), data={'name': 'African Tea', 'description': 'Add two spoonfuls of...'}, headers={'Authorization': self.access_token})
 
                 self.assertEqual(resp.status_code, 200)
                 self.assertEqual(RecipeModel.find_by_id(
@@ -125,7 +133,8 @@ class RecipeTest(BaseTestCase):
         """"""
         with self.app() as client:
             with self.app_context():
-                recipe = "1"
+                category = 1
+                recipe = 1
                 CategoryModel('Beverages').save_to_db()
                 RecipeModel('African tea',
                             'Add two spoonfuls of...', 1).save_to_db()
@@ -134,7 +143,7 @@ class RecipeTest(BaseTestCase):
                     recipe).description, 'Add two spoonfuls of...')
 
                 resp = client.put(
-                    '/recipes/{0}'.format(recipe), data={'name': 'African tea', 'description': 'Add one spoonfuls of...', 'category_id': 1}, headers={'Authorization': self.access_token})
+                    '/categories/{0}/recipes/{1}'.format(category, recipe), data={'name': 'African tea', 'description': 'Add one spoonfuls of...'}, headers={'Authorization': self.access_token})
 
                 self.assertEqual(resp.status_code, 200)
                 self.assertEqual(RecipeModel.find_by_name(
@@ -146,12 +155,13 @@ class RecipeTest(BaseTestCase):
         """Tests for getting a list of recipes"""
         with self.app() as client:
             with self.app_context():
+                category = 1
                 CategoryModel('Beverages').save_to_db()
                 RecipeModel('African tea',
                             'Add two spoonfuls of...', 1).save_to_db()
 
                 resp = client.get(
-                    '/recipes', headers={'Authorization': self.access_token})
+                    '/categories/{0}/recipes'.format(category), headers={'Authorization': self.access_token})
 
                 self.assertDictEqual({'recipes': [{'name': 'African tea', 'description': 'Add two spoonfuls of...'}]},
                                      json.loads(resp.data))
