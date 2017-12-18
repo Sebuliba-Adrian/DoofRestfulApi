@@ -68,6 +68,26 @@ class UserResourceTest(BaseTestCase):
                 self.assertDictEqual({'message': 'User password has been reset successfully.'},
                                      json.loads(resp.data))
 
+    def test_user_doesnt_exist_on_password_reset(self):
+        """Ensure that user credentials are reset only for a valid user"""
+        with self.app() as client:
+            with self.app_context():
+                user = 1
+                UserModel('testusername', 'testpassword').save_to_db()
+                auth_response = client.post('/auth/login',
+                                            data=json.dumps(
+                                                {'username': 'testusername', 'password': 'testpassword'}),
+                                            headers={'Content-Type': 'application/json'})
+                auth_token = json.loads(auth_response.data)['access_token']
+                self.access_token = 'Bearer {0}'.format(auth_token)
+                resp = client.put(
+                    '/auth/reset', data={'username': 'testnousername', 'password': 'newtestpassword'}, headers={'Authorization': self.access_token})
+                print resp.data
+                self.assertEqual(resp.status_code, 400)
+               
+                self.assertDictEqual({'message': 'User testnousername does not exist in the database.'},
+                                     json.loads(resp.data))
+
     def test_missing_username_at_login(self):
         """Ensure that username is not missing at login"""
         with self.app() as client:
