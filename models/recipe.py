@@ -32,9 +32,15 @@ class RecipeModel(db.Model):
         return cls.query.filter_by(name=name).first()
 
     @classmethod
+    def find_by_category(cls, category_id):
+        """This class method returns the recipe by category id"""
+        return cls.query.filter_by(category_id=category_id).first()
+
+    @classmethod
     def find_by_id(cls, id):
         """This class method returns the recipe by id"""
         return cls.query.filter_by(id=id).first()
+
     @classmethod
     def row_count(cls):
         """This class method returns the number of rows"""
