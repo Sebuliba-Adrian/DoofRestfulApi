@@ -12,7 +12,7 @@ class Category(Resource):
     """This is a Category resource class """
 
     @jwt_required
-    def get(self, id):
+    def get(self, category_id):
         """
         This request method gets category resource by name from the storage
         ---
@@ -20,9 +20,9 @@ class Category(Resource):
           - Recipe Categories
         parameters:
           - in: path
-            name: id
+            name: category_id
             required: true
-            description: A name of the recipe to retrieve
+            description: The id of the category to retrieve
             type: integer
 
 
@@ -35,29 +35,29 @@ class Category(Resource):
 
         """
 
-        category = CategoryModel.find_by_id(id)
+        category = CategoryModel.find_by_id(category_id)
         print category
         if category:
             return category.json()
         return {'message': 'Category not found'}, 404
 
     @jwt_required
-    def put(self, id=None):
+    def put(self, category_id):
         """"This method updates a particular category from the storage
         ---
         tags:
           - Recipe Categories
         parameters:
           - in: path
-            name: id
+            name: category_id
             required: true
-            description: An id of the recipe to update
+            description: The id of the category to update
             type: integer
 
           - in: body
-            name: Details of the new recipe
+            name: name
             required: true
-            description: An id of the recipe to update
+            description:  The id of the category  to update
             type: string  
 
         security:
@@ -86,7 +86,7 @@ class Category(Resource):
 
         data = category_put_parser.parse_args(strict=True)
         name = data['name']
-        category = CategoryModel.find_by_id(id)
+        category = CategoryModel.find_by_id(category_id)
         if CategoryModel.find_by_name(name):
             return {'message': "A category with name '{0}' already exists.".format(name)}, 400
         if category is None:
@@ -116,7 +116,7 @@ class Category(Resource):
         # return category.json(), 201
 
     @jwt_required
-    def delete(self, id):
+    def delete(self, category_id):
         """
         This method deletes a particular category resource from the storage
         ---
@@ -124,9 +124,9 @@ class Category(Resource):
           - Recipe Categories
         parameters:
           - in: path
-            name: id
+            name: category_id
             required: true
-            description: A name of the recipe to delete
+            description: The id of the recipe category to delete goes here
             type: integer
 
 
@@ -146,7 +146,7 @@ class Category(Resource):
 
         # return {'message': "Category deleted"}
 
-        category = CategoryModel.find_by_id(id)
+        category = CategoryModel.find_by_id(category_id)
         if category:
             category.delete_from_db()
         return {'message': "Category deleted"}
@@ -221,12 +221,12 @@ class CategoryList(Resource):
           - in: path
             name: per_page
             description: The number of recipes to be displayed in a single page
-            required: true
+            required: false
             type: string
           - in: path
             name: page
             description: The page to be displayed
-            required: true
+            required: false
         security:
           - TokenHeader: []
         responses:
