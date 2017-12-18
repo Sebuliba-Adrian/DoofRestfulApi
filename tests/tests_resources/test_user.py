@@ -53,8 +53,14 @@ class UserResourceTest(BaseTestCase):
             with self.app_context():
                 user = 1
                 UserModel('testusername', 'testpassword').save_to_db()
+                auth_response = client.post('/auth/login',
+                                            data=json.dumps(
+                                                {'username': 'testusername', 'password': 'testpassword'}),
+                                            headers={'Content-Type': 'application/json'})
+                auth_token = json.loads(auth_response.data)['access_token']
+                self.access_token = 'Bearer {0}'.format(auth_token)
                 resp = client.put(
-                    '/auth/reset', data={'username': 'testusername', 'password': 'newtestpassword'})
+                    '/auth/reset', data={'username': 'testusername', 'password': 'newtestpassword'}, headers={'Authorization': self.access_token})
 
                 self.assertEqual(resp.status_code, 201)
                 self.assertEqual(UserModel.find_by_id(
