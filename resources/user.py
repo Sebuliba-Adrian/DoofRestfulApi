@@ -118,7 +118,24 @@ class UserLogin(Resource):
 
 class PasswordReset(Resource):
 
+    @jwt_required
     def put(self):
+        """
+        Register a new user
+        ---
+        tags:
+          - Authentication
+        parameters:
+          - in: body
+            name: body
+            required: true
+            type: string
+        responses:
+          200:
+            description: A user is successfully updated
+            schema:
+              id: user
+        """
         data = user_put_parser.parse_args()
 
         user = UserModel.find_by_username(data['username'])
