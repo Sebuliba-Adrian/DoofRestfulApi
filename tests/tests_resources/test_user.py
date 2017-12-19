@@ -20,6 +20,16 @@ class UserResourceTest(BaseTestCase):
                 self.assertDictEqual({'message': 'User created successfully.'},
                                      json.loads(response.data))
 
+    # def test_register_non_json_input(self):
+    #     """Ensure that only json input is taken in"""
+    #     with self.app() as client:
+    #         with self.app_context():
+    #             response = client.post('/auth/register', data=self.string_with_only_integers,
+    #                                    content_type='application/json')
+    #             self.assertEqual(response.status_code, 400)
+    #             self.assertDictEqual({'message': 'User name should not be integers only'},
+    #                                  json.loads(response.data))
+
     def test_register_duplicate_user(self):
         """Ensure that user resource registered is not a duplicate"""
         with self.app() as client:
@@ -84,7 +94,7 @@ class UserResourceTest(BaseTestCase):
                     '/auth/reset', data={'username': 'testnousername', 'password': 'newtestpassword'}, headers={'Authorization': self.access_token})
                 print resp.data
                 self.assertEqual(resp.status_code, 400)
-               
+
                 self.assertDictEqual({'message': 'User testnousername does not exist in the database.'},
                                      json.loads(resp.data))
 

@@ -41,15 +41,22 @@ class UserRegister(Resource):
             schema:
               id: user
         """
+      
         data = UserRegister.parser.parse_args()
+        try:
+            # if not request.is_json:
+            #     return {"message": "Missing JSON in request. Please try again"}, 400
+            
+            if UserModel.find_by_username(data['username']):
+                return {'message': 'A user with that username already exists'}, 400
 
-        if UserModel.find_by_username(data['username']):
-            return {'message': 'A user with that username already exists'}, 400
+            user = UserModel(**data)
+            user.save_to_db()
 
-        user = UserModel(**data)
-        user.save_to_db()
+            return {'message': 'User created successfully.'}, 201
 
-        return {'message': 'User created successfully.'}, 201
+        except Exception as e:
+            return {'message':'Bad json format. Please try again'},500
 
 
 class UserLogin(Resource):
@@ -169,5 +176,6 @@ class PasswordReset(Resource):
 
 
 class LogoutUser(Resource):
+    
 
     pass

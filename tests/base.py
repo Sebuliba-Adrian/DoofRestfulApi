@@ -7,6 +7,7 @@ from db import db
 class BaseTestCase(TestCase):
 
     non_json_data = 'some non json data'
+    string_with_only_integers= '1234'
     wrong_keys_data = {
         "wrong": "Value",
         "key": "Value"}

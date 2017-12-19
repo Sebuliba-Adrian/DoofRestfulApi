@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 from flask_jwt_extended import jwt_required
 from flask_restful import Resource, abort, reqparse
 
@@ -5,6 +7,7 @@ from models.category import CategoryModel
 from models.recipe import RecipeModel
 from parsers import recipe_post_parser, recipe_put_parser
 from utilities import paginate
+from validator import is_valid
 
 
 class Recipe(Resource):
@@ -48,9 +51,7 @@ class Recipe(Resource):
         """
         recipe = RecipeModel.find_by_category(
             category_id).find_by_id(recipe_id)
-
-        print recipe.name
-        # recipe = RecipeModel.find_by_id(recipe_id)
+         
         if recipe:
             return recipe.json()
         return {'message': 'Recipe not found'}, 404
@@ -176,7 +177,6 @@ class Recipe(Resource):
                 recipe.category = category
                 # return{'message': 'Category with id {0} doesnot exist'.format(category_id)},500
 
-                print CategoryModel.row_count()
 
         recipe.save_to_db()
 
