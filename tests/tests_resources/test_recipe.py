@@ -1,6 +1,7 @@
 from models.category import CategoryModel
 from models.user import UserModel
 from models.recipe import RecipeModel
+from models.user import UserModel
 from tests.base import BaseTestCase
 import json
 
@@ -45,7 +46,7 @@ class RecipeTest(BaseTestCase):
             with self.app_context():
                 category = 1
                 recipe = 1
-                CategoryModel('Beverages').save_to_db()
+                CategoryModel(name='Beverages', user_id = self.user).save_to_db()
 
                 RecipeModel(
                     'African Tea', 'Add two spoonfuls of tea leaves...', 1).save_to_db()
@@ -60,7 +61,7 @@ class RecipeTest(BaseTestCase):
                 category = 1
                 recipe = 1
 
-                CategoryModel('Beverages').save_to_db()
+                CategoryModel(name='Beverages', user_id= self.user).save_to_db()
                 RecipeModel(
                     'African Tea', 'Add two spoonfuls of tea leaves...', 1).save_to_db()
 
@@ -75,7 +76,7 @@ class RecipeTest(BaseTestCase):
         with self.app() as client:
             with self.app_context():
                 category = 1
-                CategoryModel('Beverages').save_to_db()
+                CategoryModel(name='Beverages', user_id= self.user).save_to_db()
 
                 resp = client.post(
                     '/categories/{0}/recipes'.format(category), data={'name': 'African tea', 'description': 'Add two spoonfuls of...'}, headers={'Authorization': self.access_token})
@@ -89,7 +90,7 @@ class RecipeTest(BaseTestCase):
         with self.app() as client:
             with self.app_context():
                 category = 1
-                CategoryModel('Beverages').save_to_db()
+                CategoryModel(name='Beverages', user_id=self.user).save_to_db()
                 RecipeModel('African tea',
                             "Add two spoonfuls of...", 1).save_to_db()
 
@@ -105,7 +106,7 @@ class RecipeTest(BaseTestCase):
         with self.app() as client:
             with self.app_context():
                 category_id = 2
-                CategoryModel('Beverages').save_to_db()
+                CategoryModel(name='Beverages', user_id=self.user).save_to_db()
 
                 RecipeModel('African tea',
                             "Add two spoonfuls of...", 1).save_to_db()
@@ -119,7 +120,7 @@ class RecipeTest(BaseTestCase):
             with self.app_context():
                 category = 1
                 recipe = 1
-                CategoryModel('Beverages').save_to_db()
+                CategoryModel(name='Beverages', user_id=self.user).save_to_db()
                 resp = client.put(
                     '/categories/{0}/recipes/{1}'.format(category, recipe), data={'name': 'African Tea', 'description': 'Add two spoonfuls of...'}, headers={'Authorization': self.access_token})
 
@@ -135,7 +136,7 @@ class RecipeTest(BaseTestCase):
             with self.app_context():
                 category = 1
                 recipe = 1
-                CategoryModel('Beverages').save_to_db()
+                CategoryModel(name='Beverages', user_id= self.user).save_to_db()
                 RecipeModel('African tea',
                             'Add two spoonfuls of...', 1).save_to_db()
 
@@ -156,7 +157,7 @@ class RecipeTest(BaseTestCase):
         with self.app() as client:
             with self.app_context():
                 category = 1
-                CategoryModel('Beverages').save_to_db()
+                CategoryModel(name='Beverages', user_id= self.user).save_to_db()
                 RecipeModel('African tea',
                             'Add two spoonfuls of...', 1).save_to_db()
 

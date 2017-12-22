@@ -27,7 +27,7 @@ class CategoryTest(BaseTestCase):
             with self.app_context():
                 resp = client.post('/categories', data={'name': 'somerecipecategory'},
                                    headers={'Authorization': self.access_token})
-
+                print(resp.data)
                 self.assertEqual(resp.status_code, 201)
                 self.assertIsNotNone(
                     CategoryModel.find_by_name('somerecipecategory'))
@@ -51,6 +51,8 @@ class CategoryTest(BaseTestCase):
         with self.app() as client:
             with self.app_context():
                 category = 1
+                CategoryModel(name='somerecipecategory',user_id=1).save_to_db()
+
                 resp = client.put(
                     '/categories/{0}'.format(category), data={'name': 'Tea'}, headers={'Authorization': self.access_token})
 
@@ -64,8 +66,10 @@ class CategoryTest(BaseTestCase):
         """Ensure that a category gets created for a put request"""
         with self.app() as client:
             with self.app_context():
-                CategoryModel('somerecipecategory').save_to_db()
                 category = 1
+
+                CategoryModel(name='somerecipecategory',user_id=1).save_to_db()
+                
                 resp = client.put('/categories/{0}'.format(category),
                                   data={'name': 'somenewrecipecategory'}, headers={'Authorization': self.access_token})
                 self.assertEqual(resp.status_code, 200)
@@ -94,7 +98,8 @@ class CategoryTest(BaseTestCase):
         with self.app() as client:
             with self.app_context():
                 category = 1
-                CategoryModel(category).save_to_db()
+                user = 1
+                CategoryModel(name ='somecategory',user_id=self.user).save_to_db()
                 resp = client.delete(
                     '/categories/{0}'.format(category), headers={'Authorization': self.access_token})
 
@@ -107,7 +112,7 @@ class CategoryTest(BaseTestCase):
         with self.app() as client:
             with self.app_context():
                 category = 1
-                CategoryModel('somecategory').save_to_db()
+                CategoryModel(name='somecategory', user_id=self.user).save_to_db()
                 resp = client.get('/categories/{0}'.format(category),
                                   headers={'Authorization': self.access_token})
 
@@ -131,7 +136,7 @@ class CategoryTest(BaseTestCase):
         """Ensure that a category can be found with recipes"""
         with self.app() as client:
             with self.app_context():
-                CategoryModel('Beverage').save_to_db()
+                CategoryModel(name='Beverage', user_id=self.user).save_to_db()
                 RecipeModel(
                     'African Tea', "Add two spoonfuls of tea leaves...", 1).save_to_db()
                 category = 1
@@ -145,7 +150,7 @@ class CategoryTest(BaseTestCase):
         """Ensure that a category list is retrieved """
         with self.app() as client:
             with self.app_context():
-                CategoryModel('somecategory').save_to_db()
+                CategoryModel(name='somecategory', user_id=self.user).save_to_db()
 
                 resp = client.get(
                     '/categories', headers={'Authorization': self.access_token})
@@ -156,7 +161,7 @@ class CategoryTest(BaseTestCase):
         """Ensure that the category list has recipes """
         with self.app() as client:
             with self.app_context():
-                CategoryModel('Beverages').save_to_db()
+                CategoryModel(name='Beverages', user_id= self.user).save_to_db()
                 RecipeModel(
                     'African Tea', 'Add two spoonfuls of tea leaves...', 1).save_to_db()
 
