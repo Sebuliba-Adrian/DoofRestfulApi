@@ -1,5 +1,6 @@
+from flask import request, url_for
+
 from db import db
-from flask import url_for, request
 
 
 class CategoryModel(db.Model):
@@ -8,11 +9,13 @@ class CategoryModel(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
-    recipes = db.relationship('RecipeModel', lazy='dynamic')
-    
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    recipes = db.relationship('RecipeModel', backref='category', lazy='dynamic')
 
-    def __init__(self, name):
-        self.name = name
+    # def __init__(self, name, user_id):
+    #     self.name = name
+    #     self.user_id= user_id
+
 
     def json(self):
         """This method turns category model to json representantion"""
