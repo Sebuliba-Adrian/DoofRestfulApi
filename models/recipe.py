@@ -12,7 +12,8 @@ class RecipeModel(db.Model):
     description = db.Column(db.String(800))
 
     category_id = db.Column(db.Integer, db.ForeignKey('categories.id'))
-    category = db.relationship('CategoryModel')
+    # category = db.relationship('CategoryModel')
+   
 
     def __init__(self, name, description, category_id):
         self.name = name
