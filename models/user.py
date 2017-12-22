@@ -11,6 +11,8 @@ class UserModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80))
     password = db.Column(db.String(80))
+    categories = db.relationship('CategoryModel', backref='user', lazy='dynamic')
+    
 
     def __init__(self, username, password):
         self.username = username
@@ -20,6 +22,7 @@ class UserModel(db.Model):
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()
+        return self
     # class method to find user by username
 
     @classmethod
