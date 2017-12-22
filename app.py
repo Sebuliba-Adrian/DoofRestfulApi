@@ -2,6 +2,7 @@ from flask import Flask, jsonify
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
 from flasgger import Swagger
+import sys
 
 from db import db
 from resources.category import Category, CategoryList
@@ -46,7 +47,8 @@ jwt = JWTManager(app)
 # logging.warning(app.config['SQLALCHEMY_DATABASE_URI'])
 
 # Register Recipe endpoint with flask_restful api
-api.add_resource(Recipe, '/categories/<int:category_id>/recipes/<int:recipe_id>')
+api.add_resource(
+    Recipe, '/categories/<int:category_id>/recipes/<int:recipe_id>')
 # Register Category endpoint with flask_restful api
 api.add_resource(Category, '/categories/<int:category_id>')
 # Register recipe list end point with the flask_restful api
@@ -70,4 +72,24 @@ db.init_app(app)
 
 if __name__ == "__main__":
 
-    app.run()
+    if "createdb" in sys.argv:
+        with app.app_context():
+            db.create_all()
+        print("Database created!")
+
+    elif "seeddb" in sys.argv:
+        with app.app_context():
+            c1 = None
+            db.session.add(c1)
+            c2 = None
+            db.session.add(c2)
+            db.session.commit()
+        print("Database seeded!")
+
+    elif "deletedb" in sys.argv:
+        with app.app_context():
+            db.drop_all()
+        print("Database deleted!")
+
+    else:
+        app.run(debug=True)
