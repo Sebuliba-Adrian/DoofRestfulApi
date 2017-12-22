@@ -3,10 +3,11 @@ from flask_jwt_extended import jwt_required
 from flask_restful import Resource, fields, marshal_with, reqparse
 
 from db import db
-from models.category import CategoryModel
 from parsers import category_put_parser, category_post_parser
 from utilities import paginate
-
+from serializer import CategoryModelSchema
+from models.category import CategoryModel
+category_schema = CategoryModelSchema()
 
 class Category(Resource):
     """This is a Category resource class """
@@ -196,21 +197,23 @@ class CategoryList(Resource):
 
         args = category_post_parser.parse_args(strict=True)
         name = args['name']
+        
 
         if CategoryModel.find_by_name(name):
             return {'message': "A category with name '{0}' already exists.".format(name)}, 400
 
-        category = CategoryModel(name)
+        category = CategoryModel(name=name,user_id=1)
+        
 
         try:
             category.save_to_db()
         except:
-            return {"message": "An error occurred creating the category."}, 500
+            return {"message": "An error occurred while creating the category."}, 500
 
         return category.json(), 201
 
     @jwt_required
-    #@paginate('categories')
+    # @paginate('categories')
     def get(self):
         """
         This method gets a list of resources from the storage
@@ -235,6 +238,12 @@ class CategoryList(Resource):
           404:
             description: Not found
         """
-        result = CategoryModel.query
+        # categories = CategoryModel.query.all()
+        # results = category_schema.dump(categories, many=True).data
+        # return results
+        # result = CategoryModel.query
         # return result
         return {'categories': [category.json() for category in CategoryModel.query.all()]}
+
+
+
