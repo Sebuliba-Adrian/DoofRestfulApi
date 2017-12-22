@@ -56,7 +56,7 @@ class UserRegister(Resource):
             return {'message': 'User created successfully.'}, 201
 
         except Exception as e:
-            return {'message':'Bad json format. Please try again'},500
+            return {'message':'Server error. Please try again'},500
 
 
 class UserLogin(Resource):
