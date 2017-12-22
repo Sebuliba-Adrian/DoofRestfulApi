@@ -201,7 +201,7 @@ class RecipeList(Resource):
             type: integer
 
           - in: body
-            name: name
+            name: body
             required: true
             description: Recipe details goes here
             type: string
