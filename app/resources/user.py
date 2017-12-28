@@ -111,8 +111,8 @@ class UserLogin(Resource):
             user = UserModel.find_by_username(username)
             if user:
                 if user.verify_password(password):
-                    user_token = user.generate_auth_token()
-                    return {'token': user_token}, 200
+                    user_token = create_access_token(identity=user.id)
+                    return {'access_token': user_token}, 200
                 else:
                     message = {'message': 'Invalid password'}
                     return message
