@@ -1,5 +1,5 @@
-from models.category import CategoryModel
-from models.user import UserModel
+from app.models.category import CategoryModel
+from app.models.user import UserModel
 
 from unittest import TestCase
 

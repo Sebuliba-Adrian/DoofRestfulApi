@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from flask import g
 from flask_jwt_extended import jwt_required
 from flask_restful import Resource, abort, reqparse
 
-from models.category import CategoryModel
-from models.recipe import RecipeModel
+from app.models import CategoryModel
+from app.models import RecipeModel
 from parsers import recipe_post_parser, recipe_put_parser
-from utilities import paginate
 from validator import is_valid
 
 
@@ -49,8 +49,10 @@ class Recipe(Resource):
                     default: Tea and specifically black
 
         """
+        current_user = g.user.id
+        print("The id is {0}".format(current_user))
         recipe = RecipeModel.find_by_category(
-            category_id).find_by_id(recipe_id)
+        category_id).find_by_id(recipe_id)
          
         if recipe:
             return recipe.json()

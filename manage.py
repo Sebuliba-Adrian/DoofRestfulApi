@@ -12,7 +12,7 @@ from flask_script import Manager
 from app import app
 from db import db
 
-app.config.from_object('config.DevelopmentConfig')
+app.config.from_object('config.config.DevelopmentConfig')
 db.init_app(app)
 
 migrate = Migrate(app, db)

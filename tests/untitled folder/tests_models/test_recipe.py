@@ -1,4 +1,4 @@
-from models.recipe import RecipeModel
+from app.models.recipe import RecipeModel
 from unittest import TestCase
 
 

@@ -3,7 +3,7 @@
     
 """
 from unittest import TestCase
-from models.user import UserModel
+from app.models.user import UserModel
 
 class UserModelTest(TestCase):
     def test_create_user(self):

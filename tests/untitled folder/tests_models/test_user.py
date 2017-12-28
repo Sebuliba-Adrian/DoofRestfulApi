@@ -1,7 +1,7 @@
 """
     Class contains tests for the user model
 """
-from models.user import UserModel
+from app.models.user import UserModel
 from unittest import TestCase
 
 class UserModelTest(TestCase):

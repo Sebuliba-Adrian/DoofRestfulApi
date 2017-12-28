@@ -1,13 +1,16 @@
-from flask import abort
-from flask_jwt_extended import jwt_required
+from flask import abort, g, request
+# from app import app
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource, fields, marshal_with, reqparse
+# from app import app, db
 
-from db import db
+# from db import db
 from parsers import category_put_parser, category_post_parser
-from utilities import paginate
-from serializer import CategoryModelSchema
-from models.category import CategoryModel
-category_schema = CategoryModelSchema()
+
+# from app.serializer import CategoryModelSchema
+from app.models import CategoryModel
+# category_schema = CategoryModelSchema()
+
 
 class Category(Resource):
     """This is a Category resource class """
@@ -37,7 +40,7 @@ class Category(Resource):
         """
 
         category = CategoryModel.find_by_id(category_id)
-        print category
+       
         if category:
             return category.json()
         return {'message': 'Category not found'}, 404
@@ -164,7 +167,7 @@ class CategoryList(Resource):
     """
         This is a category list class, it handles requests that involve retrieving lists of  resources
     """
-    
+
     @jwt_required
     def post(self):
         """
@@ -197,13 +200,11 @@ class CategoryList(Resource):
 
         args = category_post_parser.parse_args(strict=True)
         name = args['name']
-        
 
         if CategoryModel.find_by_name(name):
             return {'message': "A category with name '{0}' already exists.".format(name)}, 400
 
-        category = CategoryModel(name=name,user_id=1)
-        
+        category = CategoryModel(name=name, user_id=1)
 
         try:
             category.save_to_db()
@@ -238,12 +239,10 @@ class CategoryList(Resource):
           404:
             description: Not found
         """
+      
         # categories = CategoryModel.query.all()
         # results = category_schema.dump(categories, many=True).data
         # return results
         # result = CategoryModel.query
         # return result
         return {'categories': [category.json() for category in CategoryModel.query.all()]}
-
-
-
