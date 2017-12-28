@@ -24,38 +24,46 @@ class BaseTestCase(TestCase):
         # Add dummy data for test purposes
         user = UserModel(username="testusername1")
         user.password = 'testpassword'
+        user.save_to_db()
 
         user2 = UserModel(username="testusername2")
         user2.password = 'testpassword'
+        user2.save_to_db()
 
-        c_list1 = CategoryModel(
+        category1 = CategoryModel(
             name="somerecipecategory", created_by=1)
-        c_list2 = CategoryModel(
+        category1.save_to_db()
+        category2 = CategoryModel(
             name="somerecipecategory2", created_by=1)
+        category2.save_to_db()    
 
-        r_item1 = RecipeModel(
+        recipe1 = RecipeModel(
             name="somerecipe1", description="Add one spoonfuls of...", created_by=1, category_id=1)
-        r_item2 = RecipeModel(
+        recipe1.save_to_db()    
+        recipe2 = RecipeModel(
             name="somerecipe2", description="Add two spoonfuls of...", created_by=1, category_id=2)
+        recipe2.save_to_db()    
 
-        db.session.add(user)
-        db.session.add(user2)
-        db.session.commit()
 
     def make_token(self):
-        self.user_data = {'username': 'testusername1', 'password': 'testpassword'}
+        self.user_data = {'username': 'testusername1',
+                          'password': 'testpassword'}
         response = self.app.post("/auth/login", data=self.user_data)
         output = json.loads(response.data)
-        token = output.get("access_token").encode("ascii")
-        self.authorization = {'Authorization': 'Token %s' % token}
+        token = json.loads(response.data)['access_token']
+        
+        self.authorization = {'Authorization': 'Bearer {0}'.format(token)}
         return self.authorization
 
     def make_second_user_token(self):
-        self.user_data = {'username': 'testuserusername2', 'password': 'testpassword'}
+        self.user_data = {'username': 'testusername2',
+                          'password': 'testpassword'}
         response = self.app.post("/auth/login", data=self.user_data)
         output = json.loads(response.data)
-        token = output.get("access_token").encode("ascii")
-        self.authorization = {'Authorization': 'Token %s' % token}
+        # token = output.get("access_token").encode("ascii")
+        print(output)
+        token = json.loads(response.data)['access_token']
+        self.authorization = {'Authorization': 'Bearer {0}'.format(token)}
         return self.authorization
 
     def tearDown(self):
