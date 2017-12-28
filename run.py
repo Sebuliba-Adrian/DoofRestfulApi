@@ -20,11 +20,11 @@ jwt = JWTManager(app)
 # api.add_resource(
 #     Recipe, '/categories/<int:category_id>/recipes/<int:recipe_id>')
 # # Register Category endpoint with flask_restful api
-# api.add_resource(Category, '/categories/<int:category_id>')
+api.add_resource(Category, '/categories/<int:category_id>')
 # # Register recipe list end point with the flask_restful api
 # api.add_resource(RecipeList, '/categories/<int:category_id>/recipes')
 # # Register category list endpoint with flask_resful api
-# api.add_resource(CategoryList, '/categories')
+api.add_resource(CategoryList, '/categories')
 # Register UserRegister endpoint with flask_restful api
 api.add_resource(UserRegister, '/auth/register')
 api.add_resource(UserLogin, '/auth/login')
