@@ -16,9 +16,11 @@ class UserModel(db.Model):
     username = db.Column(db.String(80), index=True)
     password_hash = db.Column(db.String(128))
     recipes = db.relationship(
-        'RecipeModel', backref='user', lazy='dynamic', cascade='all, delete-orphan')
+        'RecipeModel', backref=db.backref(
+            "user"), cascade='all, delete-orphan')
     categories = db.relationship(
-        'CategoryModel', backref='user', lazy='dynamic', cascade='all, delete-orphan')
+        'CategoryModel', backref=db.backref(
+            "user"), cascade='all, delete-orphan')
 
     @property
     def password(self):
@@ -59,7 +61,7 @@ class CategoryModel(db.Model):
     date_modified = db.Column(db.DateTime, default=db.func.current_timestamp())
     created_by = db.Column(db.Integer, db.ForeignKey('users.id'))
     recipes = db.relationship("RecipeModel", backref=db.backref(
-        "category"), cascade='all, delete-orphan')
+        "category"),lazy='dynamic', cascade='all, delete-orphan')
 
     # def __init__(self, name, user_id):
     #     self.name = name
