@@ -38,10 +38,10 @@ class CategoryTest(BaseTestCase):
             content_type='application/json')
         self.assertEqual(response.status_code, 204)
 
-    def test_editing_a_category_without_auth(self):
+    def test_editing_a_category_withno_auth(self):
         self.category = {"name": "lunch", "description": "lunch at 1:00pm"}
         response = self.client.put(
-            "/cstegories/1", data=self.category, headers=self.make_second_user_token(),
+            "/categories/1", data=self.category, headers=self.make_second_user_token(),
             content_type='application/json')
         msg = str(response.json['message'])
         self.assertEqual(msg, 'You are not authorized to edit this')
