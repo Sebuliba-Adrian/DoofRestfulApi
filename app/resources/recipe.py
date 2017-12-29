@@ -1,285 +1,201 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-from flask import g
-from flask_jwt_extended import jwt_required
-from flask_restful import Resource, abort, reqparse
-
-from app.models import CategoryModel
-from app.models import RecipeModel
-from parsers import recipe_post_parser, recipe_put_parser
-from validator import is_valid
+from db import db
+from flask import g, jsonify
+from flask_jwt_extended import get_jwt_identity, jwt_required
+from flask_restful import Resource, abort, marshal, reqparse
+from app.models import CategoryModel, RecipeModel
+from app.serializers import recipes_serializer
 
 
 class Recipe(Resource):
-    """This class represents a Recipe resource  """
-
+    """ Defines endpoints for recipes manipulation
+        methods: GET, POST, PUT, DELETE
+        url: /api/v1/categories/<category_id>/recipes/
+     """
     @jwt_required
-    def get(self, category_id, recipe_id):
+    def post(self, category_id, recipe_id=None):
         """
-        Get a recipe by name
-        ---
-        tags:
-          - Recipes
-        parameters:
-          - in: path
-            name: category_id
-            required: false
-            description: The id of the recipe to retrieve
-            type: integer
-
-          - in: path
-            name: recipe_id
-            required: false
-            description: The id of the recipe to retrieve
-            type: integer  
-
-        security: 
-          - TokenHeader: []
-        responses:
-          200:
-            description: The recipe has been successfully retrieved
-            schema:
-              id: recipe
-              properties:
-                name:
-                  type: string
-                  default: Tea
-                description:
-                    type: string
-                    default: Tea and specifically black
-
+        request that handles recipes creation
         """
-        current_user = g.user.id
-        print("The id is {0}".format(current_user))
-        recipe = RecipeModel.find_by_category(
-        category_id).find_by_id(recipe_id)
-         
-        if recipe:
-            return recipe.json()
-        return {'message': 'Recipe not found'}, 404
+        if recipe_id:
+            response = jsonify({'message': 'Method not allowed(POST)'})
+            response.status_code = 400
+            return response
 
-    @jwt_required
-    def delete(self, category_id, recipe_id):
-        """
-        This method handles requests for deleting recipe by name
-        ---
-        tags:
-          - Recipes
-        parameters:
-          - in: path
-            name: category_id
-            required: true
-            description: The id of the recipe to delete
-            type: integer
+        category = CategoryModel.find_by_id(category_id)
+        user_id = get_jwt_identity()
+        if category:
+            if category.created_by != user_id:
+                response = jsonify(
+                    {'message': 'You are not authorized to use the category'})
+                response.status_code = 401
+                return response
+            parser = reqparse.RequestParser()
+            parser.add_argument('name', type=str, help='A name is required')
+            parser.add_argument('description', type=str, default='')
+            args = parser.parse_args()
 
-          - in: path
-            name: recipe_id
-            required: true
-            description: The id of the recipe to delete
-            type: integer  
+            name = args["name"]
+            description = args["description"]
 
-        security:
-          TokenHeader: []    
+            if not name:
+                response = jsonify(
+                    {'message': 'Please provide a name for the recipe'})
+                response.status_code = 400
+                return response
 
-        responses:
-          200:
-            description: Successfully deleted
-          204:
-            description: No recipes
+            recipe = RecipeModel(
+                name=name, description=description,
+                category_id=category_id, created_by=user_id)
 
-        """
-        recipe = RecipeModel.find_by_category(
-            category_id).find_by_id(recipe_id)
-        if recipe:
-            recipe.delete_from_db()
+            if not name:
+                response = jsonify(
+                    {'message': 'Please provide a name for the recipe'})
+                response.status_code = 400
+                return response
 
-        return {'message': 'Recipe deleted'}
+            try:
+                RecipeModel.query.filter_by(name=name).one()
+                response = jsonify(
+                    {'message': 'That name is already taken, try again'})
+                response.status_code = 400
+                return response
 
-    @jwt_required
-    def put(self, category_id, recipe_id):
-        """
-        This method handles requests for updating a recipe
-        ---
-        tags:
-          - Recipes
-        parameters:
-          - in: path
-            name: category_id
-            required: true
-            description: The category id of the recipe to update goes here
-            type: integer
+            except:
+                try:
+                    recipe.save_to_db()
+                    message = {
+                        'message': 'Recipe added Successfully!'}
+                    response = marshal(recipe, recipes_serializer)
+                    response.update(message)
+                    return response, 201
 
-          - in: path
-            name: recipe_id
-            required: true
-            description: The id of the recipe to update goes here
-            type: integer  
-
-          - in: body
-            name: body
-            required: true
-            description: The details of the new recipe goes here
-            type: string  
-
-
-        security:
-          - TokenHeader: []    
-
-        responses:
-          200:
-            description: Successfuly updated
-          204:
-            description: No content
-            schema:
-              id: recipe
-
-        """
-
-        # data = recipe_put_parser.parse_args(strict=True)
-        # name = data['name']
-        # description = data['description']
-        # category_id = data['category_id']
-        # recipe = RecipeModel.find_by_id(id)
-        # if RecipeModel.find_by_name(name):
-        #     return {'message': "A recipe with name '{0}' already exists.".format(name)}, 400
-        # if recipe is None:
-        #     recipe = RecipeModel(**data)
-        # else:
-        #     if name:
-        #         recipe.name = name
-        #     if description:
-        #         recipe.description = description
-        #     if category_id:
-        #         category = CategoryModel.find_by_id(category_id)
-        #         if category is None:
-        #             return {'message': "A Category with id '{0}' does not exist".format(category_id)}, 400
-
-        # recipe.save_to_db()
-
-        # return recipe.json()
-
-        data = recipe_put_parser.parse_args()
-        data['category_id'] = category_id
-
-        recipe = RecipeModel.find_by_id(recipe_id)
-
-        if recipe is None:
-            recipe = RecipeModel(**data)
+                except:
+                    response = jsonify(
+                        {'message': 'There was an error saving the recipe'})
+                    response.status_code = 400
+                    return response
         else:
-            if data['name']:
-                recipe.name = data['name']
-            if data['description']:
-                recipe.description = data['description']
-            if category_id:
-
-                category = CategoryModel.find_by_id(category_id)
-
-                if category is None:
-                    return{'message': 'Category with id {0} doesnot exist'.format(category_id)}, 400
-                recipe.category = category
-                # return{'message': 'Category with id {0} doesnot exist'.format(category_id)},500
-
-
-        recipe.save_to_db()
-
-        return recipe.json()
-
-
-class RecipeList(Resource):
-    """This class represents a list of recipe resources"""
+            response = jsonify(
+                {'message': 'A category with the ID provided does not exist!'})
+            response.status_code = 204
+            return response
 
     @jwt_required
-    def post(self, category_id):
+    def put(self, category_id, recipe_id=None):
         """
-        This method handles requests for adding recipe to storage by name
-        ---
-        tags:
-          - Recipes
-        parameters:
-          - in: path
-            name: category_id
-            required: true
-            description: Recipe category id goes here
-            type: integer
-
-          - in: body
-            name: body
-            required: true
-            description: Recipe details goes here
-            type: string
-
-
-        security:
-          TokenHeader: []  
-
-        responses:
-          201:
-            description:  The recipe has been created successfully
-            schema:
-              id: recipe
-
+        request that updates an item
         """
-
-        data = recipe_post_parser.parse_args()
-        data['category_id'] = category_id
-        name = data['name']
-
-        if RecipeModel.find_by_name(name):
-            return {'message': "A recipe with name '{0}' already exists.".format(name)}, 400
-
-        recipe = RecipeModel(**data)
-
+        if recipe_id == None:
+            response = jsonify({'message': 'Method not allowed, check url'})
+            response.status_code = 400
+            return response
         try:
             category = CategoryModel.find_by_id(category_id)
-            recipe.category = category
-            recipe.save_to_db()
+            recipe = RecipeModel.query.filter_by(id=recipe_id).one()
         except:
-            return {"message": "An error occurred inserting the recipe."}, 500
+            response = jsonify(
+                {'message': 'The category or recipe does not exist'})
+            response.status_code = 204
+            return response
+        user_id = get_jwt_identity()
+        if recipe.created_by == user_id:
+            if category and recipe:
+                parser = reqparse.RequestParser()
+                parser.add_argument(
+                    'name', type=str, help='A name is required')
+                parser.add_argument('description', type=str, default='')
 
-        return recipe.json(), 201
+                args = parser.parse_args()
+
+                name = args["name"]
+                description = args["description"]
+
+                data = {'name': name, 'description': description}
+                if not name or name == None:
+                    data = {'description': description}
+
+                recipe_info = RecipeModel.query.filter_by(
+                    id=recipe_id).update(data)
+
+                try:
+                    db.session.commit()
+                    response = jsonify({'message': 'Recipe updated'})
+                    response.status_code = 200
+                    return response
+
+                except Exception:
+                    response = jsonify(
+                        {'message': 'There was an error updating the recipe'})
+                    response.status_code = 500
+                    return response
+            else:
+                response = jsonify(
+                    {'message': 'The category or recipe does not exist'})
+                response.status_code = 204
+                return response
+        else:
+            response = jsonify(
+                {'message': 'You are not authorized to edit this'})
+            response.status_code = 401
+            return response
 
     @jwt_required
-    #@paginate('recipes')
-    def get(self, category_id):
+    def get(self, category_id, recipe_id=None):
         """
-        This method handles requests for retrieving a list of recipes
-        ---
-        tags:
-         - Recipes
-        parameters:
-
-          - in: path
-            name: category_id
-            description: The category id goes here
-            required: true
-            type: string
-
-
-          - in: path
-            name: per_page
-            description: The number of recipes to be displayed in a single page
-            required: false
-            type: string
-
-          - in: path
-            name: page
-            description: The page to be displayed
-            required: false
-            type: string
-
-
-
-
-        security:
-          - TokenHeader: []
-        responses:
-          200:
-            description: A list of recipes
-          404:
-            description: Not found
+        request that lists a single recipe
         """
+        if recipe_id == None:
+            response = jsonify({'message': 'Method not allowed, check url'})
+            response.status_code = 400
+            return response
         category = CategoryModel.find_by_id(category_id)
-        resultx = RecipeModel.query
-        # return result
-        # print {'recipes': [recipe.json() for recipe in category.recipes]}
-        return {'recipes': [recipe.json() for recipe in category.recipes]}
+        recipe = RecipeModel.query.filter_by(
+            id=recipe_id, category_id=category_id).first()
+        user_id = get_jwt_identity()
+        if category:
+            if recipe:
+                if recipe.created_by == user_id:
+                    return marshal(recipe, recipes_serializer)
+                else:
+                    response = jsonify(
+                        {'message': 'You are not authorized to view this'})
+                    response.status_code = 401
+                    return response
+            else:
+                response = jsonify({'message': 'The recipe does not exist'})
+                response.status_code = 204
+                return response
+        else:
+            response = jsonify({'message': 'the category does not exist'})
+            response.status_code = 204
+            return response
+
+    @jwt_required
+    def delete(self, category_id, recipe_id=None):
+        """
+        request that deletes a recipe
+        """
+        if recipe_id == None:
+            response = jsonify({'message': 'Method not allowed (DELETE)'})
+            response.status_code = 400
+            return response
+
+        recipe = RecipeModel.find_by_id(recipe_id)
+        user_id = get_jwt_identity()
+
+        if recipe:
+            if recipe.created_by == user_id:
+                recipe.delete_from_db()
+                response = jsonify(
+                    {'message': 'The recipe has been successfully deleted'})
+                response.status_code = 200
+                return response
+            else:
+                response = jsonify(
+                    {'message': 'You are not authorized to del this'})
+                response.status_code = 401
+                return response
+        else:
+            response = jsonify({'message': 'The item does not exist'})
+            response.status_code = 204
+            return response
