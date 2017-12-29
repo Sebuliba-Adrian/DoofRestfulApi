@@ -10,7 +10,11 @@ import json
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 
+
 class BaseTestCase(TestCase):
+    recipe_data = {"name": "African Tea",
+               "description": "Add  2spoonfuls..."}
+    user=1
 
     def create_app(self):
         app.config.from_object('config.config.TestingConfig')
@@ -35,15 +39,14 @@ class BaseTestCase(TestCase):
         category1.save_to_db()
         category2 = CategoryModel(
             name="somerecipecategory2", created_by=1)
-        category2.save_to_db()    
+        category2.save_to_db()
 
         recipe1 = RecipeModel(
             name="somerecipe1", description="Add one spoonfuls of...", created_by=1, category_id=1)
-        recipe1.save_to_db()    
+        recipe1.save_to_db()
         recipe2 = RecipeModel(
             name="somerecipe2", description="Add two spoonfuls of...", created_by=1, category_id=2)
-        recipe2.save_to_db()    
-
+        recipe2.save_to_db()
 
     def make_token(self):
         self.user_data = {'username': 'testusername1',
@@ -51,7 +54,7 @@ class BaseTestCase(TestCase):
         response = self.app.post("/auth/login", data=self.user_data)
         output = json.loads(response.data)
         token = json.loads(response.data)['access_token']
-        
+
         self.authorization = {'Authorization': 'Bearer {0}'.format(token)}
         return self.authorization
 
