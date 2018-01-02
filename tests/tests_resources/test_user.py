@@ -12,6 +12,7 @@ class UserResourceTest(BaseTestCase):
                           "password": "testpasssword"}
         response = self.app.post("/auth/register", data=self.user_data)
         msg = json.loads(response.data)
+        
 
         print(response.data)
         self.assertIn(msg['message'], 'New user successfully registered!')
