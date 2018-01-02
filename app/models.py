@@ -61,7 +61,7 @@ class CategoryModel(db.Model):
     date_modified = db.Column(db.DateTime, default=db.func.current_timestamp())
     created_by = db.Column(db.Integer, db.ForeignKey('users.id'))
     recipes = db.relationship("RecipeModel", backref=db.backref(
-        "category"),lazy='dynamic', cascade='all, delete-orphan')
+        "category"), lazy='dynamic', cascade='all, delete-orphan')
 
     # def __init__(self, name, user_id):
     #     self.name = name
