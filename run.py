@@ -1,15 +1,16 @@
 import sys
 
-from app import app
-from app.models import UserModel
-from app.resources.category import Category, CategoryList
-from app.resources.recipe import Recipe
-from app.resources.user import PasswordReset, UserLogin, UserRegister
-from db import db
 from flasgger import Swagger
 from flask import Flask, jsonify
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
+
+from app import app
+from app.models import UserModel
+from app.resources.category import Category, CategoryList
+from app.resources.recipe import Recipe, RecipeList
+from app.resources.user import PasswordReset, UserLogin, UserRegister
+from db import db
 
 # instantiate flask_restful Api class
 api = Api(app)
@@ -18,11 +19,11 @@ jwt = JWTManager(app)
 
 # # Register Recipe endpoint with flask_restful api
 api.add_resource(
-    Recipe, '/categories/<int:category_id>/recipes/<int:recipe_id>', endpoint="single_recipe")
+    Recipe, '/categories/<int:category_id>/recipes/<int:recipe_id>')
 # # Register Category endpoint with flask_restful api
 api.add_resource(Category, '/categories/<int:category_id>')
 # # Register recipe list end point with the flask_restful api
-api.add_resource(Recipe, '/categories/<int:category_id>/recipes/',   endpoint="multiple_recipes")
+api.add_resource(RecipeList, '/categories/<int:category_id>/recipes/')
 # # Register category list endpoint with flask_resful api
 api.add_resource(CategoryList, '/categories')
 # Register UserRegister endpoint with flask_restful api
