@@ -1,11 +1,11 @@
 from flask import g, jsonify, request
-from flask_restful import marshal, reqparse, Resource, abort
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import get_jwt_identity, jwt_required
+from flask_restful import Resource, abort, marshal, reqparse
 
-from db import db
 from app.models import CategoryModel, RecipeModel
 from app.serializers import categories_serializer
 from app.utilities import search_categories
+from db import db
 
 
 class CategoryList(Resource):
@@ -16,7 +16,33 @@ class CategoryList(Resource):
 
     @jwt_required
     def post(self, category_id=None):
-        """ Method to create new categories """
+        """
+        This post request method adds a category resource of a particular name to the storage
+        ---
+        tags:
+          - Recipe Categories
+        parameters:
+          - in: body
+            name: body
+            required: true
+            type: string
+            description: Category name
+
+        security: 
+          - TokenHeader: []  
+
+
+        responses:
+          200:
+            description: Recipe category is successfully created
+            schema:
+              id: category
+              properties:
+                name:
+                  type: string
+                  default: Tea
+
+        """
 
         if category_id:
             abort(400, 'The requested url is not valid')
@@ -30,7 +56,7 @@ class CategoryList(Resource):
         user_id = get_jwt_identity()
         # set parsed items to an object of model class
         category = CategoryModel(
-            name=name, description=description, created_by=user_id)  # 
+            name=name, description=description, created_by=user_id)  #
 
         if not name:
             response = jsonify(
@@ -63,70 +89,80 @@ class CategoryList(Resource):
 
     @jwt_required
     def get(self):
-        """ Method that gets all categories """
-        args = request.args.to_dict()
+        """
+        This method gets a list of resources from the storage
+        ---
+        tags:
+         - Recipe Categories
+        parameters:
+          - in: query
+            name: q
+            description: The search query parameter q
+            required: false
+            type: string
 
-        q = args.get('q')
+          - in: query
+            name: page
+            description: The page to be displayed
+            required: false
+            type: string
+
+          - in: query
+            name: limit
+            description: The number of recipes to be displayed in a single page
+            required: false
+            type: string  
+
+        security:
+         - TokenHeader: []
+        responses:
+          200:
+            description: A list of recipes
+          404:
+            description: Not found   
+
+        """
+        q = request.args.get("q", "")
         try:
-            page = int(args.get('page', 1))  # query start as an integer
-            # 100 items == 20 per page for 5 pages
-            limit = int(args.get('limit', 20))
-            if q:
-                categories = search_categories(q)
-                if not categories:
-                    abort(204, message='No data found matching the query')
-                else:
-                    response = marshal(categories, categories_serializer)
-                    return response
+            page = int(request.args.get("page", 1))
+        except:
+            return {"message": "Please use numbers to define the page"}, 400
+        try:
+            limit = int(request.args.get("limit", 1))
+            if limit > 100:
+                limit = 100
+        except:
+            return {"message": "Please use numbers to define the limit"}, 400
 
-            try:
-                # query a paginate object
-                user_id = get_jwt_identity()
-                categories = CategoryModel.query.filter_by(created_by=user_id).paginate(
-                    page, limit, False)
+        user_id = get_jwt_identity()
+        result = search_categories(q, user_id)
+        categories = result.paginate(page, limit, error_out=True)
+        if len(categories.items) == 0:
+            return {"message": "Your request was not found. Please try again"}, 404
+        else:
+            if categories.has_next:
+                next_page = str(request.url_root) + "categories?" + \
+                    "limit=" + str(limit) + "&page=" + str(page + 1)
+            else:
+                next_page = "None"
+            if categories.has_prev:
+                prev_page = request.url_root + "categories?" + \
+                    "limit=" + str(limit) + "&page=" + str(page - 1)
+            else:
+                prev_page = "None"
 
-                all_pages = categories.pages  # get total page count
-                next_pg = categories.has_next  # check for next page
-                previous_pg = categories.has_prev  # check for previous page
+            data = {"count": len(categories.items),
+                    "next": next_page,
+                    "prev": prev_page,
+                    "categories": marshal(categories.items, categories_serializer)}, 200
 
-                # if the query allows a max over the limit, generate a url
-                # for the next page
-                if next_pg:
-                    next_page = str(request.url_root) + '/categories?' + \
-                        'limit=' + str(limit) + '&page=' + str(page + 1)
-                else:
-                    next_page = 'None'
-
-                # set a url for the previous page
-                if previous_pg:
-                    previous_page = str(request.url_root) + '/categories?' + \
-                        'limit=' + str(limit) + '&page=' + str(page - 1)
-                else:
-                    previous_page = 'None'
-
-                categories = categories.items
-
-                data = {'categories': marshal(categories, categories_serializer),
-                        'total pages': all_pages,
-                        'next page': next_page,
-                        'previous page': previous_page}
-                # if categories are not None, return data as output
-                if categories:
-                    return data
-                else:
-                    response = jsonify(
-                        {'message': 'There are no categories available'})
-                    response.status_code = 204
-                    return response
-            except AttributeError:
-                response = jsonify({'message': 'Authenticate to proceed'})
-                response.status_code = 401
+            if categories.items:
+                return data
+            else:
+                response = jsonify(
+                    {'message': 'There are no categories available'})
+                response.status_code = 204
                 return response
-
-        except ValueError:
-            response = jsonify({'message': ' provide an integer'})
-            response.status_code = 400
-            return response
 
 
 class Category(Resource):
@@ -137,7 +173,28 @@ class Category(Resource):
     @jwt_required
     def get(self, category_id):
         """
-        Method that gets a single category
+        This request method gets category resource by name from the storage
+        ---
+        tags:
+          - Recipe Categories
+        parameters:
+          - in: path
+            name: category_id
+            required: true
+            description: The id of the category to retrieve
+            type: integer
+
+
+        security: 
+          - TokenHeader: []
+        responses:
+          200:
+            description: The recipe category has been successfully retrieved
+
+          204:
+            description: No recipe category content found 
+
+
         """
         user_id = get_jwt_identity()
         category = CategoryModel.query.filter_by(
@@ -152,8 +209,39 @@ class Category(Resource):
 
     @jwt_required
     def put(self, category_id):
-        """
-        Method that edits an existing category
+        """"This method updates a particular category from the storage
+        ---
+        tags:
+          - Recipe Categories
+        parameters:
+          - in: path
+            name: category_id
+            required: true
+            description: The id of the category to update
+            type: integer
+
+          - in: body
+            name: name
+            required: true
+            description:  The content of the category  to update
+            type: string  
+
+        security:
+          - TokenHeader: []
+
+        responses:
+          200:
+            description: The recipe category has been sucessfully changed
+            schema:
+              id: categories
+              properties:
+                name:
+                  Type: string
+                  default: Tea
+
+                description:
+                  Type: string
+                  default: For the early birds  
         """
         category = CategoryModel.find_by_id(category_id)
         user_id = get_jwt_identity()
@@ -198,9 +286,25 @@ class Category(Resource):
     @jwt_required
     def delete(self, category_id):
         """
-        Method that deletes an existing category
+        This method deletes a particular category resource from the storage
+        ---
+        tags:
+          - Recipe Categories
+        parameters:
+          - in: path
+            name: category_id
+            required: true
+            description: The id of the recipe category to delete goes here
+            type: integer
+
+
+        security: 
+          - TokenHeader: []
+        responses:
+          200:
+            description: The recipe category has been successfully deleted
         """
-        if id == None:
+        if category_id == None:
             response = jsonify({'message': 'Method not allowed(DELETE)'})
             response.status_code = 400
             return response
