@@ -120,7 +120,8 @@ class UserLogin(Resource):
                     user_token = create_access_token(
                         identity=user.id, expires_delta=expires)
 
-                    return {'access_token': user_token}, 200
+                    return {'message':'user has successfully been logged in',
+                'access_token': user_token}, 200
                 else:
                     message = {'message': 'Invalid password'}
                     return message

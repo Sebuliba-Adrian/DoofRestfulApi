@@ -10,6 +10,9 @@ This class represents the user model
 
 
 class UserModel(db.Model):
+    """
+    This class represents the user model 
+    """
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -63,48 +66,47 @@ class CategoryModel(db.Model):
     recipes = db.relationship("RecipeModel", backref=db.backref(
         "category"), lazy='dynamic', cascade='all, delete-orphan')
 
-    # def __init__(self, name, user_id):
-    #     self.name = name
-    #     self.user_id= user_id
-
     def json(self):
-        """This method turns category model to json representantion"""
-        return {'id': self.id, 'name': self.name, 'recipes': [recipe.json() for recipe in self.recipes.all()]}
-
-    def get_url(self):
-        return url_for(request.endpoint, _external=True)
+        """
+        This method turns category model to json representantion
+        """
+        return {'id': self.id, 'name': self.name,
+                'recipes': [recipe.json() for recipe in self.recipes.all()]}
 
     @classmethod
     def find_by_name(cls, name):
-        """This class method queries the database and returns the category model by name"""
+        """
+        This class method queries the database and returns the category model by name
+        """
         return cls.query.filter_by(name=name).first()
 
     @classmethod
     def find_by_id(cls, id):
-        """This class method queries the database and returns the category model by id"""
+        """
+        This class method queries the database and returns the category model by id
+        """
         return cls.query.filter_by(id=id).first()
 
-    @classmethod
-    def row_count(cls):
-        """This class method returns the number of rows"""
-        return cls.query.count()
-
-    @staticmethod
-    def roll_back():
-        """This static method rolles back database session """
-        db.session().rollback()
-
     def save_to_db(self):
+        """
+        This method saves the category model to the db
+        """
         db.session.add(self)
         db.session.commit()
 
     def delete_from_db(self):
+        """
+        This method deletes the category model from the db
+        """
         db.session.delete(self)
         return db.session.commit()
 
 
 class RecipeModel(db.Model):
-    """This is a recipe model class"""
+    """
+    This recipe model class
+    represents the recipe model 
+    """
     __tablename__ = 'recipes'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -116,10 +118,11 @@ class RecipeModel(db.Model):
     created_by = db.Column(
         db.Integer, db.ForeignKey('users.id'), nullable=False)
 
-    # category = db.relationship('CategoryModel')
 
     def json(self):
-        """This method jsonifies the recipe model"""
+        """
+        This method jsonifies the recipe model
+        """
         return {'name': self.name, 'description': self.description}
 
     def get_url(self):
@@ -127,22 +130,30 @@ class RecipeModel(db.Model):
 
     @classmethod
     def find_by_name(cls, name):
-        """This class method returns the recipe by name"""
+        """
+        This class method returns the recipe by name
+        """
         return cls.query.filter_by(name=name).first()
 
     @classmethod
     def find_by_category(cls, category_id):
-        """This class method returns the recipe by category id"""
+        """
+        This class method returns the recipe by category id
+        """
         return cls.query.filter_by(category_id=category_id).first()
 
     @classmethod
     def find_by_id(cls, id):
-        """This class method returns the recipe by id"""
+        """
+        This class method returns the recipe by id
+        """
         return cls.query.filter_by(id=id).first()
 
     @classmethod
     def row_count(cls):
-        """This class method returns the number of rows"""
+        """
+        This class method returns the number of rows
+        """
         return cls.query.count()
 
     def save_to_db(self):
@@ -151,6 +162,8 @@ class RecipeModel(db.Model):
         db.session.commit()
 
     def delete_from_db(self):
-        """This method deletes recipe from the database"""
+        """
+        This method deletes recipe from the database
+        """
         db.session.delete(self)
         db.session.commit()

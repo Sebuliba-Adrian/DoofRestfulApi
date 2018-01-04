@@ -3,22 +3,22 @@ import re
 from app.models import CategoryModel, RecipeModel
 
 
-def search_categories(q, user_id):
+def search_categories(query, user_id):
     '''
     method that gets data based on the search query provided
     '''
     categories = CategoryModel.query.filter(CategoryModel.created_by == user_id,
-                                            CategoryModel.name.contains(q))
+                                            CategoryModel.name.contains(query))
 
     return categories
 
 
-def search_recipes(q):
+def search_recipes(query):
     '''
     method that gets data based on the search query provided
     '''
 
-    recipes = RecipeModel.query.filter(RecipeModel.name.contains(q)).all()
+    recipes = RecipeModel.query.filter(RecipeModel.name.contains(query)).all()
     return recipes
 
 
