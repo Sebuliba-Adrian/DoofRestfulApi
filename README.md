@@ -6,50 +6,67 @@
 
 # DoofRestfulApi
 
-This is an API for a recipes api called "DOOF" designed using flask framework for python
+This is an API version 1.0 for the recipes api called "DOOF" designed using the flask microframework in python
 
 ### Live demo
 coming soon!
 
-### Set up
-You should have [git](https://git-scm.com/), [python](https://docs.python.org/), [pip](https://pypi.python.org/pypi/pip), [sqlite3](https://www.sqlite.org/), [virtualenv](https://virtualenv.pypa.io/en/stable/) installed
-##### These instractions are specific to a linux or unix and windows based machine
-1. Open your terminal
+### Set Up
+You should have [git](https://git-scm.com/), [python](https://docs.python.org/), [pip](https://pypi.python.org/pypi/pip), [postgresql](https://www.postgresql.org/), [virtualenv](https://virtualenv.pypa.io/en/stable/) installed
+##### These instructions are specific to a linux, macOS or and windows based machine
+1. Open your terminal/commandline
 2. Clone the project using `git clone https://github.com/sebuliba-adrian/DoofRestfulApi`
 3. Change to the project directory using `cd DoofRestfulApi`
 4. Create a virtual environment for the project using the command `virtualenv venv` and start it using `source venv/bin/activate` for unix or `venv\Scripts\activate`  and using the command `deactivate` to stop the virtual environment
-5. Install packages using `pip install -r requirements.txt`
+5. Install dependencies using `pip install -r requirements.txt`
 6. You can run tests using the command `nose2 --with-cov --coverage tests`
 7. To launch the application you should first apply migrations in order to create the database whose process is shown below
-8. Run the application using `python manage.py runserver or python app.py`
+8. Run the application using `python run.py`
 10. Access to the api documentation  `coming soon!`
 
 
+### Setup Database:
 
-### Command for creation of the database and applying migrations to it
+Install postgres: ```brew install postgresql```
+
+1. ```Type psql in terminal.```
+
+2. ```On postgres interactive interface, type CREATE DATABASE develop_db;```
+
+3. ```Create a user, type; CREATE USER username WITH PASSWORD 'password' ```
+
+4. ```Edit the /config/config.py with the created username and password from step3 above. ```
+
+
+### Command for  applying migrations to database
 
 ```sh
-$ python manage.py create_db
 $ python manage.py db init
 $ python manage.py db migrate
 $ python manage.py db upgrade
 $ python manage.py db --help
 ```
 
+### Run the server
+ ```python run.py```
+
 
 ### Specifications for the API are shown below
 
-| EndPoint | Functionality | Public Access |
-| -------- | ------------- | ------------- |
-| [ POST /login ](#) | Logs a user in | FALSE |
-| [ POST /register ](#) | Register a user | FALSE |
-| [ POST /categories/\<name> ](#) | Create a new recipe category | TRUE |
-| [ GET /categories/ ](#) | List all the created recipe categories | TRUE |
-| [ GET /categories/\<name> ](#) | Get single recipe category | TRUE |
-| [ DELETE /categories/\<name> ](#) | Delete this single recipe category | TRUE |
-| [ POST /recipes/\<name> ](#) | Create a new recipe | TRUE |
-| [ GET /recipies/ ](#) | List all the created recipes | TRUE |
-| [ PUT /recipes/\<name> ](#) | Update a recipe | TRUE |
-| [ DELETE /recipes/\<name> ](#) | Delete a recipe | TRUE |
-
+||Method | Endpoint | Description |
+| ---- | ---- | --------------- |
+|POST| `/api/v1/auth/register` |  Register a user. |
+|POST| `/api/v1/auth/login` | Login user.|
+|POST| `/api/v1/auth/logout` | Logout a user.|
+|PUT| `/api/v1/auth/reset` | Reset user password.|
+|POST| `/api/v1/categories/` | Create a new category. |
+|GET| `/api/v1/categories/` | Retrieve all the created categories. |
+|GET| `/api/v1/categories/<category_id>` | Get a single category. |
+|PUT| `/api/v1/categories/<category_id>` | Update a single category. |
+|DELETE| `/api/v1/categories/<category_id>` | Delete single category. |
+|POST| `/api/v1/categories/<category_id>/recipes` | Add a new recipe to this category. |
+|PUT|`/api/v1/categories/<category_id>/recipes/<recipe_id>` | Update this recipe. |
+|DELETE|`/api/v1/categories/<category_id>/recipes/<recipe_id>` | Delete this single recipe. |
+|GET| `/api/v1/categories?limit=10&page=1` | Pagination to get 10 category records.|
+|GET| `/api/v1/categories?q=a category` | Search for categories with name like a category. 
 Others specs coming soon
