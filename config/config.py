@@ -32,13 +32,12 @@ class TestingConfig(BaseConfig):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = os.environ.get(
         'DATABASE_TEST_URL') or 'postgresql://adrian1:andela@localhost/test_db'
-        #'sqlite:///' + os.path.join(basedir, 'testdb.sqlite')
+    #'sqlite:///' + os.path.join(basedir, 'testdb.sqlite')
     SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')
 
 
 class ProductionConfig(BaseConfig):
     """Production configuration"""
     DEBUG = False
-    SQLALCHEMY_DATABASE_URI = os.environ.get(
-        'DATABASE_URL') or 'postgres://postgres:postgres@users-db:5432/users_prod'
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'postgres://postgres:postgres@users-db:5432/users_prod'
             
