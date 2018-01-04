@@ -5,11 +5,14 @@ from flask_jwt_extended import JWTManager, get_jwt_identity
 from flask_restful import Api
 # from .resources.category import Category, CategoryList
 # from .resources.recipe import Recipe, RecipeList
-from .resources.user import PasswordReset, UserLogin, UserRegister
+from .resources.user import PasswordReset, UserLogin, UserRegister, UserLogout
 
 
 app = Flask(__name__)
 app.config.from_object('config.config.DevelopmentConfig')
+# app.config['JWT_ACCESS_TOKEN_EXPIRES'] = False #JWT_BLACKLIST_ENABLED
+app.config['JWT_BLACKLIST_ENABLED'] = True
+app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access', 'refresh']
 
 
 swag = Swagger(app=app,
