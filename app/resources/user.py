@@ -1,9 +1,14 @@
-from app.models import UserModel
+import datetime
+
 from flask import jsonify, make_response, request
 from flask_jwt_extended import (create_access_token, get_jwt_identity,
-                                jwt_required)
+                                get_raw_jwt, jwt_required)
 from flask_restful import Resource, reqparse
+
+from app.models import UserModel
+from db import blacklist, db
 from parsers import user_put_parser
+from app.utilities import username_validator
 
 
 class UserRegister(Resource):
@@ -11,7 +16,7 @@ class UserRegister(Resource):
     This resource allows users to register by sending a
     POST request with their username and password.
     """
-    
+
     def post(self):
         """
         Register a new user
@@ -29,16 +34,17 @@ class UserRegister(Resource):
             schema:
               id: user
         """
-      
+
         parser = reqparse.RequestParser()
         parser.add_argument('username', required=True,
-                            type=str, help='Username is required')
-        parser.add_argument('password', required=True, default='')
+                            type=username_validator)
+        parser.add_argument('password', required=True,
+                            help="This field cannot be blank.")
         args = parser.parse_args()
         username = args['username']
         password = args['password']
         user = UserModel(username=username)
-        user.password =password
+        user.password = password
         try:
             UserModel.query.filter_by(username=username).one()
 
@@ -57,16 +63,15 @@ class UserRegister(Resource):
                 response = jsonify(
                     {'message': 'There was a problem while saving the data'})
                 response.status_code = 500
-                return response                    
-
+                return response
 
 
 class UserLogin(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument('username',
-                        type=str,
-                        required=True,
-                        help="This field cannot be blank.")
+                        type=username_validator,
+                        required=True
+                        )
     parser.add_argument('password',
                         type=str,
                         required=True,
@@ -106,12 +111,15 @@ class UserLogin(Resource):
         args = parser.parse_args()
         username = args['username']
         password = args['password']
-        
+
         if username and password:
             user = UserModel.find_by_username(username)
             if user:
                 if user.verify_password(password):
-                    user_token = create_access_token(identity=user.id)
+                    expires = datetime.timedelta(days=365)
+                    user_token = create_access_token(
+                        identity=user.id, expires_delta=expires)
+
                     return {'access_token': user_token}, 200
                 else:
                     message = {'message': 'Invalid password'}
@@ -122,6 +130,12 @@ class UserLogin(Resource):
         else:
             message = {'message': 'one or more fields is not complete'}
             return message, 400
+
+    @jwt_required
+    def delete(self):
+        jti = get_raw_jwt()['jti']
+        blacklist.add(jti)
+        return jsonify({"message": "Successfully logged out"}), 200
 
 
 class PasswordReset(Resource):
@@ -144,28 +158,14 @@ class PasswordReset(Resource):
             schema:
               id: user
         """
-        # data = user_put_parser.parse_args(strict=True)
-        # username = data['username']
-        # user = UserModel.find_by_username(username)
-        # if UserModel.find_by_username(username):
-        #     return {'message': "A user with name '{0}' already exists.".format(username)}, 400
-
-        # else:
-        #     if data['username']:
-        #         user.username = data['username']
-        #     if data['password']:
-        #         user.password = data['password']
-
-        # user.save_to_db()
-
-        # return {'message': 'User password has been reset successfully.'}, 201
 
         data = user_put_parser.parse_args()
 
         user = UserModel.find_by_username(data['username'])
 
         if user is None:
-            return {'message': 'User {0} does not exist in the database.'.format(data['username'])}, 400
+            return {'message': 'User {0} does not exist in the database.'.
+                    format(data['username'])}, 400
         else:
             if data['username']:
                 user.username = data['username']
@@ -176,7 +176,21 @@ class PasswordReset(Resource):
         return {'message': 'User password has been reset successfully.'}, 201
 
 
-class LogoutUser(Resource):
-    
+class UserLogout(Resource):
 
-    pass
+    @jwt_required
+    def delete(self):
+        """
+        Logout A User
+        ---
+        tags:
+          - Authentication
+
+        responses:
+          200:
+            description: User is Successfully logged out
+        """
+
+        jti = get_raw_jwt()['jti']
+        blacklist.add(jti)
+        return {"message": "Successfully logged out"}, 200

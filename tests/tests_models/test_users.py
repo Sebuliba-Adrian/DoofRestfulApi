@@ -10,5 +10,6 @@ class UserModelTest(TestCase):
         user.password ='testpassword'
 
         self.assertEqual(user.username, 'testusername',"error try again" )
-        self.assertTrue(user.verify_password('testpassword') ,"error try again")
+        self.assertTrue(user.verify_password('testpassword') 
+        ,"error try again")
 

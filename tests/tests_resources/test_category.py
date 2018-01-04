@@ -7,9 +7,9 @@ class CategoryTest(BaseTestCase):
     """Ensures that the category resource functions as expectected"""
 
     def test_invalid_url_on_creation_of_a_category(self):
-        self.category = {"name": "Lunch", "description": "lunch at 1:00pm"}
-        response = self.client.get(
-            "/categories//", data=self.category, headers=self.make_token(),
+        category = {"name": "Lunch", "description": "lunch at 1:00pm"}
+        self.client.get(
+            "/categories//", data=category, headers=self.make_token(),
             content_type='application/json')
         # print(response.data)
         # msg = str(response.json['Error'])
@@ -18,7 +18,17 @@ class CategoryTest(BaseTestCase):
         # pass
         pass
 
-    def test_requesting_a_category_without_auth(self):
+    def test_user_logout(self):
+        response = self.app.delete(
+            "/auth/logout", headers=self.make_token(),
+            content_type='application/json')
+
+        msg = json.loads(response.data)
+        print(msg)
+        self.assertIn(msg['message'], 'Successfully logged out')
+        self.assertEqual(response.status_code, 200)
+
+    def test_requesting_category_without_auth(self):
         response = self.client.get(
             "/categories", content_type='application/json')
         msg = str(response.json['msg'])
@@ -26,7 +36,7 @@ class CategoryTest(BaseTestCase):
         self.assertEqual(msg, 'Missing Authorization Header')
         self.assertEqual(response.status_code, 401)
 
-    def test_requesting_other_users_categories(self):
+    def test_requesting_otherusers_categories(self):
         response = self.client.get(
             "/categories/1", headers=self.make_second_user_token(),
             content_type='application/json')
@@ -41,9 +51,10 @@ class CategoryTest(BaseTestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_editing_a_category_withno_auth(self):
-        self.category = {"name": "lunch", "description": "lunch at 1:00pm"}
+        category = {"name": "lunch", "description": "lunch at 1:00pm"}
         response = self.client.put(
-            "/categories/1", data=self.category, headers=self.make_second_user_token(),
+            "/categories/1", data=category,
+             headers=self.make_second_user_token(),
             content_type='application/json')
         msg = str(response.json['message'])
         self.assertEqual(msg, 'You are not authorized to edit this')
@@ -51,28 +62,37 @@ class CategoryTest(BaseTestCase):
 
     def test_creation_of_a_category(self):
         """ Test for creation of a category """
-        self.category = {"name": "lunch", "description": "lunch at 1:00pm"}
+        category = {"name": "lunch", "description": "lunch at 1:00pm"}
         response = self.client.post(
-            "/categories", data=self.category, headers=self.make_token())
+            "/categories", data=category, headers=self.make_token())
         msg = str(response.json['message'])
         self.assertEqual(msg, 'Category updated Successfully')
         self.assertEqual(response.status_code, 200)
 
+    def test_category_creation_with_invalid_token(self):
+        """ Test for creation of a category with invalid token """
+        category = {"name": "lunch", "description": "lunch at 1:00pm"}
+        response = self.client.post(
+            "/categories", data=category, headers=self.make_invalid_token())
+        msg = str(response.json['message'])
+        self.assertEqual(msg, 'Invalid Token')
+        self.assertEqual(response.status_code, 422)
+
     def test_creation_of_a_category_without_name(self):
         """ Test for creation of a category """
-        self.category = {"description": "lunch at 1:00pm"}
+        category = {"description": "lunch at 1:00pm"}
         response = self.client.post(
-            "/categories", data=self.category, headers=self.make_token())
+            "/categories", data=category, headers=self.make_token())
         msg = str(response.json['message'])
         self.assertEqual(msg, 'Please provide a name for the category')
         self.assertEqual(response.status_code, 400)
 
     def test_creation_of_a_category_with_existing_name(self):
         """ Test for creation of a category with existing name """
-        self.category = {"name": "somerecipecategory",
+        category = {"name": "somerecipecategory",
                          "description": "dance time"}
         response = self.client.post(
-            "/categories", data=self.category, headers=self.make_token())
+            "/categories", data=category, headers=self.make_token())
         msg = str(response.json['message'])
         self.assertEqual(msg, 'You already have a category with that name')
         self.assertEqual(response.status_code, 400)
@@ -121,7 +141,8 @@ class CategoryTest(BaseTestCase):
     def test_editing_a_category_without_auth(self):
         self.category = {"name": "lunch", "description": "lunch at 1:00pm"}
         response = self.client.put(
-            "/categories/1", data=self.category, headers=self.make_second_user_token(),
+            "/categories/1", data=self.category,
+             headers=self.make_second_user_token(),
             content_type='application/json')
         msg = str(response.json['message'])
         self.assertEqual(msg, 'You are not authorized to edit this')

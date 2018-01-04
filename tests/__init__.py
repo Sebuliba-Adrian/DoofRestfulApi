@@ -10,11 +10,10 @@ import json
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 
-
 class BaseTestCase(TestCase):
     recipe_data = {"name": "African Tea",
-               "description": "Add  2spoonfuls..."}
-    user=1
+                   "description": "Add  2spoonfuls..."}
+    user = 1
 
     def create_app(self):
         app.config.from_object('config.config.TestingConfig')
@@ -34,6 +33,10 @@ class BaseTestCase(TestCase):
         user2.password = 'testpassword'
         user2.save_to_db()
 
+        user3 = UserModel(username="testusername3")
+        user3.password = 'testpassword'
+        user3.save_to_db()
+
         category1 = CategoryModel(
             name="somerecipecategory", created_by=1)
         category1.save_to_db()
@@ -42,10 +45,13 @@ class BaseTestCase(TestCase):
         category2.save_to_db()
 
         recipe1 = RecipeModel(
-            name="somerecipe1", description="Add one spoonfuls of...", created_by=1, category_id=1)
+            name="somerecipe1",
+            description="Add one spoonfuls of...",
+            created_by=1, category_id=1)
         recipe1.save_to_db()
         recipe2 = RecipeModel(
-            name="somerecipe2", description="Add two spoonfuls of...", created_by=1, category_id=2)
+            name="somerecipe2", description="Add two spoonfuls of...",
+             created_by=1, category_id=2)
         recipe2.save_to_db()
 
     def make_token(self):
@@ -66,6 +72,17 @@ class BaseTestCase(TestCase):
         # token = output.get("access_token").encode("ascii")
         print(output)
         token = json.loads(response.data)['access_token']
+        self.authorization = {'Authorization': 'Bearer {0}'.format(token)}
+        return self.authorization
+
+    def make_invalid_token(self):
+        self.user_data = {'username': 'testusername3',
+                          'password': 'testpassword'}
+        response = self.app.post("/auth/login", data=self.user_data)
+        output = json.loads(response.data)
+        # token = output.get("access_token").encode("ascii")
+        print(output)
+        token = json.loads(response.data)['access_token'] + "98hjjhbhgbdj"
         self.authorization = {'Authorization': 'Bearer {0}'.format(token)}
         return self.authorization
 

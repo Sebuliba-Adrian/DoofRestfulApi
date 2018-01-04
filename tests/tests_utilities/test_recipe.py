@@ -1,5 +1,6 @@
 from app.models import CategoryModel, RecipeModel, UserModel
 from tests import BaseTestCase
+from app.utilities import recipe_name_validator
 
 
 class RecipeTest(BaseTestCase):
@@ -9,10 +10,12 @@ class RecipeTest(BaseTestCase):
         user.save_to_db()
         category = CategoryModel(name='Beverages', user=user)
         recipe = RecipeModel(
-            name='African tea', description='add stuf', user=user, category=category)
+            name='African tea', description='add stuf',
+            user=user, category=category)
 
         self.assertIsNone(RecipeModel.find_by_name(''),
-                          "Found a recipe with name {}, but expected not to.".format(recipe.name))
+                          "Found a recipe with name {}, but expected not to."
+                          .format(recipe.name))
 
         recipe.save_to_db()
 
@@ -30,9 +33,33 @@ class RecipeTest(BaseTestCase):
 
         category = CategoryModel(name='test_category', user=user)
         recipe = RecipeModel(name='test_recipe',
-                             description='Add stuff', user=user, category=category)
+                             description='Add stuff', user=user,
+                              category=category)
 
         category.save_to_db()
         recipe.save_to_db()
 
         self.assertEqual(recipe.category.name, 'test_category')
+
+
+class RecipeValidationTest(BaseTestCase):
+
+    def test_input_for_valid_recipename(self):
+        """Ensure that a valid recipe name actually gets 
+        returned """
+        self.assertEqual(recipe_name_validator("somerecipe"), 'somerecipe')
+
+    def test_blank_recipename(self):
+        """Ensure that no blank recipenames are provided as input to 
+        the api"""
+        self.assertRaises(ValueError, recipe_name_validator, "  ")
+
+    def test_none_input_for_recipename(self):
+        """Ensure that none recipename are not provide as inputs to 
+        the api"""
+        self.assertRaises(ValueError, recipe_name_validator, None)
+
+    def test_recipename_contains_special_characters(self):
+        """Ensure that the recipename doesnot contain any special characters
+        """
+        self.assertRaises(ValueError, recipe_name_validator, '*()#$%')
