@@ -31,9 +31,9 @@ class CategoryTest(BaseTestCase):
     def test_requesting_category_without_auth(self):
         response = self.client.get(
             "/categories", content_type='application/json')
-        msg = str(response.json['msg'])
+        msg = str(response.json['message'])
 
-        self.assertEqual(msg, 'Missing Authorization Header')
+        self.assertEqual(msg, 'No authorization token provided')
         self.assertEqual(response.status_code, 401)
 
     def test_requesting_otherusers_categories(self):
