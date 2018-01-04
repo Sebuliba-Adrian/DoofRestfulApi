@@ -4,7 +4,7 @@ from flask_restful import Resource, abort, marshal, reqparse
 
 from app.models import CategoryModel, RecipeModel
 from app.serializers import categories_serializer
-from app.utilities import search_categories
+from app.utilities import search_categories, category_name_validator
 from db import db
 
 
@@ -15,7 +15,7 @@ class CategoryList(Resource):
      """
 
     @jwt_required
-    def post(self, category_id=None):
+    def post(self):
         """
         This post request method adds a category resource of a particular name to the storage
         ---
@@ -44,11 +44,9 @@ class CategoryList(Resource):
 
         """
 
-        if category_id:
-            abort(400, 'The requested url is not valid')
 
         parser = reqparse.RequestParser()
-        parser.add_argument('name', type=str, help='A name is required')
+        parser.add_argument('name', type=category_name_validator)
         parser.add_argument('description', type=str, default='')
         args = parser.parse_args()
         name = args.get("name")
@@ -74,7 +72,7 @@ class CategoryList(Resource):
             return response
         try:
             category.save_to_db()
-            message = {'message': 'Category updated Successfully'}
+            message = {'message': 'Category created Successfully'}
             response = marshal(category, categories_serializer)
             response.update(message)
             response.status_code = 201
@@ -128,7 +126,7 @@ class CategoryList(Resource):
         except:
             return {"message": "Please use numbers to define the page"}, 400
         try:
-            limit = int(request.args.get("limit", 1))
+            limit = int(request.args.get("limit", 10))
             if limit > 100:
                 limit = 100
         except:
