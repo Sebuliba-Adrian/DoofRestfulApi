@@ -1,10 +1,10 @@
-from flask import g, jsonify, request
+from flask import jsonify, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from flask_restful import Resource, abort, marshal, reqparse
 
 from app.models import CategoryModel, RecipeModel
 from app.serializers import recipes_serializer
-from app.utilities import search_recipes
+from app.utilities import search_recipes, recipe_name_validator
 from db import db
 
 
@@ -63,14 +63,14 @@ class Recipe(Resource):
         except:
             response = jsonify(
                 {'message': 'The category or recipe does not exist'})
-            response.status_code = 204
+            response.status_code = 404
             return response
         user_id = get_jwt_identity()
         if recipe.created_by == user_id:
             if category and recipe:
                 parser = reqparse.RequestParser()
                 parser.add_argument(
-                    'name', type=str, help='A name is required')
+                    'name', type=recipe_name_validator)
                 parser.add_argument('description', type=str, default='')
 
                 args = parser.parse_args()
@@ -83,7 +83,7 @@ class Recipe(Resource):
                     data = {'description': description}
 
                 recipe_info = RecipeModel.query.filter_by(
-                    id=recipe_id).update(data)
+                        id=recipe_id).update(data)
 
                 try:
                     db.session.commit()
@@ -99,7 +99,7 @@ class Recipe(Resource):
             else:
                 response = jsonify(
                     {'message': 'The category or recipe does not exist'})
-                response.status_code = 204
+                response.status_code = 404
                 return response
         else:
             response = jsonify(
@@ -162,11 +162,11 @@ class Recipe(Resource):
                     return response
             else:
                 response = jsonify({'message': 'The recipe does not exist'})
-                response.status_code = 204
+                response.status_code = 404
                 return response
         else:
             response = jsonify({'message': 'the category does not exist'})
-            response.status_code = 204
+            response.status_code = 404
             return response
 
     @jwt_required
@@ -221,7 +221,7 @@ class Recipe(Resource):
                 return response
         else:
             response = jsonify({'message': 'The item does not exist'})
-            response.status_code = 204
+            response.status_code = 404
             return response
 
 
@@ -260,11 +260,6 @@ class RecipeList(Resource):
 
         """
 
-        # if recipe_id:
-        #     response = jsonify({'message': 'Method not allowed(POST)'})
-        #     response.status_code = 400
-        #     return response
-
         category = CategoryModel.find_by_id(category_id)
         user_id = get_jwt_identity()
         if category:
@@ -274,7 +269,7 @@ class RecipeList(Resource):
                 response.status_code = 401
                 return response
             parser = reqparse.RequestParser()
-            parser.add_argument('name', type=str, help='A name is required')
+            parser.add_argument('name', type=recipe_name_validator)
             parser.add_argument('description', type=str, default='')
             args = parser.parse_args()
 
@@ -321,7 +316,7 @@ class RecipeList(Resource):
         else:
             response = jsonify(
                 {'message': 'A category with the ID provided does not exist!'})
-            response.status_code = 204
+            response.status_code = 404
             return response
 
     @jwt_required
@@ -428,7 +423,7 @@ class RecipeList(Resource):
                 else:
                     response = jsonify(
                         {'message': 'There are no recipes available'})
-                    response.status_code = 204
+                    response.status_code = 404
                     return response
             except AttributeError:
                 response = jsonify({'message': 'Authenticate to proceed'})
@@ -439,9 +434,3 @@ class RecipeList(Resource):
             response = jsonify({'message': ' provide an integer'})
             response.status_code = 400
             return response
-
-        # category = CategoryModel.find_by_id(category_id)
-        # resultx = RecipeModel.query
-        # return result
-        # print {'recipes': [recipe.json() for recipe in category.recipes]}
-        # return {'recipes': [recipe.json() for recipe in category.recipes]}
