@@ -70,7 +70,7 @@ def recipe_name_validator(recipe):
     if recipe:
         if recipe.strip():
 
-            if re.match("^[a-zA-Z0-9]+$", recipe):
+            if re.match("^[a-zA-Z0-9\s]+$", recipe):
                 return recipe
             raise ValueError(
                 "Only alphanumeric characters are allowed for the recipe name")
