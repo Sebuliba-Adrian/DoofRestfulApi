@@ -9,13 +9,39 @@ from app import app
 from app.models import UserModel
 from app.resources.category import Category, CategoryList
 from app.resources.recipe import Recipe, RecipeList
-from app.resources.user import PasswordReset, UserLogin, UserRegister
-from db import db
+from app.resources.user import (PasswordReset, UserLogin, UserRegister, 
+UserLogout)
+from db import blacklist, db
 
 # instantiate flask_restful Api class
 api = Api(app)
 #access_token = create_access_token(identity=username)
 jwt = JWTManager(app)
+
+
+# Using the expired_token_loader decorator, we will now call
+# this function whenever an expired but otherwise valid access
+# Token attempts to access an endpoint
+@jwt.expired_token_loader
+def my_expired_token_callback():
+    return jsonify({'status': 401,
+
+                    'message': 'You must be logged in to access this!'
+                    }), 401
+
+
+@jwt.invalid_token_loader
+def my_invalid_token_callback(error='Invalid Token'):
+
+    return jsonify({'message': 'Invalid Token'}), 422
+
+
+@jwt.token_in_blacklist_loader
+def check_if_token_in_blacklist(decrypted_token):
+    jti = decrypted_token['jti']
+    return jti in blacklist
+
+
 
 # # Register Recipe endpoint with flask_restful api
 api.add_resource(
@@ -27,9 +53,10 @@ api.add_resource(RecipeList, '/categories/<int:category_id>/recipes/')
 # # Register category list endpoint with flask_resful api
 api.add_resource(CategoryList, '/categories')
 # Register UserRegister endpoint with flask_restful api
+api.add_resource(PasswordReset, '/auth/reset')
 api.add_resource(UserRegister, '/auth/register')
 api.add_resource(UserLogin, '/auth/login')
-# api.add_resource(PasswordReset, '/auth/reset')
+api.add_resource(UserLogout, '/auth/logout')
 db.init_app(app)
 
 
