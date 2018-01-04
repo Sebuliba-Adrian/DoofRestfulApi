@@ -38,6 +38,11 @@ def my_invalid_token_callback(error='Invalid Token'):
     return jsonify({'message': 'Invalid Token'}), 422
 
 
+@jwt.unauthorized_loader
+def my_unauthorized_loader(error='error'):
+    return jsonify({'message': 'No authorization token provided'}), 401
+
+
 @jwt.token_in_blacklist_loader
 def check_if_token_in_blacklist(decrypted_token):
     jti = decrypted_token['jti']
