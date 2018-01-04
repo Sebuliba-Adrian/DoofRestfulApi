@@ -167,3 +167,12 @@ class RecipeModel(db.Model):
         """
         db.session.delete(self)
         db.session.commit()
+
+
+class BlackListModel(db.Model):
+    """
+    This model stores users blacklisted tokens/logged out tokens
+    """     
+    __tablename__ = 'blacklists'
+    id = db.Column(db.Integer, primary_key=True)
+    token = db.Column(db.String(800))
