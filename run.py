@@ -1,16 +1,13 @@
 import sys
-
-from flasgger import Swagger
-from flask import Flask, jsonify
+from flask import jsonify
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
 
 from app import app
-from app.models import UserModel
 from app.resources.category import Category, CategoryList
 from app.resources.recipe import Recipe, RecipeList
 from app.resources.user import (PasswordReset, UserLogin, UserRegister, 
-UserLogout)
+                                UserLogout)
 from db import blacklist, db
 
 # instantiate flask_restful Api class
@@ -28,6 +25,11 @@ def my_expired_token_callback():
 
                     'message': 'You must be logged in to access this!'
                     }), 401
+
+
+@jwt.revoked_token_loader
+def my_revoked_token_callback():
+    return jsonify({'message': 'You must be logged in to access this!'})
 
 
 @jwt.invalid_token_loader
@@ -60,28 +62,6 @@ api.add_resource(UserLogout, '/auth/logout')
 db.init_app(app)
 
 
-# @app.before_request
-# def before_request():
-#     """
-#     Validates token.
-#     Is run before all requests apart from user registration, login and index.
-#     """
-#     if request.endpoint not in ["userlogin", "userregister", "index"]:
-#         id = get_jwt_identity()
-#         print ("My id  " + str(id))
-#         if id:
-#             user = UserModel.find_by_id(id)
-#             print (user.username)
-#             if user:
-
-#                 app.app_context().push()
-#                 g.user = user
-
-#                 print('its is'+str(g.user.id))
-#             else:
-#                 print("Error: The token you have entered is "
-#                                     "invalid.")
-#         # print ("Error: Please enter a token." )
 
 
 # @app.before_first_request
