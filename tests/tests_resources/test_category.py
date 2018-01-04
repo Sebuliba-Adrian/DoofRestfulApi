@@ -6,18 +6,6 @@ from tests import BaseTestCase
 class CategoryTest(BaseTestCase):
     """Ensures that the category resource functions as expectected"""
 
-    def test_invalid_url_on_creation_of_a_category(self):
-        category = {"name": "Lunch", "description": "lunch at 1:00pm"}
-        self.client.get(
-            "/categories//", data=category, headers=self.make_token(),
-            content_type='application/json')
-        # print(response.data)
-        # msg = str(response.json['Error'])
-        # self.assertEqual(msg, 'The requested url was not found')
-        # self.assertEqual(response.status_code, 404)
-        # pass
-        pass
-
     def test_user_logout(self):
         response = self.app.delete(
             "/auth/logout", headers=self.make_token(),
@@ -40,7 +28,7 @@ class CategoryTest(BaseTestCase):
         response = self.client.get(
             "/categories/1", headers=self.make_second_user_token(),
             content_type='application/json')
-        self.assertEqual(response.status_code, 204)
+        self.assertEqual(response.status_code, 404)
 
     def test_requesting_categories(self):
         response = self.client.get(
@@ -120,7 +108,7 @@ class CategoryTest(BaseTestCase):
         response = self.app.delete(
             "/categories/10", headers=self.make_token(),
             content_type='application/json')
-        self.assertEqual(response.status_code, 204)
+        self.assertEqual(response.status_code, 404)
 
     def test_get_categories(self):
         """ Test listing all categories via a get request """
@@ -136,7 +124,7 @@ class CategoryTest(BaseTestCase):
         response = self.app.put(
             "/categories/2000", data=self.category,
             headers=self.make_token(), content_type='application/json')
-        self.assertEqual(response.status_code, 204)
+        self.assertEqual(response.status_code, 404)
 
     def test_editing_a_category_without_auth(self):
         self.category = {"name": "lunch", "description": "lunch at 1:00pm"}
@@ -174,7 +162,7 @@ class CategoryTest(BaseTestCase):
         """ Test get request on a none existent category """
         response = self.app.get("/categories/50",
                                 headers=self.make_token())
-        self.assertEqual(response.status_code, 204)
+        self.assertEqual(response.status_code, 404)
 
     def test_input_on_get_categories_request(self):
         response = self.app.get("/categories?limit=abc",

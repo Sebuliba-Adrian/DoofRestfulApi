@@ -1,11 +1,11 @@
+import json
+import os
 from flask_testing import TestCase
 
-import os
 from run import db, app
 
 from app.models import UserModel, CategoryModel, RecipeModel
 
-import json
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -51,40 +51,33 @@ class BaseTestCase(TestCase):
         recipe1.save_to_db()
         recipe2 = RecipeModel(
             name="somerecipe2", description="Add two spoonfuls of...",
-             created_by=1, category_id=2)
+            created_by=1, category_id=2)
         recipe2.save_to_db()
 
     def make_token(self):
-        self.user_data = {'username': 'testusername1',
-                          'password': 'testpassword'}
-        response = self.app.post("/auth/login", data=self.user_data)
-        output = json.loads(response.data)
+        user_data = {'username': 'testusername1',
+                     'password': 'testpassword'}
+        response = self.app.post("/auth/login", data=user_data)
         token = json.loads(response.data)['access_token']
 
-        self.authorization = {'Authorization': 'Bearer {0}'.format(token)}
-        return self.authorization
+        authorization = {'Authorization': 'Bearer {0}'.format(token)}
+        return authorization
 
     def make_second_user_token(self):
-        self.user_data = {'username': 'testusername2',
-                          'password': 'testpassword'}
-        response = self.app.post("/auth/login", data=self.user_data)
-        output = json.loads(response.data)
-        # token = output.get("access_token").encode("ascii")
-        print(output)
+        user_data = {'username': 'testusername2',
+                     'password': 'testpassword'}
+        response = self.app.post("/auth/login", data=user_data)
         token = json.loads(response.data)['access_token']
-        self.authorization = {'Authorization': 'Bearer {0}'.format(token)}
-        return self.authorization
+        authorization = {'Authorization': 'Bearer {0}'.format(token)}
+        return authorization
 
     def make_invalid_token(self):
-        self.user_data = {'username': 'testusername3',
-                          'password': 'testpassword'}
-        response = self.app.post("/auth/login", data=self.user_data)
-        output = json.loads(response.data)
-        # token = output.get("access_token").encode("ascii")
-        print(output)
+        user_data = {'username': 'testusername3',
+                     'password': 'testpassword'}
+        response = self.app.post("/auth/login", data=user_data)
         token = json.loads(response.data)['access_token'] + "98hjjhbhgbdj"
-        self.authorization = {'Authorization': 'Bearer {0}'.format(token)}
-        return self.authorization
+        authorization = {'Authorization': 'Bearer {0}'.format(token)}
+        return authorization
 
     def tearDown(self):
         db.session.remove()

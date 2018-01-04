@@ -1,8 +1,8 @@
-from flask import g, jsonify, request
+from flask import jsonify, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from flask_restful import Resource, abort, marshal, reqparse
 
-from app.models import CategoryModel, RecipeModel
+from app.models import CategoryModel
 from app.serializers import categories_serializer
 from app.utilities import search_categories, category_name_validator
 from db import db
@@ -126,7 +126,7 @@ class CategoryList(Resource):
         except:
             return {"message": "Please use numbers to define the page"}, 400
         try:
-            limit = int(request.args.get("limit", 10))
+            limit = int(request.args.get("limit", 4))
             if limit > 100:
                 limit = 100
         except:
@@ -201,8 +201,8 @@ class Category(Resource):
             response = marshal(category, categories_serializer)
             return response
         else:
-            response = jsonify({'message': 'the category does not exist'})
-            response.status_code = 204
+            response = jsonify({'message': 'The category your are looking for does not exist'})
+            response.status_code = 404
             return response
 
     @jwt_required
@@ -248,7 +248,7 @@ class Category(Resource):
             if category.created_by == user_id:
                 parser = reqparse.RequestParser()
                 parser.add_argument(
-                    'name', type=str, help='A name is required')
+                    'name', type=category_name_validator)
                 parser.add_argument('description', type=str, default='')
                 args = parser.parse_args()
 
@@ -277,8 +277,8 @@ class Category(Resource):
             else:
                 abort(401, message='You are not authorized to edit this')
         else:
-            response = jsonify({'message': 'the category does not exist'})
-            response.status_code = 204
+            response = jsonify({'message': 'The category you are trying to edit does not exist'})
+            response.status_code = 404
             return response
 
     @jwt_required
@@ -322,6 +322,6 @@ class Category(Resource):
             else:
                 abort(401, message='You are not authorized to delete this')
         else:  # else return a 204 response
-            response = jsonify({'message': 'the category does not exist'})
-            response.status_code = 204
+            response = {'message': 'The category you are trying to delete does not exist'}, 404
+           
             return response
