@@ -66,7 +66,7 @@ class CategoryTest(BaseTestCase):
         response = self.client.post(
             "/categories", data=category, headers=self.make_token())
         msg = str(response.json['message'])
-        self.assertEqual(msg, 'Category updated Successfully')
+        self.assertEqual(msg, 'Category created Successfully')
         self.assertEqual(response.status_code, 200)
 
     def test_category_creation_with_invalid_token(self):
