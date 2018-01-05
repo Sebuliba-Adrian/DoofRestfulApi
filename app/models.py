@@ -1,6 +1,7 @@
-from db import db
 from flask import request, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
+
+from db import db
 
 
 """
@@ -167,12 +168,3 @@ class RecipeModel(db.Model):
         """
         db.session.delete(self)
         db.session.commit()
-
-
-class BlackListModel(db.Model):
-    """
-    This model stores users blacklisted tokens/logged out tokens
-    """     
-    __tablename__ = 'blacklists'
-    id = db.Column(db.Integer, primary_key=True)
-    token = db.Column(db.String(800))

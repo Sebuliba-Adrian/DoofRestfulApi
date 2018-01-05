@@ -6,7 +6,7 @@ import os
 import unittest
 
 import coverage
-from flask_migrate import MigrateCommand, Migrate
+from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager
 
 from app import app
@@ -65,3 +65,8 @@ def drop_db():
 
 
 
+def main():
+    manager.run()
+
+if __name__ == '__main__':
+    main()

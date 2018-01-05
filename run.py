@@ -40,7 +40,7 @@ def my_invalid_token_callback(error='Invalid Token'):
 
 @jwt.unauthorized_loader
 def my_unauthorized_loader(error='error'):
-    return jsonify({'message': 'No authorization token provided'}), 401
+    return jsonify({'message': 'No authorization token provided'}),401
 
 
 @jwt.token_in_blacklist_loader
