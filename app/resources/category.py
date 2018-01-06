@@ -4,7 +4,7 @@ from flask_restful import Resource, abort, marshal, reqparse
 
 from app.models import CategoryModel
 from app.serializers import categories_serializer
-from app.utilities import search_categories, category_name_validator
+from app.utilities import category_name_validator, search_categories
 from db import db
 
 
@@ -134,7 +134,7 @@ class CategoryList(Resource):
 
         user_id = get_jwt_identity()
         result = search_categories(q, user_id)
-        categories = result.paginate(page, limit, error_out=True)
+        categories = result.paginate(page, limit, error_out=False)
         if len(categories.items) == 0:
             return {"message": "Your request was not found. Please try again"}, 404
         else:
