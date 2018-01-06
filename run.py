@@ -1,13 +1,15 @@
 import sys
+
 from flask import jsonify
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
 
 from app import app
+from app.models import Blacklist
 from app.resources.category import Category, CategoryList
 from app.resources.recipe import Recipe, RecipeList
-from app.resources.user import (PasswordReset, UserLogin, UserRegister, 
-                                UserLogout)
+from app.resources.user import (PasswordReset, UserLogin, UserLogout,
+                                UserRegister)
 from db import blacklist, db
 
 # instantiate flask_restful Api class
@@ -40,13 +42,16 @@ def my_invalid_token_callback(error='Invalid Token'):
 
 @jwt.unauthorized_loader
 def my_unauthorized_loader(error='error'):
-    return jsonify({'message': 'No authorization token provided'}),401
+    return jsonify({'message': 'No authorization token provided'}), 401
 
 
 @jwt.token_in_blacklist_loader
 def check_if_token_in_blacklist(decrypted_token):
+
     jti = decrypted_token['jti']
-    return jti in blacklist
+
+    isthere = Blacklist.get_or_create(jti)
+    return isthere
 
 
 
@@ -65,8 +70,6 @@ api.add_resource(UserRegister, '/auth/register')
 api.add_resource(UserLogin, '/auth/login')
 api.add_resource(UserLogout, '/auth/logout')
 db.init_app(app)
-
-
 
 
 # @app.before_first_request
