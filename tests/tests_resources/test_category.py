@@ -1,8 +1,5 @@
 import json
-
 from tests import BaseTestCase
-
-
 class CategoryTest(BaseTestCase):
     """Ensures that the category resource functions as expectected"""
 
