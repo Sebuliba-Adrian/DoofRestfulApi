@@ -6,7 +6,7 @@ from flask_restful import Resource, reqparse
 
 from app.models import Blacklist, UserModel
 from app.utilities import username_validator
-from db import blacklist, db
+from db import blacklist
 from parsers import user_put_parser
 
 
@@ -192,7 +192,7 @@ class UserLogout(Resource):
         """
 
         jti = get_raw_jwt()['jti']
-        blist=Blacklist(jti=jti)
+        blist = Blacklist(jti=jti)
         blist.save_to_db()
         # blacklist.add(jti)
         return {"message": "Successfully logged out"}, 200
