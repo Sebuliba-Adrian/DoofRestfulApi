@@ -4,7 +4,7 @@ from flask_restful import Resource, abort, marshal, reqparse
 
 from app.models import CategoryModel, RecipeModel
 from app.serializers import recipes_serializer
-from app.utilities import search_recipes, recipe_name_validator
+from app.utilities import recipe_name_validator, search_recipes
 from db import db
 
 
@@ -182,22 +182,19 @@ class Recipe(Resource):
             required: true
             description: The id of the recipe to delete
             type: integer
-
           - in: path
             name: recipe_id
             required: true
             description: The id of the recipe to delete
             type: integer  
-
         security:
-          TokenHeader: []    
+          TokenHeader: [] 
 
         responses:
           200:
             description: Successfully deleted
           204:
             description: No recipes
-
         """
         if recipe_id == None:
             response = jsonify({'message': 'Method not allowed (DELETE)'})
@@ -241,23 +238,18 @@ class RecipeList(Resource):
             required: true
             description: Recipe category id goes here
             type: integer
-
           - in: body
             name: body
             required: true
             description: Recipe details goes here
             type: string
-
-
         security:
           TokenHeader: []  
-
         responses:
           201:
             description:  The recipe has been created successfully
             schema:
               id: recipe
-
         """
 
         category = CategoryModel.find_by_id(category_id)
@@ -320,7 +312,6 @@ class RecipeList(Resource):
             return response
 
     @jwt_required
-    #@paginate('recipes')
     def get(self, category_id=None):
         """
         This method handles requests for retrieving a list of recipes
@@ -335,7 +326,6 @@ class RecipeList(Resource):
             required: true
             type: string
 
-
           - in: query
             name: q
             description: The search term(s)
@@ -346,22 +336,13 @@ class RecipeList(Resource):
             name: page
             description: The page to be displayed
             required: false
-            type: string   
-
+            type: string  
 
           - in: query
             name: limit
             description: The number of recipes to be displayed in a single page
             required: false
             type: string
-
-
-
-
-
-
-
-
 
         security:
           - TokenHeader: []
