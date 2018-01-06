@@ -51,7 +51,7 @@ def category_name_validator(category):
     if category:
         if category.strip():
 
-            if re.match("^[a-zA-Z0-9]+$", category):
+            if re.match("^[a-zA-Z0-9\s]+$", category):
                 return category
             raise ValueError(
                 "Only alphanumeric characters are allowed for the category name")
