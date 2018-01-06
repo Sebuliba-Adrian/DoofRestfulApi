@@ -1,10 +1,10 @@
-import unittest
-import os
-from flask import current_app
-from unittest import TestCase
-from config.config import basedir
-from app import app
 
+
+from unittest import TestCase
+
+from flask import current_app
+
+from app import app
 
 """
     Class contains test that verify the app created with
@@ -38,7 +38,7 @@ class TestDevelopmentConfig(TestCase):
         self.assertTrue(self.app.config['DEBUG'] is True)
         self.assertFalse(current_app is None)
         self.assertTrue(self.app.config['SQLALCHEMY_DATABASE_URI'] ==
-                        'postgresql://adrian2:andela@localhost/develop_db')
+                        'postgresql://adrian:andela@localhost/develop_db')
         self.assertTrue(self.app.config['JWT_SECRET_KEY'] ==
                         'my precious')
 
@@ -72,7 +72,7 @@ class TestTestingConfig(TestCase):
         self.assertFalse(self.app.config['PRESERVE_CONTEXT_ON_EXCEPTION'])
         self.assertTrue(
             self.app.config['SQLALCHEMY_DATABASE_URI'] ==
-            'postgresql://adrian1:andela@localhost/test_db')
+            'postgresql://adrian:andela@localhost/test_db')
         self.assertTrue(self.app.config['JWT_SECRET_KEY'] ==
                         'my precious')
 
@@ -104,5 +104,3 @@ class TestProductionConfig(TestCase):
         self.assertFalse(self.app.config['TESTING'])
         self.assertTrue(self.app.config['JWT_SECRET_KEY'] ==
                         'my precious')
-
-

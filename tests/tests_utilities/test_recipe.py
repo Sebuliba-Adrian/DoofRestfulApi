@@ -1,11 +1,10 @@
 from app.models import CategoryModel, RecipeModel, UserModel
-from tests import BaseTestCase
 from app.utilities import recipe_name_validator
+from tests import BaseTestCase
 
 
 class RecipeTest(BaseTestCase):
     def test_crud(self):
-
         user = UserModel(username="testusername", password="testpassword")
         user.save_to_db()
         category = CategoryModel(name='Beverages', user=user)
@@ -26,7 +25,6 @@ class RecipeTest(BaseTestCase):
         self.assertIsNone(RecipeModel.find_by_name('African tea'))
 
     def test_category_relationship(self):
-
         user = UserModel(username="testusername",
                          password="testpassword")
         user.save_to_db()
@@ -34,7 +32,7 @@ class RecipeTest(BaseTestCase):
         category = CategoryModel(name='test_category', user=user)
         recipe = RecipeModel(name='test_recipe',
                              description='Add stuff', user=user,
-                              category=category)
+                             category=category)
 
         category.save_to_db()
         recipe.save_to_db()

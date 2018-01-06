@@ -4,9 +4,9 @@ from app.models import CategoryModel, RecipeModel
 
 
 def search_categories(query, user_id):
-    '''
+    """
     method that gets data based on the search query provided
-    '''
+    """
     categories = CategoryModel.query.filter(CategoryModel.created_by == user_id,
                                             CategoryModel.name.contains(query))
 
@@ -14,9 +14,9 @@ def search_categories(query, user_id):
 
 
 def search_recipes(query):
-    '''
+    """
     method that gets data based on the search query provided
-    '''
+    """
 
     recipes = RecipeModel.query.filter(RecipeModel.name.contains(query)).all()
     return recipes
@@ -28,7 +28,7 @@ def username_validator(username):
     """
     if username:
         if username.strip():
-            if len(username) > 3 and len(username) < 16:
+            if 3 < len(username) < 16:
                 if re.match("^[a-zA-Z0-9_.-]+$", username):
                     return username
                 raise ValueError(

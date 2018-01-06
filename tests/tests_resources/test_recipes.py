@@ -1,4 +1,6 @@
 from tests import BaseTestCase
+
+
 class RecipeTest(BaseTestCase):
     """This class handles test cases for recipes """
 
@@ -18,8 +20,8 @@ class RecipeTest(BaseTestCase):
 
         self.assertEqual(msg, 'Invalid Token')
         self.assertEqual(response.status_code, 422)
-    def test_recipe_creation_with_invalid_url(self):
 
+    def test_recipe_creation_with_invalid_url(self):
         response = self.app.post(
             "/categories/2/recipes/1", data=self.recipe_data,
             headers=self.make_token())
@@ -50,7 +52,6 @@ class RecipeTest(BaseTestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_creation_of_recipe_in_none_existent_category(self):
-
         response = self.app.post(
             "/categories/200/recipes/", data=self.recipe_data,
             headers=self.make_token())
@@ -67,20 +68,20 @@ class RecipeTest(BaseTestCase):
     def test_editing_a_recipe(self):
         """ Test for editing a recipe """
         recipe = {"name": "African Tea",
-                       "description": "Add 2spoonfuls of..."}
+                  "description": "Add 2spoonfuls of..."}
         response = self.app.put(
             "/categories/1/recipes/1",
             headers=self.make_token(),
             data=recipe)
         msg = str(response.json['message'])
-        
+
         self.assertEqual(msg, 'Recipe updated')
         self.assertEqual(response.status_code, 200)
 
     def test_editing_other_users_recipe(self):
         """ Test for editing a recipe """
         recipe = {"name": "African Tea",
-                       "description": "Add 2spoonfuls of..."}
+                  "description": "Add 2spoonfuls of..."}
         response = self.app.put(
             "/categories/1/recipes/1",
             headers=self.make_second_user_token(),
@@ -91,7 +92,7 @@ class RecipeTest(BaseTestCase):
 
     def test_editing_recipe_with_invalid_url(self):
         recipe = {"name": "African Tea",
-                       "description": "Add 2spoonfuls of..."}
+                  "description": "Add 2spoonfuls of..."}
         response = self.app.put(
             "/categories/1/recipes/",
             headers=self.make_token(),
@@ -102,27 +103,30 @@ class RecipeTest(BaseTestCase):
         self.assertEqual(response.status_code, 405)
 
     def test_editing_none_existent_category_and_recipe(self):
-
         response = self.app.put(
             "/categories/100/recipes/100",
             headers=self.make_token(),
             data=self.recipe_data)
         self.assertEqual(response.status_code, 404)
+
     def test_recipe_request_on_none_existent_category(self):
         response = self.app.get("/categories/4/recipes/1",
                                 headers=self.make_token())
         self.assertEqual(response.status_code, 404)
+
     def test_invalid_credentials_on_recipe_request(self):
         response = self.app.get("/categories/1/recipes/1",
                                 headers=self.make_second_user_token())
         msg = str(response.json['message'])
         self.assertEqual(msg, 'You are not authorized to view this')
         self.assertEqual(response.status_code, 401)
+
     def test_requesting_a_none_existent_recipe(self):
         """Ensure that a non existing recipe is not returned"""
         response = self.app.get("/categories/1/recipes/20",
                                 headers=self.make_token())
         self.assertEqual(response.status_code, 404)
+
     def test_deletion_of_an_recipe(self):
         """ Test for deletion of an recipe  """
         response = self.app.delete("/categories/2/recipes/1",
@@ -131,6 +135,7 @@ class RecipeTest(BaseTestCase):
         msg = str(response.json['message'])
         self.assertEqual(msg, 'The recipe has been successfully deleted')
         self.assertEqual(response.status_code, 200)
+
     def test_deletion_of_recipe_in_other_user_categories(self):
         """ Test for deletion of an recipe  """
         response = self.app.delete("/categories/1/recipes/1",
@@ -139,6 +144,7 @@ class RecipeTest(BaseTestCase):
         msg = str(response.json['message'])
         self.assertEqual(msg, 'You are not authorized to del this')
         self.assertEqual(response.status_code, 401)
+
     def test_deletion_of_a_none_existent_recipe(self):
         response = self.app.delete("/categories/2/recipes/300",
                                    headers=self.make_token(),
@@ -147,7 +153,7 @@ class RecipeTest(BaseTestCase):
 
     def test_deleting_an_recipe_with_invalid_url(self):
         response = self.app.delete("/categories/2/recipes/",
-                                   headers=self.make_token(), 
+                                   headers=self.make_token(),
                                    content_type='application/json')
         msg = str(response.json['message'])
         self.assertEqual(

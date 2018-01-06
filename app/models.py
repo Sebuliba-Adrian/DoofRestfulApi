@@ -98,6 +98,10 @@ class CategoryModel(db.Model):
         return db.session.commit()
 
 
+def get_url():
+    return url_for(request.endpoint, _external=True)
+
+
 class RecipeModel(db.Model):
     """
     This recipe model class
@@ -119,9 +123,6 @@ class RecipeModel(db.Model):
         This method jsonifies the recipe model
         """
         return {'name': self.name, 'description': self.description}
-
-    def get_url(self):
-        return url_for(request.endpoint, _external=True)
 
     @classmethod
     def find_by_name(cls, name):

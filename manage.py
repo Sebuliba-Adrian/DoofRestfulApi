@@ -19,6 +19,7 @@ manager = Manager(app)
 # migrations
 manager.add_command('db', MigrateCommand)
 
+
 @manager.command
 def test():
     """Runs the unit tests without coverage."""
@@ -28,6 +29,7 @@ def test():
         return 0
     else:
         return 1
+
 
 @manager.command
 def cov():
@@ -46,19 +48,23 @@ def cov():
     print('HTML version: file://%s/index.html' % covdir)
     cov.erase()
 
+
 @manager.command
 def create_db():
     db.drop_all()
     db.create_all()
     db.session.commit()
 
+
 @manager.command
 def drop_db():
     """Drops the db tables."""
     db.drop_all()
-    
+
+
 def main():
     manager.run()
+
 
 if __name__ == '__main__':
     main()

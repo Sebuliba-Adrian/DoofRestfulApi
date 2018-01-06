@@ -1,4 +1,3 @@
-
 from app.models import UserModel
 from app.utilities import username_validator
 from tests import BaseTestCase
@@ -6,7 +5,6 @@ from tests import BaseTestCase
 
 class UserTest(BaseTestCase):
     def test_crud(self):
-
         user = UserModel(username='testusername', password='testpassword')
         self.assertIsNone(UserModel.find_by_username('testusername'))
         self.assertIsNotNone(UserModel.find_by_id(1))
@@ -18,7 +16,7 @@ class UserTest(BaseTestCase):
 
 
 class UserValidationTest(BaseTestCase):
-    
+
     def test_valid_username(self):
         """Ensure that a valid username is provided as input to 
         the api"""
@@ -40,8 +38,8 @@ class UserValidationTest(BaseTestCase):
 
     def test_username_above_15_characters(self):
         """Ensure that username of characters above 15 are not allowed"""
-        self.assertRaises(ValueError, username_validator, 
-        'adrian.sebulibam')
+        self.assertRaises(ValueError, username_validator,
+                          'adrian.sebulibam')
 
     def test_username_contains_special_characters(self):
         """Ensure that the username doesnot contain special characters 

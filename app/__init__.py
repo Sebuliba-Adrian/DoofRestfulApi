@@ -1,11 +1,7 @@
-from flask import Flask
 from flasgger import Swagger
-
-from flask_jwt_extended import JWTManager, get_jwt_identity
-from flask_restful import Api
+from flask import Flask
 
 from .resources.user import PasswordReset, UserLogin, UserRegister, UserLogout
-
 
 app = Flask(__name__)
 app.config.from_object('config.config.DevelopmentConfig')

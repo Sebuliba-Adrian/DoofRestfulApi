@@ -10,11 +10,11 @@ from app.resources.category import Category, CategoryList
 from app.resources.recipe import Recipe, RecipeList
 from app.resources.user import (PasswordReset, UserLogin, UserLogout,
                                 UserRegister)
-from db import blacklist, db
+from db import db
 
 # instantiate flask_restful Api class
 api = Api(app)
-#access_token = create_access_token(identity=username)
+# access_token = create_access_token(identity=username)
 jwt = JWTManager(app)
 
 
@@ -36,7 +36,6 @@ def my_revoked_token_callback():
 
 @jwt.invalid_token_loader
 def my_invalid_token_callback(error='Invalid Token'):
-
     return jsonify({'message': 'Invalid Token'}), 422
 
 
@@ -47,12 +46,10 @@ def my_unauthorized_loader(error='error'):
 
 @jwt.token_in_blacklist_loader
 def check_if_token_in_blacklist(decrypted_token):
-
     jti = decrypted_token['jti']
 
     isthere = Blacklist.get_or_create(jti)
     return isthere
-
 
 
 # # Register Recipe endpoint with flask_restful api
@@ -70,7 +67,6 @@ api.add_resource(UserRegister, '/auth/register')
 api.add_resource(UserLogin, '/auth/login')
 api.add_resource(UserLogout, '/auth/logout')
 db.init_app(app)
-
 
 # @app.before_first_request
 # def create_tables():

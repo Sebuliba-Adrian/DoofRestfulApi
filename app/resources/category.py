@@ -44,7 +44,6 @@ class CategoryList(Resource):
 
         """
 
-
         parser = reqparse.RequestParser()
         parser.add_argument('name', type=category_name_validator)
         parser.add_argument('description', type=str, default='')
@@ -140,12 +139,12 @@ class CategoryList(Resource):
         else:
             if categories.has_next:
                 next_page = str(request.url_root) + "categories?" + \
-                    "limit=" + str(limit) + "&page=" + str(page + 1)
+                            "limit=" + str(limit) + "&page=" + str(page + 1)
             else:
                 next_page = "None"
             if categories.has_prev:
                 prev_page = request.url_root + "categories?" + \
-                    "limit=" + str(limit) + "&page=" + str(page - 1)
+                            "limit=" + str(limit) + "&page=" + str(page - 1)
             else:
                 prev_page = "None"
 
@@ -168,6 +167,7 @@ class Category(Resource):
         methods: GET, PUT, DELETE
         url: url: api/v1/categoriess/<category_id>
     """
+
     @jwt_required
     def get(self, category_id):
         """
@@ -255,7 +255,7 @@ class Category(Resource):
                 name = args["name"]
                 description = args["description"]
                 data = {'name': name, 'description': description}
-                if not name or name == None:
+                if not name or name is None:
                     data = {'description': description}
 
                 # update changes and commit to db
@@ -302,7 +302,7 @@ class Category(Resource):
           200:
             description: The recipe category has been successfully deleted
         """
-        if category_id == None:
+        if category_id is None:
             response = jsonify({'message': 'Method not allowed(DELETE)'})
             response.status_code = 400
             return response
@@ -323,5 +323,5 @@ class Category(Resource):
                 abort(401, message='You are not authorized to delete this')
         else:  # else return a 204 response
             response = {'message': 'The category you are trying to delete does not exist'}, 404
-           
+
             return response

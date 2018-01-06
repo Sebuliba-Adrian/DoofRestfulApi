@@ -53,7 +53,7 @@ class Recipe(Resource):
               id: recipe
 
         """
-        if recipe_id == None:
+        if recipe_id is None:
             response = jsonify({'message': 'Method not allowed, check url'})
             response.status_code = 400
             return response
@@ -82,8 +82,10 @@ class Recipe(Resource):
                 if not name or name == None:
                     data = {'description': description}
 
+                assert isinstance(RecipeModel.query.filter_by(
+                    id=recipe_id).update, object)
                 recipe_info = RecipeModel.query.filter_by(
-                        id=recipe_id).update(data)
+                    id=recipe_id).update(data)
 
                 try:
                     db.session.commit()
@@ -143,7 +145,7 @@ class Recipe(Resource):
                     default: Tea and specifically black
 
         """
-        if recipe_id == None:
+        if recipe_id is None:
             response = jsonify({'message': 'Method not allowed, check url'})
             response.status_code = 400
             return response
@@ -196,7 +198,7 @@ class Recipe(Resource):
           204:
             description: No recipes
         """
-        if recipe_id == None:
+        if recipe_id is None:
             response = jsonify({'message': 'Method not allowed (DELETE)'})
             response.status_code = 400
             return response
@@ -381,14 +383,14 @@ class RecipeList(Resource):
                 # for the next page
                 if next_pg:
                     next_page = str(request.url_root) + '/recipes?' + \
-                        'limit=' + str(limit) + '&page=' + str(page + 1)
+                                'limit=' + str(limit) + '&page=' + str(page + 1)
                 else:
                     next_page = 'None'
 
                 # set a url for the previous page
                 if previous_pg:
                     previous_page = str(request.url_root) + '/recipes?' + \
-                        'limit=' + str(limit) + '&page=' + str(page - 1)
+                                    'limit=' + str(limit) + '&page=' + str(page - 1)
                 else:
                     previous_page = 'None'
 

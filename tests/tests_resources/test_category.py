@@ -1,5 +1,8 @@
 import json
+
 from tests import BaseTestCase
+
+
 class CategoryTest(BaseTestCase):
     """Ensures that the category resource functions as expectected"""
 
@@ -39,7 +42,7 @@ class CategoryTest(BaseTestCase):
         category = {"name": "lunch", "description": "lunch at 1:00pm"}
         response = self.client.put(
             "/categories/1", data=category,
-             headers=self.make_second_user_token(),
+            headers=self.make_second_user_token(),
             content_type='application/json')
         msg = str(response.json['message'])
         self.assertEqual(msg, 'You are not authorized to edit this')
@@ -75,7 +78,7 @@ class CategoryTest(BaseTestCase):
     def test_creation_of_a_category_with_existing_name(self):
         """ Test for creation of a category with existing name """
         category = {"name": "somerecipecategory",
-                         "description": "dance time"}
+                    "description": "dance time"}
         response = self.client.post(
             "/categories", data=category, headers=self.make_token())
         msg = str(response.json['message'])
@@ -127,7 +130,7 @@ class CategoryTest(BaseTestCase):
         self.category = {"name": "lunch", "description": "lunch at 1:00pm"}
         response = self.client.put(
             "/categories/1", data=self.category,
-             headers=self.make_second_user_token(),
+            headers=self.make_second_user_token(),
             content_type='application/json')
         msg = str(response.json['message'])
         self.assertEqual(msg, 'You are not authorized to edit this')
@@ -202,4 +205,3 @@ class CategoryTest(BaseTestCase):
                                    content_type="application/json",
                                    headers=self.make_token())
         self.assertEqual(response.status_code, 404)
-        response_msg = json.loads(response.data)
