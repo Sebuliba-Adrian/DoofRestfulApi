@@ -4,12 +4,6 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from db import db
 
 
-"""
-UserModel
-This class represents the user model
-"""
-
-
 class UserModel(db.Model):
     """
     This class represents the user model 
@@ -55,6 +49,7 @@ class UserModel(db.Model):
 
 
 class CategoryModel(db.Model):
+
     """This is category model class"""
     __tablename__ = 'categories'
 
@@ -119,7 +114,6 @@ class RecipeModel(db.Model):
     created_by = db.Column(
         db.Integer, db.ForeignKey('users.id'), nullable=False)
 
-
     def json(self):
         """
         This method jsonifies the recipe model
@@ -168,3 +162,25 @@ class RecipeModel(db.Model):
         """
         db.session.delete(self)
         db.session.commit()
+
+
+class Blacklist(db.Model):
+
+    __tablename__ = "blacklist"
+    id = db.Column(db.Integer, primary_key=True)
+    jti = db.Column(db.String(36), nullable=False)
+
+    def save_to_db(self):
+        """
+        This method saves the blacklist model to the db
+        """
+        db.session.add(self)
+        db.session.commit()
+
+    @classmethod
+    def get_or_create(cls, jti):
+        exists = db.session.query(Blacklist.id).filter_by(
+            jti=jti).scalar() is not None
+        if exists:
+            return True
+        return False
