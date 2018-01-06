@@ -1,14 +1,13 @@
 import datetime
 
-from flask import jsonify, make_response, request
-from flask_jwt_extended import (create_access_token, get_jwt_identity,
-                                get_raw_jwt, jwt_required)
+from flask import jsonify
+from flask_jwt_extended import create_access_token, get_raw_jwt, jwt_required
 from flask_restful import Resource, reqparse
 
-from app.models import UserModel
+from app.models import Blacklist, UserModel
+from app.utilities import username_validator
 from db import blacklist, db
 from parsers import user_put_parser
-from app.utilities import username_validator
 
 
 class UserRegister(Resource):
@@ -120,8 +119,8 @@ class UserLogin(Resource):
                     user_token = create_access_token(
                         identity=user.id, expires_delta=expires)
 
-                    return {'message':'user has successfully been logged in',
-                'access_token': user_token}, 200
+                    return {'message': 'user has successfully been logged in',
+                            'access_token': user_token}, 200
                 else:
                     message = {'message': 'Invalid password'}
                     return message
@@ -193,5 +192,7 @@ class UserLogout(Resource):
         """
 
         jti = get_raw_jwt()['jti']
-        blacklist.add(jti)
+        blist=Blacklist(jti=jti)
+        blist.save_to_db()
+        # blacklist.add(jti)
         return {"message": "Successfully logged out"}, 200
