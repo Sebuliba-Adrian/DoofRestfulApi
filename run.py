@@ -68,10 +68,10 @@ api.add_resource(UserLogin, '/auth/login')
 api.add_resource(UserLogout, '/auth/logout')
 db.init_app(app)
 
-# @app.before_first_request
-# def create_tables():
-#     """Creates a database on every start if there is none"""
-#     db.create_all()
+@app.before_first_request
+def create_tables():
+    """Creates a database on every start if there is none"""
+    db.create_all()
 
 
 if __name__ == "__main__":
