@@ -53,7 +53,7 @@ def category_name_validator(category):
     if category:
         if category.strip():
 
-            if re.match("^[A-Za-z0-9]*$|^[A-Za-z0-9][A-Za-z0-9]*[A-Za-z0-9]$",
+            if re.match("^[A-Za-z]*$|^[A-Za-z][A-Za-z]*[A-Za-z]$",
                         category):
                 return category
             raise ValueError(
@@ -74,7 +74,7 @@ def recipe_name_validator(recipe):
     if recipe:
         if recipe.strip():
 
-            if re.match("^[A-Za-z0-9]*$|^[A-Za-z0-9][A-Za-z0-9]*[A-Za-z0-9]$",
+            if re.match("^[A-Za-z]*$|^[A-Za-z][A-Za-z]*[A-Za-z]$",
                         recipe):
                 return recipe
             raise ValueError(
