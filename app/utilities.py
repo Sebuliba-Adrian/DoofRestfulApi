@@ -9,7 +9,7 @@ def search_categories(query, user_id):
     """
     categories = CategoryModel.query.filter(
         CategoryModel.created_by == user_id,
-        CategoryModel.name.contains(query.lower()))
+        CategoryModel.name.ilike("%{0}%".format(query)))
 
     return categories
 
