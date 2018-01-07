@@ -52,7 +52,7 @@ def category_name_validator(category):
     if category:
         if category.strip():
 
-            if re.match("^[a-zA-Z0-9\s]+$", category):
+            if re.match("^[A-Za-z]*$|^[A-Za-z][A-Za-z ]*[A-Za-z]$", category):
                 return category
             raise ValueError(
                 "Only alphanumeric characters are allowed for the category "
@@ -72,7 +72,7 @@ def recipe_name_validator(recipe):
     if recipe:
         if recipe.strip():
 
-            if re.match("^[a-zA-Z0-9\s]+$", recipe):
+            if re.match("^[A-Za-z]*$|^[A-Za-z][A-Za-z ]*[A-Za-z]$", recipe):
                 return recipe
             raise ValueError(
                 "Only alphanumeric characters are allowed for the recipe name")
