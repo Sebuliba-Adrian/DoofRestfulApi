@@ -1,0 +1,30 @@
+This method gets a list of resources from the storage
+---
+tags:
+  - Recipe Categories
+parameters:
+  - in: query
+    name: q
+    description: The search query parameter q
+    required: false
+    type: string
+
+  - in: query
+    name: page
+    description: The page to be displayed
+    required: false
+    type: string
+
+  - in: query
+    name: limit
+    description: The number of recipes to be displayed in a single page
+    required: false
+    type: string  
+
+security:
+  - TokenHeader: []
+responses:
+  200:
+    description: A list of recipes
+  404:
+    description: Not found

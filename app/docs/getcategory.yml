@@ -1,0 +1,20 @@
+This request method gets category resource by name from the storage
+---
+tags:
+  - Recipe Categories
+parameters:
+  - in: path
+    name: category_id
+    required: true
+    description: The id of the category to retrieve
+    type: integer
+
+
+security: 
+  - TokenHeader: []
+responses:
+  200:
+    description: The recipe category has been successfully retrieved
+
+  204:
+    description: No recipe category content found

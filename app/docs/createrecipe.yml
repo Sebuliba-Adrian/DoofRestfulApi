@@ -1,0 +1,22 @@
+This method handles requests for adding recipe to storage by id
+---
+tags:
+  - Recipes
+parameters:
+  - in: path
+    name: category_id
+    required: true
+    description: Recipe category id goes here
+    type: integer
+  - in: body
+    name: body
+    required: true
+    description: Recipe details goes here
+    type: string
+security:
+  TokenHeader: []  
+responses:
+  201:
+    description:  The recipe has been created successfully
+    schema:
+      id: recipe

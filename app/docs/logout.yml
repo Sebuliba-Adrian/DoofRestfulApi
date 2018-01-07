@@ -1,0 +1,8 @@
+Logout A User
+---
+tags:
+  - Authentication
+
+responses:
+  200:
+    description: User has successfully logged out

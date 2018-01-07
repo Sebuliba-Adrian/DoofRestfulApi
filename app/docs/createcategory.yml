@@ -1,0 +1,27 @@
+
+This post request method adds a category resource of a particular name to the storage
+---
+tags:
+  - Recipe Categories
+parameters:
+  - in: body
+    name: body
+    required: true
+    type: string
+    description: Category name
+
+security: 
+  - TokenHeader: []  
+
+
+responses:
+  200:
+    description: Recipe category is successfully created
+    schema:
+      id: category
+      properties:
+        name:
+          type: string
+          default: Tea
+
+       

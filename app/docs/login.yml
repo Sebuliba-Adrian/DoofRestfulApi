@@ -1,0 +1,22 @@
+Log in a user
+---
+tags:
+  - Authentication
+parameters:
+  - in: body
+    name: body
+    required: true
+    type: string
+    description: Username and password of the user
+responses:
+  200:
+    description: User is successfully logged in and token generated
+    schema:
+      id: user
+      properties:
+        username:
+          type: string
+          default: testusername
+        password:
+          type: string
+          default: testpassword

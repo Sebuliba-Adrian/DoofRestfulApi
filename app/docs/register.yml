@@ -1,0 +1,14 @@
+Register a new user
+---
+tags:
+  - Authentication
+parameters:
+  - in: body
+    name: body
+    required: true
+    type: string
+responses:
+  200:
+    description: A user is successfully logged in
+    schema:
+      id: user

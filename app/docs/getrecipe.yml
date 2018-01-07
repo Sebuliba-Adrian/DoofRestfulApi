@@ -1,0 +1,31 @@
+Get a recipe by id
+---
+tags:
+  - Recipes
+parameters:
+  - in: path
+    name: category_id
+    required: false
+    description: The id of the recipe to retrieve
+    type: integer
+
+  - in: path
+    name: recipe_id
+    required: false
+    description: The id of the recipe to retrieve
+    type: integer  
+
+security: 
+  - TokenHeader: []
+responses:
+  200:
+    description: The recipe has been successfully retrieved
+    schema:
+      id: recipe
+      properties:
+        name:
+          type: string
+          default: Tea
+        description:
+            type: string
+            default: Tea and specifically black
