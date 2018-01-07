@@ -15,6 +15,7 @@ class UserRegister(Resource):
     This resource allows users to register by sending a
     POST request with their username and password.
     """
+
     @swag_from('/app/docs/register.yml')
     def post(self):
         """
@@ -95,13 +96,12 @@ class UserLogin(Resource):
             message = {'message': 'one or more fields is not complete'}
             return message, 400
 
-    
 
 class PasswordReset(Resource):
 
     @jwt_required
     @swag_from('/app/docs/resetpassword.yml')
-    def put(self) -> object:
+    def put(self):
         """
         This method resets the user's password
         """
@@ -111,7 +111,7 @@ class PasswordReset(Resource):
 
         if user is None:
             return {'message': 'User {0} does not exist in the database.'.
-                    format(data['username'])}, 400
+                format(data['username'])}, 400
         else:
             if data['username']:
                 user.username = data['username']

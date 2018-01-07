@@ -13,11 +13,11 @@ class Recipe(Resource):
     """ Defines endpoints for recipes manipulation
         methods: GET, POST, PUT, DELETE
         url: /api/v1/categories/<category_id>/recipes/
-     """
+    """
 
     @jwt_required
     @swag_from('/app/docs/editrecipe.yml')
-    def put(self, category_id: object, recipe_id: object = None) -> object:
+    def put(self, category_id, recipe_id):
         """
         This method edits a recipe in a category of a user
         """
@@ -47,7 +47,7 @@ class Recipe(Resource):
                 description = args["description"]
 
                 data = {'name': name, 'description': description}
-                if not name or name == None:
+                if not name or name is None:
                     data = {'description': description}
 
                 recipe_info = RecipeModel.query.filter_by(
@@ -231,7 +231,8 @@ class RecipeList(Resource):
             try:
                 # query a paginate object
                 user_id = get_jwt_identity()
-                recipes = RecipeModel.query.filter_by(category_id=category_id, created_by=user_id).paginate(
+                recipes = RecipeModel.query.filter_by(category_id=category_id,
+                                                      created_by=user_id).paginate(
                     page, limit, False)
 
                 all_pages = recipes.pages  # get total page count
