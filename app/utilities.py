@@ -19,7 +19,8 @@ def search_recipes(query):
     method that gets data based on the search query provided
     """
 
-    recipes = RecipeModel.query.filter(RecipeModel.name.contains(query)).all()
+    recipes = RecipeModel.query.filter(RecipeModel.name.
+                                       ilike("%{0}%".format(query))).all()
     return recipes
 
 
@@ -34,10 +35,10 @@ def username_validator(username):
                     return username
                 raise ValueError(
                     "Special characters in username {0} are not allowed"
-                    .format(username))
+                        .format(username))
             raise ValueError(
                 "Username {0} should be 4 to 15 characters long".
-                format(username))
+                    format(username))
 
         raise ValueError("Blank space is not allowed for the username field")
 
@@ -52,7 +53,8 @@ def category_name_validator(category):
     if category:
         if category.strip():
 
-            if re.match("^[A-Za-z]*$|^[A-Za-z][A-Za-z ]*[A-Za-z]$", category):
+            if re.match("^[A-Za-z0-9]*$|^[A-Za-z0-9][A-Za-z0-9]*[A-Za-z0-9]$",
+                        category):
                 return category
             raise ValueError(
                 "Only alphanumeric characters are allowed for the category "
@@ -72,7 +74,8 @@ def recipe_name_validator(recipe):
     if recipe:
         if recipe.strip():
 
-            if re.match("^[A-Za-z]*$|^[A-Za-z][A-Za-z ]*[A-Za-z]$", recipe):
+            if re.match("^[A-Za-z0-9]*$|^[A-Za-z0-9][A-Za-z0-9]*[A-Za-z0-9]$",
+                        recipe):
                 return recipe
             raise ValueError(
                 "Only alphanumeric characters are allowed for the recipe name")
