@@ -1,7 +1,7 @@
 from flasgger import swag_from
 from flask import jsonify, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
-from flask_restful import Resource, abort, marshal, reqparse
+from flask_restful import Resource, marshal, reqparse
 
 from app.models import CategoryModel, RecipeModel
 from app.serializers import recipes_serializer
@@ -209,6 +209,7 @@ class RecipeList(Resource):
             return response
 
     @jwt_required
+    @swag_from('/app/docs/getrecipes.yml')
     def get(self, category_id=None):
         """
         This method handles requests for retrieving a list of recipes
@@ -223,7 +224,7 @@ class RecipeList(Resource):
             if q:
                 recipes = search_recipes(q)
                 if not recipes:
-                    abort(204, message='No data found matching the query')
+                    return {'message':'No data found matching the query'},404
                 else:
                     response = marshal(recipes, recipes_serializer)
                     return response
