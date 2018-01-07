@@ -1,5 +1,4 @@
 import json
-
 from tests import BaseTestCase
 
 
@@ -205,3 +204,4 @@ class CategoryTest(BaseTestCase):
                                    content_type="application/json",
                                    headers=self.make_token())
         self.assertEqual(response.status_code, 404)
+        response_msg = json.loads(response.data)

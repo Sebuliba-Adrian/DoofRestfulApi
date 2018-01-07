@@ -1,12 +1,12 @@
 import datetime
 
+from flasgger import swag_from
 from flask import jsonify
 from flask_jwt_extended import create_access_token, get_raw_jwt, jwt_required
 from flask_restful import Resource, reqparse
 
 from app.models import Blacklist, UserModel
 from app.utilities import username_validator
-from db import blacklist
 from parsers import user_put_parser
 
 
@@ -15,25 +15,11 @@ class UserRegister(Resource):
     This resource allows users to register by sending a
     POST request with their username and password.
     """
-
+    @swag_from('/app/docs/register.yml')
     def post(self):
         """
         Register a new user
-        ---
-        tags:
-          - Authentication
-        parameters:
-          - in: body
-            name: body
-            required: true
-            type: string
-        responses:
-          200:
-            description: A user is successfully logged in
-            schema:
-              id: user
         """
-
         parser = reqparse.RequestParser()
         parser.add_argument('username', required=True,
                             type=username_validator)
@@ -76,33 +62,11 @@ class UserLogin(Resource):
                         required=True,
                         help="This field cannot be blank.")
 
+    @swag_from('/app/docs/login.yml')
     def post(self):
         """
-        Log in a user
-        ---
-        tags:
-          - Authentication
-        parameters:
-          - in: body
-            name: body
-            required: true
-            type: string
-            description: Username and password of the user
-
-
-        responses:
-          200:
-            description: User is successfully logged in and token generated
-            schema:
-              id: user
-              properties:
-                username:
-                  type: string
-                  default: testusername
-                password:
-                  type: string
-                  default: testpassword
-            """
+        This method logins in a user
+        """
         parser = reqparse.RequestParser()
         parser.add_argument('username', required=True,
                             type=str, help='Username is required')
@@ -131,34 +95,16 @@ class UserLogin(Resource):
             message = {'message': 'one or more fields is not complete'}
             return message, 400
 
-    @jwt_required
-    def delete(self):
-        jti = get_raw_jwt()['jti']
-        blacklist.add(jti)
-        return jsonify({"message": "Successfully logged out"}), 200
-
+    
 
 class PasswordReset(Resource):
 
     @jwt_required
-    def put(self):
+    @swag_from('/app/docs/resetpassword.yml')
+    def put(self) -> object:
         """
-        Reset a user's password
-        ---
-        tags:
-          - Authentication
-        parameters:
-          - in: body
-            name: body
-            required: true
-            type: string
-        responses:
-          200:
-            description: A user is successfully updated
-            schema:
-              id: user
+        This method resets the user's password
         """
-
         data = user_put_parser.parse_args()
 
         user = UserModel.find_by_username(data['username'])
@@ -179,20 +125,13 @@ class PasswordReset(Resource):
 class UserLogout(Resource):
 
     @jwt_required
+    @swag_from('/app/docs/logout.yml')
     def delete(self):
         """
-        Logout A User
-        ---
-        tags:
-          - Authentication
-
-        responses:
-          200:
-            description: User is Successfully logged out
+        Logout a user
         """
 
         jti = get_raw_jwt()['jti']
         blist = Blacklist(jti=jti)
         blist.save_to_db()
-        # blacklist.add(jti)
         return {"message": "Successfully logged out"}, 200

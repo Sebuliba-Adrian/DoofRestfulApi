@@ -72,14 +72,16 @@ class CategoryModel(db.Model):
     @classmethod
     def find_by_name(cls, name):
         """
-        This class method queries the database and returns the category model by name
+        This class method queries the database and returns the category
+        model by name
         """
         return cls.query.filter_by(name=name).first()
 
     @classmethod
     def find_by_id(cls, id):
         """
-        This class method queries the database and returns the category model by id
+        This class method queries the database and returns the category
+        model by id
         """
         return cls.query.filter_by(id=id).first()
 
@@ -96,10 +98,6 @@ class CategoryModel(db.Model):
         """
         db.session.delete(self)
         return db.session.commit()
-
-
-def get_url():
-    return url_for(request.endpoint, _external=True)
 
 
 class RecipeModel(db.Model):
@@ -123,6 +121,10 @@ class RecipeModel(db.Model):
         This method jsonifies the recipe model
         """
         return {'name': self.name, 'description': self.description}
+
+    @property
+    def get_url(self):
+        return url_for(request.endpoint, _external=True)
 
     @classmethod
     def find_by_name(cls, name):

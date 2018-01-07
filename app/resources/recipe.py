@@ -1,3 +1,4 @@
+from flasgger import swag_from
 from flask import jsonify, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from flask_restful import Resource, abort, marshal, reqparse
@@ -15,43 +16,10 @@ class Recipe(Resource):
      """
 
     @jwt_required
-    def put(self, category_id, recipe_id=None):
+    @swag_from('/app/docs/editrecipe.yml')
+    def put(self, category_id: object, recipe_id: object = None) -> object:
         """
-        This method handles requests for updating a recipe
-        ---
-        tags:
-          - Recipes
-        parameters:
-          - in: path
-            name: category_id
-            required: true
-            description: The category id of the recipe to update goes here
-            type: integer
-
-          - in: path
-            name: recipe_id
-            required: true
-            description: The id of the recipe to update goes here
-            type: integer  
-
-          - in: body
-            name: body
-            required: true
-            description: The details of the new recipe goes here
-            type: string  
-
-
-        security:
-          - TokenHeader: []    
-
-        responses:
-          200:
-            description: Successfuly updated
-          204:
-            description: No content
-            schema:
-              id: recipe
-
+        This method edits a recipe in a category of a user
         """
         if recipe_id is None:
             response = jsonify({'message': 'Method not allowed, check url'})
@@ -82,10 +50,8 @@ class Recipe(Resource):
                 if not name or name == None:
                     data = {'description': description}
 
-                assert isinstance(RecipeModel.query.filter_by(
-                    id=recipe_id).update, object)
                 recipe_info = RecipeModel.query.filter_by(
-                    id=recipe_id).update(data)
+                        id=recipe_id).update(data)
 
                 try:
                     db.session.commit()
@@ -110,40 +76,10 @@ class Recipe(Resource):
             return response
 
     @jwt_required
+    @swag_from('/app/docs/getrecipe.yml')
     def get(self, category_id, recipe_id=None):
         """
-        Get a recipe by id
-        ---
-        tags:
-          - Recipes
-        parameters:
-          - in: path
-            name: category_id
-            required: false
-            description: The id of the recipe to retrieve
-            type: integer
-
-          - in: path
-            name: recipe_id
-            required: false
-            description: The id of the recipe to retrieve
-            type: integer  
-
-        security: 
-          - TokenHeader: []
-        responses:
-          200:
-            description: The recipe has been successfully retrieved
-            schema:
-              id: recipe
-              properties:
-                name:
-                  type: string
-                  default: Tea
-                description:
-                    type: string
-                    default: Tea and specifically black
-
+        This method gets a specific recipe from a category
         """
         if recipe_id is None:
             response = jsonify({'message': 'Method not allowed, check url'})
@@ -172,31 +108,10 @@ class Recipe(Resource):
             return response
 
     @jwt_required
+    @swag_from('/app/docs/deleterecipe.yml')
     def delete(self, category_id, recipe_id=None):
         """
-        This method handles requests for deleting recipe by name
-        ---
-        tags:
-          - Recipes
-        parameters:
-          - in: path
-            name: category_id
-            required: true
-            description: The id of the recipe to delete
-            type: integer
-          - in: path
-            name: recipe_id
-            required: true
-            description: The id of the recipe to delete
-            type: integer  
-        security:
-          TokenHeader: [] 
-
-        responses:
-          200:
-            description: Successfully deleted
-          204:
-            description: No recipes
+        This method deletes a specific recipe from a category
         """
         if recipe_id is None:
             response = jsonify({'message': 'Method not allowed (DELETE)'})
@@ -228,30 +143,10 @@ class RecipeList(Resource):
     """This class represents a list of recipe resources"""
 
     @jwt_required
+    @swag_from('/app/docs/createrecipe.yml')
     def post(self, category_id):
         """
-        This method handles requests for adding recipe to storage by name
-        ---
-        tags:
-          - Recipes
-        parameters:
-          - in: path
-            name: category_id
-            required: true
-            description: Recipe category id goes here
-            type: integer
-          - in: body
-            name: body
-            required: true
-            description: Recipe details goes here
-            type: string
-        security:
-          TokenHeader: []  
-        responses:
-          201:
-            description:  The recipe has been created successfully
-            schema:
-              id: recipe
+        This method handles requests for adding recipe to storage by id
         """
 
         category = CategoryModel.find_by_id(category_id)
@@ -317,42 +212,6 @@ class RecipeList(Resource):
     def get(self, category_id=None):
         """
         This method handles requests for retrieving a list of recipes
-        ---
-        tags:
-         - Recipes
-        parameters:
-
-          - in: path
-            name: category_id
-            description: The category id goes here
-            required: true
-            type: string
-
-          - in: query
-            name: q
-            description: The search term(s)
-            required: false
-            type: string
-
-          - in: query
-            name: page
-            description: The page to be displayed
-            required: false
-            type: string  
-
-          - in: query
-            name: limit
-            description: The number of recipes to be displayed in a single page
-            required: false
-            type: string
-
-        security:
-          - TokenHeader: []
-        responses:
-          200:
-            description: A list of recipes in a category
-          404:
-            description: Not found
         """
         args = request.args.to_dict()
 
@@ -383,14 +242,14 @@ class RecipeList(Resource):
                 # for the next page
                 if next_pg:
                     next_page = str(request.url_root) + '/recipes?' + \
-                                'limit=' + str(limit) + '&page=' + str(page + 1)
+                        'limit=' + str(limit) + '&page=' + str(page + 1)
                 else:
                     next_page = 'None'
 
                 # set a url for the previous page
                 if previous_pg:
                     previous_page = str(request.url_root) + '/recipes?' + \
-                                    'limit=' + str(limit) + '&page=' + str(page - 1)
+                        'limit=' + str(limit) + '&page=' + str(page - 1)
                 else:
                     previous_page = 'None'
 

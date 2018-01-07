@@ -6,6 +6,7 @@ from app.models import CategoryModel
 from app.serializers import categories_serializer
 from app.utilities import category_name_validator, search_categories
 from db import db
+from flasgger import swag_from
 
 
 class CategoryList(Resource):
@@ -15,35 +16,11 @@ class CategoryList(Resource):
      """
 
     @jwt_required
+    @swag_from('/app/docs/createcategory.yml')
     def post(self):
         """
-        This post request method adds a category resource of a particular name to the storage
-        ---
-        tags:
-          - Recipe Categories
-        parameters:
-          - in: body
-            name: body
-            required: true
-            type: string
-            description: Category name
-
-        security: 
-          - TokenHeader: []  
-
-
-        responses:
-          200:
-            description: Recipe category is successfully created
-            schema:
-              id: category
-              properties:
-                name:
-                  type: string
-                  default: Tea
-
+        This method creates a recipe category
         """
-
         parser = reqparse.RequestParser()
         parser.add_argument('name', type=category_name_validator)
         parser.add_argument('description', type=str, default='')
@@ -85,39 +62,10 @@ class CategoryList(Resource):
             return response
 
     @jwt_required
+    @swag_from('/app/docs/getcategories.yml')
     def get(self):
         """
-        This method gets a list of resources from the storage
-        ---
-        tags:
-         - Recipe Categories
-        parameters:
-          - in: query
-            name: q
-            description: The search query parameter q
-            required: false
-            type: string
-
-          - in: query
-            name: page
-            description: The page to be displayed
-            required: false
-            type: string
-
-          - in: query
-            name: limit
-            description: The number of recipes to be displayed in a single page
-            required: false
-            type: string  
-
-        security:
-         - TokenHeader: []
-        responses:
-          200:
-            description: A list of recipes
-          404:
-            description: Not found   
-
+        This method gets all categories for a particular user
         """
         q = request.args.get("q", "")
         try:
@@ -139,12 +87,12 @@ class CategoryList(Resource):
         else:
             if categories.has_next:
                 next_page = str(request.url_root) + "categories?" + \
-                            "limit=" + str(limit) + "&page=" + str(page + 1)
+                    "limit=" + str(limit) + "&page=" + str(page + 1)
             else:
                 next_page = "None"
             if categories.has_prev:
                 prev_page = request.url_root + "categories?" + \
-                            "limit=" + str(limit) + "&page=" + str(page - 1)
+                    "limit=" + str(limit) + "&page=" + str(page - 1)
             else:
                 prev_page = "None"
 
@@ -167,32 +115,11 @@ class Category(Resource):
         methods: GET, PUT, DELETE
         url: url: api/v1/categoriess/<category_id>
     """
-
     @jwt_required
+    @swag_from('/app/docs/getcategory.yml')
     def get(self, category_id):
         """
-        This request method gets category resource by name from the storage
-        ---
-        tags:
-          - Recipe Categories
-        parameters:
-          - in: path
-            name: category_id
-            required: true
-            description: The id of the category to retrieve
-            type: integer
-
-
-        security: 
-          - TokenHeader: []
-        responses:
-          200:
-            description: The recipe category has been successfully retrieved
-
-          204:
-            description: No recipe category content found 
-
-
+        This method gets specific category from the user
         """
         user_id = get_jwt_identity()
         category = CategoryModel.query.filter_by(
@@ -206,40 +133,10 @@ class Category(Resource):
             return response
 
     @jwt_required
-    def put(self, category_id):
-        """"This method updates a particular category from the storage
-        ---
-        tags:
-          - Recipe Categories
-        parameters:
-          - in: path
-            name: category_id
-            required: true
-            description: The id of the category to update
-            type: integer
-
-          - in: body
-            name: name
-            required: true
-            description:  The content of the category  to update
-            type: string  
-
-        security:
-          - TokenHeader: []
-
-        responses:
-          200:
-            description: The recipe category has been sucessfully changed
-            schema:
-              id: categories
-              properties:
-                name:
-                  Type: string
-                  default: Tea
-
-                description:
-                  Type: string
-                  default: For the early birds  
+    @swag_from('/app/docs/editcategory.yml')
+    def put(self, category_id: object) -> object:
+        """
+        This method edits the user's category
         """
         category = CategoryModel.find_by_id(category_id)
         user_id = get_jwt_identity()
@@ -255,7 +152,7 @@ class Category(Resource):
                 name = args["name"]
                 description = args["description"]
                 data = {'name': name, 'description': description}
-                if not name or name is None:
+                if not name or name == None:
                     data = {'description': description}
 
                 # update changes and commit to db
@@ -282,25 +179,10 @@ class Category(Resource):
             return response
 
     @jwt_required
+    @swag_from('/app/docs/deletecategory.yml')
     def delete(self, category_id):
         """
-        This method deletes a particular category resource from the storage
-        ---
-        tags:
-          - Recipe Categories
-        parameters:
-          - in: path
-            name: category_id
-            required: true
-            description: The id of the recipe category to delete goes here
-            type: integer
-
-
-        security: 
-          - TokenHeader: []
-        responses:
-          200:
-            description: The recipe category has been successfully deleted
+        This method deletes a user's category by id
         """
         if category_id is None:
             response = jsonify({'message': 'Method not allowed(DELETE)'})
@@ -323,5 +205,5 @@ class Category(Resource):
                 abort(401, message='You are not authorized to delete this')
         else:  # else return a 204 response
             response = {'message': 'The category you are trying to delete does not exist'}, 404
-
+           
             return response

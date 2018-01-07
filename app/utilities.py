@@ -7,8 +7,9 @@ def search_categories(query, user_id):
     """
     method that gets data based on the search query provided
     """
-    categories = CategoryModel.query.filter(CategoryModel.created_by == user_id,
-                                            CategoryModel.name.contains(query))
+    categories = CategoryModel.query.filter(
+        CategoryModel.created_by == user_id,
+        CategoryModel.name.contains(query.lower()))
 
     return categories
 
@@ -54,7 +55,8 @@ def category_name_validator(category):
             if re.match("^[a-zA-Z0-9\s]+$", category):
                 return category
             raise ValueError(
-                "Only alphanumeric characters are allowed for the category name")
+                "Only alphanumeric characters are allowed for the category "
+                "name")
 
         raise ValueError(
             "Blank space is not allowed for the category name field")
