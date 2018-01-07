@@ -40,4 +40,7 @@ class ProductionConfig(BaseConfig):
     """Production configuration"""
     DEBUG = False
     SQLALCHEMY_DATABASE_URI = os.environ.get(
-        'DATABASE_URL') or 'postgres://postgres:postgres@users-db:5432/users_prod'
+        'DATABASE_URL') or 'postgres://postgres:postgres@users-db:5432' \
+                           '/users_prod '
+    if os.environ.get('DATABASE_URL'):
+        SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']

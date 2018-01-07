@@ -1,10 +1,9 @@
-
-
 from unittest import TestCase
 
 from flask import current_app
 
 from app import app
+
 
 """
     Class contains test that verify the app created with
