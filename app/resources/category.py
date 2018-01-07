@@ -134,7 +134,7 @@ class Category(Resource):
 
     @jwt_required
     @swag_from('/app/docs/editcategory.yml')
-    def put(self, category_id: object) -> object:
+    def put(self, category_id):
         """
         This method edits the user's category
         """
