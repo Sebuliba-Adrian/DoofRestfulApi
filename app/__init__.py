@@ -8,7 +8,7 @@ from .resources.user import PasswordReset, UserLogin, UserRegister, UserLogout
 
 
 app = Flask(__name__)
-app.config.from_object('config.config.ProductionConfig')
+app.config.from_object('config.config.DevelopmentConfig')
 app.config['JWT_BLACKLIST_ENABLED'] = True
 app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access']
 app.config['SWAGGER'] = {

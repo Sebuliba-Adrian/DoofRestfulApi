@@ -21,35 +21,42 @@ class UserRegister(Resource):
         """
         Register a new user
         """
-        parser = reqparse.RequestParser()
-        parser.add_argument('username', required=True,
-                            type=username_validator)
-        parser.add_argument('password', required=True,
-                            help="This field cannot be blank.")
-        args = parser.parse_args()
-        username = args['username']
-        password = args['password']
-        user = UserModel(username=username)
-        user.password = password
         try:
-            UserModel.query.filter_by(username=username).one()
-
-            response = jsonify(
-                {'message': 'The username is already registered'})
-            response.status_code = 400
-            return response
-        except:
+            parser = reqparse.RequestParser()
+            parser.add_argument('username', required=True,
+                                type=username_validator)
+            parser.add_argument('password', required=True,
+                                help="This field cannot be blank.")
+            args = parser.parse_args()
+            username = args['username']
+            password = args['password']
+            user = UserModel(username=username)
+            user.password = password
             try:
-                user.save_to_db()
+                UserModel.query.filter_by(username=username).one()
+
                 response = jsonify(
-                    {'message': 'New user successfully registered!'})
-                response.status_code = 201
+                    {'message': 'The username is already registered'})
+                response.status_code = 400
                 return response
-            except Exception:
-                response = jsonify(
-                    {'message': 'There was a problem while saving the data'})
-                response.status_code = 500
-                return response
+            except:
+                try:
+                    user.save_to_db()
+                    response = jsonify(
+                        {'message': 'New user successfully registered!'})
+                    response.status_code = 201
+                    return response
+                except Exception:
+                    response = jsonify(
+                        {'message': 'There was a problem while saving the data'})
+                    response.status_code = 500
+                    return response
+        except:
+            response = jsonify(
+                {'message': 'You json data is deformed, correct that and continue!'})
+            response.status_code = 400
+
+            return response
 
 
 class UserLogin(Resource):
