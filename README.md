@@ -64,11 +64,11 @@ $ python manage.py db --help
 | [ POST /auth/logout ](#) | Logs a user out | FALSE |
 | [ POST /categories/ ](#) | Create a new category list | FALSE |
 | [ GET /categories/ ](#) | List all the created categories | FALSE |
-| [ GET /categories/\<id> ](#) | Get single category | FALSE |
-| [ PUT /categories/\<id> ](#) | Update this category | FALSE |
-| [ DELETE /categories/\<id> ](#) | Delete this single category | FALSE |
+| [ GET /categories/\<category_id> ](#) | Get single category | FALSE |
+| [ PUT /categories/\<category_id> ](#) | Update this category | FALSE |
+| [ DELETE /categories/\<category_id> ](#) | Delete this single category | FALSE |
 | [ POST /categories/\<recipe_id>/recipes ](#) | Create a new recipe category | FALSE |
-| [ PUT /categories/\<categorid>/recipes/<recipe_id> ](#) | Update a recipe | FALSE |
+| [ PUT /categories/\<category_id>/recipes/<recipe_id> ](#) | Update a recipe | FALSE |
 | [ DELETE /categories/\<category_id>/recipes/<recipe_id> ](#) | Delete a recipe in a category | FALSE |
 | [ GET /categories?limit=<number> ](#) | Gets a number of categories relative to the value passed in number. Maximum records is 100 | FALSE |
 | [ GET /categories?q=\<category_name> ](#) | Search for category with the same name as that passed in category_name | FALSE |
