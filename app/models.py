@@ -13,6 +13,7 @@ class UserModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), index=True)
     password_hash = db.Column(db.String(128))
+    email = db.Column(db.String(254))
     recipes = db.relationship(
         'RecipeModel', backref=db.backref(
             "user"), cascade='all, delete-orphan')

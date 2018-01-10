@@ -58,7 +58,8 @@ class CategoryList(Resource):
                 response.status_code = 201
                 return response
 
-            except Exception:
+            except Exception as e:
+                logging.exception("message")
                 response = jsonify(
                     {'message': 'There was an error saving the category'})
                 response.status_code = 400

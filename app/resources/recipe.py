@@ -159,79 +159,72 @@ class RecipeList(Resource):
         """
         This method handles requests for adding recipe to storage by id
         """
-        try:
-            category = CategoryModel.find_by_id(category_id)
-            user_id = get_jwt_identity()
-            if category:
-                if category.created_by != user_id:
-                    response = jsonify(
-                        {
-                            'message': 'You are not authorized to use the '
-                                       'category'})
-                    response.status_code = 401
-                    return response
-                parser = reqparse.RequestParser()
-                parser.add_argument('name', type=recipe_name_validator)
-                parser.add_argument('description', type=str, default='')
-                args = parser.parse_args()
-
-                name = args["name"]
-                description = args["description"]
-
-                if not name:
-                    response = jsonify(
-                        {'message': 'Please provide a name for the recipe'})
-                    response.status_code = 400
-                    return response
-
-                recipe = RecipeModel(
-                    name=name, description=description,
-                    category_id=category_id, created_by=user_id)
-
-                if not name:
-                    response = jsonify(
-                        {'message': 'Please provide a name for the recipe'})
-                    response.status_code = 400
-                    return response
-
-                try:
-                    RecipeModel.query.filter_by(name=name).one()
-                    response = jsonify(
-                        {'message': 'That name is already taken, try again'})
-                    response.status_code = 400
-                    return response
-
-                except:
-                    try:
-                        recipe.save_to_db()
-                        message = {
-                            'message': 'Recipe added Successfully!'}
-                        response = marshal(recipe, recipes_serializer)
-                        response.update(message)
-                        return response, 201
-
-                    except:
-                        response = jsonify(
-                            {
-                                'message': 'There was an error saving the '
-                                           'recipe'})
-                        response.status_code = 400
-                        return response
-            else:
+        
+        category = CategoryModel.find_by_id(category_id)
+        user_id = get_jwt_identity()
+        if category:
+            if category.created_by != user_id:
                 response = jsonify(
                     {
-                        'message': 'You json data is deformed, correct that '
-                                   'and continue!'})
-                response.status_code = 404
+                        'message': 'You are not authorized to use the '
+                                    'category'})
+                response.status_code = 401
                 return response
-        except BadRequest:
+            parser = reqparse.RequestParser()
+            parser.add_argument('name', type=recipe_name_validator)
+            parser.add_argument('description', type=str, default='')
+            args = parser.parse_args()
+
+            name = args["name"]
+            description = args["description"]
+
+            if not name:
+                response = jsonify(
+                    {'message': 'Please provide a name for the recipe'})
+                response.status_code = 400
+                return response
+
+            recipe = RecipeModel(
+                name=name, description=description,
+                category_id=category_id, created_by=user_id)
+
+            if not name:
+                response = jsonify(
+                    {'message': 'Please provide a name for the recipe'})
+                response.status_code = 400
+                return response
+
+            try:
+                RecipeModel.query.filter_by(name=name).one()
+                response = jsonify(
+                    {'message': 'That name is already taken, try again'})
+                response.status_code = 400
+                return response
+
+            except:
+                try:
+                    recipe.save_to_db()
+                    message = {
+                        'message': 'Recipe added Successfully!'}
+                    response = marshal(recipe, recipes_serializer)
+                    response.update(message)
+                    return response, 201
+
+                except:
+                    response = jsonify(
+                        {
+                            'message': 'There was an error saving the '
+                                        'recipe'})
+                    response.status_code = 400
+                    return response
+        else:
             response = jsonify(
                 {
-                    'message': 'Your json seems to be deformed, correct it '
-                               'and try again!'})
-            response.status_code = 400
+                    'message': 'You json data is deformed, correct that '
+                                'and continue!'})
+            response.status_code = 404
             return response
-
+        
     @jwt_required
     @swag_from('/app/docs/getrecipes.yml')
     def get(self, category_id=None):

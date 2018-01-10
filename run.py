@@ -58,11 +58,6 @@ def url_not_found(error):
         {'message': 'Your url seems to be deformed, please try again!'}), 404
 
 
-@app.errorhandler(400)
-def bad_data(error):
-    return jsonify(
-        {'message': 'Your json seems to be deformed. please try again!'}), 400
-
 
 # # Register Recipe endpoint with flask_restful api
 api.add_resource(
@@ -70,7 +65,7 @@ api.add_resource(
 # # Register Category endpoint with flask_restful api
 api.add_resource(Category, '/categories/<int:category_id>')
 # # Register recipe list end point with the flask_restful api
-api.add_resource(RecipeList, '/categories/<int:category_id>/recipes/')
+api.add_resource(RecipeList, '/categories/<int:category_id>/recipes')
 # # Register category list endpoint with flask_resful api
 api.add_resource(CategoryList, '/categories')
 # Register UserRegister endpoint with flask_restful api

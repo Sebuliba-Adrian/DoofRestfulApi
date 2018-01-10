@@ -1,3 +1,4 @@
+import random
 import re
 
 from app.models import CategoryModel, RecipeModel
@@ -86,3 +87,97 @@ def recipe_name_validator(recipe):
             "Blank spaces are not allowed in the recipe name field")
 
     raise ValueError("No input provided in the recipe name field")
+
+
+def email_validator(email):
+    """ 
+    This function handles password validation
+    """
+    if email:
+        if email.strip():
+            if 4 < len(email) < 254:
+                if re.match(r'[a-zA-Z0-9.-]+@[a-z]+\.[a-z]+', email):
+                    return email
+                raise ValueError(
+                    "Invalid characters or format, try again!")
+
+            raise ValueError(
+                "Email address  should be 4 to 254 characters long")
+
+        raise ValueError("Blank space is not allowed for the email field")
+
+    raise ValueError("No input provided for the email field")
+
+
+def random_password(length=3):
+    """ Create a a random password to display if the
+       primary validation fails. """
+
+    valid_upcase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    valid_lowcase = 'abcdefghijklmnopqrstuvwxyz'
+    valid_specs = '!$@&'
+    valid_digits = '1234567890'
+
+    return ''.join((random.choice(valid_upcase) + random.choice(
+        valid_lowcase) + random.choice(valid_specs) + random.choice(
+        valid_digits) for i in range(length)))
+
+
+def length_error(password):
+    """ Validate that the password is over 3 characters
+       and no more than 25 characters. """
+
+    if 3 < len(password) < 25:
+        return False
+    else:
+        return True
+
+
+def lower_error(password):
+    return re.search(r"[a-z]", password)
+
+
+def symbol_error(password):
+    return re.search(r"[!@$&]", password)
+
+
+def upcase_error(password):
+    return re.search(r"[A-Z]", password)
+
+
+def digit_error(password):
+    return re.search(r"\d", password)
+
+
+def password_validator(password):
+    """ Where the validation occurs, if the password does
+       not pass one of the following tests, it will output
+       a random string that does pass the test. """
+
+    if not password:
+        raise ValueError(
+            "Please provide a passord, you may try this: {0}".format(
+                random_password()))
+
+    if lower_error(password) is None or upcase_error(password) is None:
+        raise ValueError(
+            "Uppercase or Lowercase requirements not met, you may try this: "
+            "{0}".format(
+                random_password()))
+
+
+    elif digit_error(password) is None or symbol_error(password) is None:
+        raise ValueError(
+            "Integer and special characters requirements not met, you may "
+            "try this: {0}".format(
+                random_password()))
+
+
+    elif length_error(password) is None:
+        raise ValueError(
+            " 8 to 20 characters requirements not met, you may try this: {0}".format(
+                random_password()))
+
+
+    else:
+        return password

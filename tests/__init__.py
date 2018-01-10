@@ -26,15 +26,18 @@ class BaseTestCase(TestCase):
 
         # Add dummy data for test purposes
         user = UserModel(username="testusername1")
-        user.password = 'testpassword'
+        user.email='adrian1@example.com'
+        user.password = 'Ss$9Ly&2Rn$1'
         user.save_to_db()
 
         user2 = UserModel(username="testusername2")
-        user2.password = 'testpassword'
+        user2.email='adrian2@email.com'
+        user2.password = 'Ss$9Ly&2Rn$1'
         user2.save_to_db()
 
         user3 = UserModel(username="testusername3")
-        user3.password = 'testpassword'
+        user3.email='adrian3@gmail.com'
+        user3.password = 'Ss$9Ly&2Rn$1'
         user3.save_to_db()
 
         category1 = CategoryModel(
@@ -56,7 +59,7 @@ class BaseTestCase(TestCase):
 
     def make_token(self):
         user_data = {'username': 'testusername1',
-                     'password': 'testpassword'}
+                     'password': 'Ss$9Ly&2Rn$1'}
         response = self.app.post("/auth/login", data=user_data)
         token = json.loads(response.data)['access_token']
 
@@ -65,7 +68,7 @@ class BaseTestCase(TestCase):
 
     def make_second_user_token(self):
         user_data = {'username': 'testusername2',
-                     'password': 'testpassword'}
+                     'password': 'Ss$9Ly&2Rn$1'}
         response = self.app.post("/auth/login", data=user_data)
         token = json.loads(response.data)['access_token']
         authorization = {'Authorization': 'Bearer {0}'.format(token)}
@@ -73,7 +76,7 @@ class BaseTestCase(TestCase):
 
     def make_invalid_token(self):
         user_data = {'username': 'testusername3',
-                     'password': 'testpassword'}
+                     'password': 'Ss$9Ly&2Rn$1'}
         response = self.app.post("/auth/login", data=user_data)
         token = json.loads(response.data)['access_token'] + "98hjjhbhgbdj"
         authorization = {'Authorization': 'Bearer {0}'.format(token)}

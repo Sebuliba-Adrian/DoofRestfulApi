@@ -7,7 +7,7 @@ from tests import BaseTestCase
 class UserTest(BaseTestCase):
     def test_crud(self):
 
-        user = UserModel(username='testusername', password='testpassword')
+        user = UserModel(username='testusername',email='adrian@example.com', password='testpassword')
         self.assertIsNone(UserModel.find_by_username('testusername'))
         self.assertIsNotNone(UserModel.find_by_id(1))
 

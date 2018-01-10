@@ -1,12 +1,16 @@
 import datetime
+import logging
 
 from flasgger import swag_from
 from flask import jsonify
 from flask_jwt_extended import create_access_token, get_raw_jwt, jwt_required
-from flask_restful import Resource, reqparse
+from flask_restful import Resource, reqparse, inputs
+from werkzeug.exceptions import BadRequest
+from sqlalchemy.exc import IntegrityError
 
 from app.models import Blacklist, UserModel
-from app.utilities import username_validator
+from app.utilities import username_validator, email_validator, \
+    password_validator
 from parsers import user_put_parser
 
 
@@ -21,42 +25,43 @@ class UserRegister(Resource):
         """
         Register a new user
         """
+
+        parser = reqparse.RequestParser()
+        parser.add_argument('username', required=True,
+                            type=username_validator,
+                            help="The username field cannot be blank.")
+        parser.add_argument('password', required=True,
+                            type=password_validator)
+        parser.add_argument(
+            'email', required=True, type=email_validator)
+        # [a-zA-Z0-9.-]+@[a-z]+\.[a-z]+
+
+        args = parser.parse_args()
+        username = args['username']
+        password = args['password']
+        email = args['email']
+        user = UserModel(username=username, email=email)
+        user.password = password
         try:
-            parser = reqparse.RequestParser()
-            parser.add_argument('username', required=True,
-                                type=username_validator)
-            parser.add_argument('password', required=True,
-                                help="This field cannot be blank.")
-            args = parser.parse_args()
-            username = args['username']
-            password = args['password']
-            user = UserModel(username=username)
-            user.password = password
+            UserModel.query.filter_by(username=username, email=email).one()
+
+            response = jsonify(
+                {'message': 'The username or email is already registered'})
+            response.status_code = 400
+            return response
+        except:
             try:
-                UserModel.query.filter_by(username=username).one()
+                user.save_to_db()
+                response = jsonify(
+                    {'message': 'New user successfully registered!'})
+                response.status_code = 201
+                return response
+            except IntegrityError:
 
                 response = jsonify(
-                    {'message': 'The username is already registered'})
+                    {'message': 'The username or email is already registered'})
                 response.status_code = 400
                 return response
-            except:
-                try:
-                    user.save_to_db()
-                    response = jsonify(
-                        {'message': 'New user successfully registered!'})
-                    response.status_code = 201
-                    return response
-                except Exception:
-                    response = jsonify(
-                        {'message': 'There was a problem while saving the data'})
-                    response.status_code = 500
-                    return response
-        except:
-            response = jsonify(
-                {'message': 'You json data is deformed, correct that and continue!'})
-            response.status_code = 400
-
-            return response
 
 
 class UserLogin(Resource):
@@ -117,6 +122,7 @@ class PasswordReset(Resource):
         user = UserModel.find_by_username(data['username'])
 
         if user is None:
+
             return {'message': 'User {0} does not exist in the database.'.
                 format(data['username'])}, 400
         else:

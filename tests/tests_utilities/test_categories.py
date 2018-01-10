@@ -7,7 +7,8 @@ class CategoryTest(BaseTestCase):
     def test_create_category_recipes_empty(self):
 
         UserModel(username="testusername",
-                  password="testpassword").save_to_db()
+                  password="testpassword",
+                  email="adrian@example.com").save_to_db()
 
         category = CategoryModel(name='Beverages', created_by=self.user)
 
@@ -21,7 +22,8 @@ class CategoryTest(BaseTestCase):
     def test_crud(self):
 
         UserModel(username="testusername",
-                  password="testpassword").save_to_db()
+                  password="testpassword",
+                 email="adrian@example.com" ).save_to_db()
 
         category = CategoryModel(name='Beverages', created_by=self.user)
 
@@ -37,7 +39,7 @@ class CategoryTest(BaseTestCase):
 
     def test_category_relationship(self):
 
-        user = UserModel(username="testusername", password="testpassword")
+        user = UserModel(username="testusername", password="testpassword", email= "adrian@example.com")
         user.save_to_db()
 
         category = CategoryModel(name='Beverages', user=user)
@@ -54,7 +56,9 @@ class CategoryTest(BaseTestCase):
     def test_category_json(self):
 
         UserModel(username="testusername",
-                  password="testpassword").save_to_db()
+                  password="testpassword",
+                  email="adrian@example.com"
+                  ).save_to_db()
 
         category = CategoryModel(name='Beverages', created_by=self.user)
         expected = {
@@ -68,7 +72,8 @@ class CategoryTest(BaseTestCase):
     def test_category_json_with_recipe(self):
 
         user = UserModel(username="testusername",
-                         password="testpassword")
+                         password="testpassword",
+                         email="adrian@example.com")
         user.save_to_db()
 
         category = CategoryModel(name='Beverages', user=user)
