@@ -55,8 +55,6 @@ $ python manage.py db --help
 
 ### Specifications for the API are shown below
 
-### Specifications for the API are shown below
-
 | EndPoint | Functionality | Public Access |
 | -------- | ------------- | ------------- |
 | [ POST /auth/login ](#) | Logs a user in | TRUE |
