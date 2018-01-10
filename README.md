@@ -9,7 +9,8 @@
 This is an API version 1.0 for the recipes api called "DOOF" designed using the flask microframework in python
 
 ### Live demo
-coming soon!
+[https://doofrecipeapi.herokuapp.com/apidocs](https://doofrecipeapi.herokuapp.com/apidocs)
+
 
 ### Set Up
 You should have [git](https://git-scm.com/), [python](https://docs.python.org/), [pip](https://pypi.python.org/pypi/pip), [postgresql](https://www.postgresql.org/), [virtualenv](https://virtualenv.pypa.io/en/stable/) installed
@@ -22,7 +23,8 @@ You should have [git](https://git-scm.com/), [python](https://docs.python.org/),
 6. You can run tests using the command `nose2 --with-cov --coverage tests`
 7. To launch the application you should first apply migrations in order to create the database whose process is shown below
 8. Run the application using `python run.py`
-10. Access to the api documentation  `coming soon!`
+10. You can access the api documentation at 
+`http://localhost:5000/apidocs`
 
 
 ### Setup Database:
@@ -53,20 +55,22 @@ $ python manage.py db --help
 
 ### Specifications for the API are shown below
 
-||Method | Endpoint | Description |
-| ---- | ---- | --------------- |
-|POST| `/api/v1/auth/register` |  Register a user. |
-|POST| `/api/v1/auth/login` | Login user.|
-|POST| `/api/v1/auth/logout` | Logout a user.|
-|PUT| `/api/v1/auth/reset` | Reset user password.|
-|POST| `/api/v1/categories/` | Create a new category. |
-|GET| `/api/v1/categories/` | Retrieve all the created categories. |
-|GET| `/api/v1/categories/<category_id>` | Get a single category. |
-|PUT| `/api/v1/categories/<category_id>` | Update a single category. |
-|DELETE| `/api/v1/categories/<category_id>` | Delete single category. |
-|POST| `/api/v1/categories/<category_id>/recipes` | Add a new recipe to this category. |
-|PUT|`/api/v1/categories/<category_id>/recipes/<recipe_id>` | Update this recipe. |
-|DELETE|`/api/v1/categories/<category_id>/recipes/<recipe_id>` | Delete this single recipe. |
-|GET| `/api/v1/categories?limit=10&page=1` | Pagination to get 10 category records.|
-|GET| `/api/v1/categories?q=a category` | Search for categories with name like a category. 
+### Specifications for the API are shown below
+
+| EndPoint | Functionality | Public Access |
+| -------- | ------------- | ------------- |
+| [ POST /auth/login ](#) | Logs a user in | TRUE |
+| [ POST /auth/register ](#) | Register a user | TRUE |
+| [ POST /auth/logout ](#) | Logs a user out | FALSE |
+| [ POST /categories/ ](#) | Create a new category list | FALSE |
+| [ GET /categories/ ](#) | List all the created categories | FALSE |
+| [ GET /categories/\<id> ](#) | Get single category | FALSE |
+| [ PUT /categories/\<id> ](#) | Update this category | FALSE |
+| [ DELETE /categories/\<id> ](#) | Delete this single category | FALSE |
+| [ POST /categories/\<recipe_id>/recipes ](#) | Create a new recipe category | FALSE |
+| [ PUT /categories/\<categorid>/recipes/<recipe_id> ](#) | Update a recipe | FALSE |
+| [ DELETE /categories/\<category_id>/recipes/<recipe_id> ](#) | Delete a recipe in a category | FALSE |
+| [ GET /categories?limit=<number> ](#) | Gets a number of categories relative to the value passed in number. Maximum records is 100 | FALSE |
+| [ GET /categories?q=\<category_name> ](#) | Search for category with the same name as that passed in category_name | FALSE |
+
 Others specs coming soon
