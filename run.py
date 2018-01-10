@@ -52,6 +52,18 @@ def check_if_token_in_blacklist(decrypted_token):
     return isthere
 
 
+@app.errorhandler(404)
+def url_not_found(error):
+    return jsonify(
+        {'message': 'Your url seems to be deformed, please try again!'}), 404
+
+
+@app.errorhandler(400)
+def bad_data(error):
+    return jsonify(
+        {'message': 'Your json seems to be deformed. please try again!'}), 400
+
+
 # # Register Recipe endpoint with flask_restful api
 api.add_resource(
     Recipe, '/categories/<int:category_id>/recipes/<int:recipe_id>')
@@ -67,6 +79,7 @@ api.add_resource(UserRegister, '/auth/register')
 api.add_resource(UserLogin, '/auth/login')
 api.add_resource(UserLogout, '/auth/logout')
 db.init_app(app)
+
 
 @app.before_first_request
 def create_tables():
