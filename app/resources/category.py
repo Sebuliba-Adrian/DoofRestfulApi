@@ -145,8 +145,8 @@ class Category(Resource):
             return response
         else:
             response = jsonify({
-                                   'message': 'The category your are looking '
-                                              'for does not exist'})
+                'message': 'The category your are looking '
+                           'for does not exist'})
             response.status_code = 404
             return response
 
@@ -197,9 +197,9 @@ class Category(Resource):
                     abort(401, message='You are not authorized to edit this')
             else:
                 response = jsonify({
-                                       'message': 'The category you are '
-                                                  'trying to edit does not '
-                                                  'exist'})
+                    'message': 'The category you are '
+                               'trying to edit does not '
+                               'exist'})
                 response.status_code = 404
                 return response
 

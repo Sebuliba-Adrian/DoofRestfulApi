@@ -28,8 +28,7 @@ class UserRegister(Resource):
 
         parser = reqparse.RequestParser()
         parser.add_argument('username', required=True,
-                            type=username_validator,
-                            help="The username field cannot be blank.")
+                            type=username_validator)
         parser.add_argument('password', required=True,
                             type=password_validator)
         parser.add_argument(

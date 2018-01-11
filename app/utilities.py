@@ -30,18 +30,21 @@ def username_validator(username):
     This function handles username validation
     """
     if username:
-        if username.strip():
-            if 3 < len(username) < 16:
-                if re.match("^[a-zA-Z0-9_.-]+$", username):
-                    return username
+        if not isinstance(username, (int, float)):
+            if username.strip():
+                if 3 < len(username) < 16:
+                    if re.match("^[a-zA-Z0-9_.-]+$", username):
+                        return username
+                    raise ValueError(
+                        "Special characters in username {0} are not allowed"
+                            .format(username))
                 raise ValueError(
-                    "Special characters in username {0} are not allowed"
-                        .format(username))
-            raise ValueError(
-                "Username {0} should be 4 to 15 characters long".
-                    format(username))
+                    "Username {0} should be 4 to 15 characters long".
+                        format(username))
 
-        raise ValueError("Blank space is not allowed for the username field")
+            raise ValueError(
+                "Blank space is not allowed for the username field")
+        raise ValueError("Number types are not allowed for the username")
 
     raise ValueError("No input provided for the username field")
 
@@ -52,18 +55,22 @@ def category_name_validator(category):
 
     """
     if category:
-        if category.strip():
+        if not isinstance(category, (int, float)):
+            if category.strip():
 
-            if re.match("^[A-Za-z0-9]*$|^[A-Za-z0-9][A-Za-z0-9 ]*"
-                        "[A-Za-z0-9]$",
-                        category):
-                return category
+                if re.match("^[A-Za-z0-9]*$|^[A-Za-z0-9][A-Za-z0-9 ]*"
+                            "[A-Za-z0-9]$",
+                            category):
+                    return category
+                raise ValueError(
+                    "Only alphanumeric characters are allowed for the "
+                    "category "
+                    "name")
+
             raise ValueError(
-                "Only alphanumeric characters are allowed for the category "
-                "name")
-
+                "Blank space is not allowed for the category name field")
         raise ValueError(
-            "Blank space is not allowed for the category name field")
+            "Numbers are not allowed for the category name field")
 
     raise ValueError("No input provided for the category name field")
 
@@ -74,18 +81,21 @@ def recipe_name_validator(recipe):
 
     """
     if recipe:
-        if recipe.strip():
+        if not isinstance(recipe, (int, float)):
+            if recipe.strip():
 
-            if re.match("^[A-Za-z0-9]*$|^[A-Za-z-9][A-Za-z0-9 ]*"
-                        "[A-Za-z0-9]$",
-                        recipe):
-                return recipe
+                if re.match("^[A-Za-z0-9]*$|^[A-Za-z-9][A-Za-z0-9 ]*"
+                            "[A-Za-z0-9]$",
+                            recipe):
+                    return recipe
+                raise ValueError(
+                    "Only alphanumeric characters are allowed for the recipe "
+                    "name")
+
             raise ValueError(
-                "Only alphanumeric characters are allowed for the recipe name")
-
+                "Blank spaces are not allowed in the recipe name field")
         raise ValueError(
-            "Blank spaces are not allowed in the recipe name field")
-
+            "Numbers are not allowed for the recipe name field")
     raise ValueError("No input provided in the recipe name field")
 
 
@@ -94,17 +104,20 @@ def email_validator(email):
     This function handles password validation
     """
     if email:
-        if email.strip():
-            if 4 < len(email) < 254:
-                if re.match(r'[a-zA-Z0-9.-]+@[a-z]+\.[a-z]+', email):
-                    return email
+        if not isinstance(email, (int, float)):
+            if email.strip():
+
+                if 4 < len(email) < 254:
+                    if re.match(r'[a-zA-Z0-9.-]+@[a-z]+\.[a-z]+', email):
+                        return email
+                    raise ValueError(
+                        "Invalid characters or format, try again!")
+
                 raise ValueError(
-                    "Invalid characters or format, try again!")
+                    "Email address  should be 4 to 254 characters long")
 
-            raise ValueError(
-                "Email address  should be 4 to 254 characters long")
-
-        raise ValueError("Blank space is not allowed for the email field")
+            raise ValueError("Blank space is not allowed for the email field")
+        raise ValueError("Numbers are not allowed for the email field")
 
     raise ValueError("No input provided for the email field")
 
@@ -154,6 +167,11 @@ def password_validator(password):
        not pass one of the following tests, it will output
        a random string that does pass the test. """
 
+    if isinstance(password, (int, float)):
+        raise ValueError(
+            "Please provide a string type for the passord, try this: {0}".format(
+                random_password()))
+
     if not password:
         raise ValueError(
             "Please provide a passord, you may try this: {0}".format(
@@ -165,19 +183,15 @@ def password_validator(password):
             "{0}".format(
                 random_password()))
 
-
     elif digit_error(password) is None or symbol_error(password) is None:
         raise ValueError(
             "Integer and special characters requirements not met, you may "
             "try this: {0}".format(
                 random_password()))
 
-
     elif length_error(password) is None:
         raise ValueError(
-            " 8 to 20 characters requirements not met, you may try this: {0}".format(
-                random_password()))
-
-
+            " 8 to 20 characters requirements not met, you may try this: {0}".
+                format(random_password()))
     else:
         return password

@@ -5,7 +5,7 @@ from flask_jwt_extended import JWTManager, get_jwt_identity
 from flask_restful import Api
 
 from .resources.user import PasswordReset, UserLogin, UserRegister, UserLogout
-
+from db import db
 
 app = Flask(__name__)
 app.config.from_object('config.config.DevelopmentConfig')

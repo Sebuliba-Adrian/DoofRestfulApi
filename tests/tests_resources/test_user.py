@@ -8,7 +8,7 @@ class UserResourceTest(BaseTestCase):
 
     def test_successful_registration(self):
         user_data = {"username": "testusername",
-                     "password": "Ss$9Ly&2Rn$1",
+                     "password": "Ss$9Ly&2Rn$1", 
                      "email":"adrian@example.com"}
         response = self.app.post("/auth/register", data=user_data)
         msg = json.loads(response.data)
