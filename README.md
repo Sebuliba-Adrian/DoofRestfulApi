@@ -65,7 +65,7 @@ $ python manage.py db --help
 | [ GET /categories/\<category_id> ](#) | Get single category | FALSE |
 | [ PUT /categories/\<category_id> ](#) | Update this category | FALSE |
 | [ DELETE /categories/\<category_id> ](#) | Delete this single category | FALSE |
-| [ POST /categories/\<recipe_id>/recipes ](#) | Create a new recipe category | FALSE |
+| [ POST /categories/\<category_id>/recipes ](#) | Create a new recipe category | FALSE |
 | [ PUT /categories/\<category_id>/recipes/<recipe_id> ](#) | Update a recipe | FALSE |
 | [ DELETE /categories/\<category_id>/recipes/<recipe_id> ](#) | Delete a recipe in a category | FALSE |
 | [ GET /categories?limit=<number> ](#) | Gets a number of categories relative to the value passed in number. Maximum records is 100 | FALSE |
