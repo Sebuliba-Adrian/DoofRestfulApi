@@ -111,6 +111,7 @@ class CategoryList(Resource):
                 prev_page = "None"
 
             data = {"count": len(categories.items),
+                    "pages": int(categories.pages),
                     "next": next_page,
                     "prev": prev_page,
                     "categories": marshal(categories.items,

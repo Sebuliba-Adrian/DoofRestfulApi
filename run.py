@@ -104,4 +104,4 @@ if __name__ == "__main__":
         print("Database deleted!")
 
     else:
-        app.run(debug=True)
+        app.run(debug=True, threaded=True)

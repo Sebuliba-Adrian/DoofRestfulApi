@@ -98,10 +98,10 @@ class UserLogin(Resource):
                     return {'message': 'user has successfully been logged in',
                             'access_token': user_token}, 200
                 else:
-                    message = {'message': 'Invalid password'}
+                    message = {'message': 'Invalid password'}, 400
                     return message
             else:
-                message = {'message': 'The user does not exist'}
+                message = {'message': 'The user does not exist'}, 400
                 return message
         else:
             message = {'message': 'one or more fields is not complete'}

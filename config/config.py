@@ -21,7 +21,7 @@ class DevelopmentConfig(BaseConfig):
     """Development configuration"""
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.environ.get(
-        'DATABASE_URL') or 'postgresql://adrian2:andela@localhost/develop_db'
+        'DATABASE_URL') or 'postgresql://adrian:andela@localhost/develop_db'
     # 'sqlite:///' + os.path.join(basedir, 'devdb.sqlite')
     SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')
 
@@ -31,7 +31,7 @@ class TestingConfig(BaseConfig):
     DEBUG = True
     TESTING = True
     SQLALCHEMY_DATABASE_URI = os.environ.get(
-        'DATABASE_TEST_URL') or 'postgresql://adrian1:andela@localhost/test_db'
+        'DATABASE_TEST_URL') or 'postgresql://adrian:andela@localhost/test_db'
     # 'sqlite:///' + os.path.join(basedir, 'testdb.sqlite')
     SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')
 

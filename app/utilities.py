@@ -10,7 +10,7 @@ def search_categories(query, user_id):
     """
     categories = CategoryModel.query.filter(
         CategoryModel.created_by == user_id,
-        CategoryModel.name.ilike("%{0}%".format(query)))
+        CategoryModel.name.ilike("%{0}%".format(query))).order_by(CategoryModel.date_created.desc())
 
     return categories
 

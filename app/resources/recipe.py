@@ -234,6 +234,7 @@ class RecipeList(Resource):
         args = request.args.to_dict()
 
         q = args.get('q')
+        
         try:
             page = int(args.get('page', 1))  # query start as an integer
             # 100 items == 20 per page for 5 pages
@@ -249,37 +250,41 @@ class RecipeList(Resource):
             try:
                 # query a paginate object
                 user_id = get_jwt_identity()
-                recipes = RecipeModel.query.filter_by(category_id=category_id,
-                                                      created_by=user_id).paginate(
+                recipes = RecipeModel.query.filter_by(category_id=category_id,\
+                created_by=user_id).order_by(RecipeModel.date_created.desc()).\
+                paginate(
                     page, limit, False)
 
                 all_pages = recipes.pages  # get total page count
+                all_items= recipes.total
                 next_pg = recipes.has_next  # check for next page
                 previous_pg = recipes.has_prev  # check for previous page
 
                 # if the query allows a max over the limit, generate a url
                 # for the next page
                 if next_pg:
-                    next_page = str(request.url_root) + '/recipes?' + \
-                                'limit=' + str(limit) + '&page=' + str(
-                        page + 1)
+                    next_page = str(request.url_root) + "categories/"+\
+                     str(category_id)+'/recipes?' + 'limit=' +\
+                      str(limit) + '&page=' + str(page + 1)
                 else:
                     next_page = 'None'
 
                 # set a url for the previous page
                 if previous_pg:
-                    previous_page = str(request.url_root) + '/recipes?' + \
-                                    'limit=' + str(limit) + '&page=' + str(
-                        page - 1)
+                    previous_page = str(request.url_root) + "categories/"+\
+                     str(category_id)+'/recipes?' + 'limit=' +\
+                      str(limit) + '&page=' + str(page - 1)
                 else:
                     previous_page = 'None'
 
                 recipes = recipes.items
 
                 data = {'recipes': marshal(recipes, recipes_serializer),
-                        'total pages': all_pages,
-                        'next page': next_page,
-                        'previous page': previous_page}
+                        'count': all_pages,
+                        'next': next_page,
+                        'prev': previous_page,
+                        'total': all_items
+                        }
                 # if recipes are not None, return data as output
                 if recipes:
                     return data
