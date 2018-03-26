@@ -1,48 +1,41 @@
-from models.user import UserModel
-from unittest import TestCase
-from tests.base import BaseTestCase
 import json
+
+from tests import BaseTestCase
 
 
 class UserResourceTest(BaseTestCase):
     """Ensure a new user resource can be added to the database."""
 
-    def test_register_user(self):
-        """Ensure that user resource  is registered"""
-        with self.app() as client:
-            with self.app_context():
-                response = client.post(
-                    '/register', data={'username': 'testusername', 'password': 'testpassword'})
+    def test_successful_registration(self):
+        user_data = {"username": "testusername",
+                     "password": "Ss$9Ly&2Rn$1", 
+                     "email":"adrian@example.com"}
+        response = self.app.post("/auth/register", data=user_data)
+        msg = json.loads(response.data)
 
-                self.assertEqual(response.status_code, 201)
-                self.assertIsNotNone(
-                    UserModel.find_by_username('testusername'))
-                self.assertDictEqual({'message': 'User created successfully.'},
-                                     json.loads(response.data))
+        self.assertIn(msg['message'], 'New user successfully registered!')
+        self.assertEqual(response.status_code, 201)
 
-    def test_register_duplicate_user(self):
-        """Ensure that user resource registered is not a duplicate"""
-        with self.app() as client:
-            with self.app_context():
-                client.post(
-                    '/register', data={'username': 'testusername', 'password': 'testpassword'})
-                response = client.post(
-                    '/register', data={'username': 'testusername', 'password': 'testpassword'})
+    def test_registration_with_existing_credentials(self):
+        user_data = {"username": "testusername1",
+                     "password": "Ss$9Ly&2Rn$1",
+                     "email": "adrian1@example.com"}
+        response = self.app.post("/auth/register", data=user_data)
+        msg = json.loads(response.data)
+        self.assertEqual(str(msg['message']),
+                         'The username or email is already registered')
+        self.assertEqual(response.status_code, 400)
 
-                self.assertEqual(response.status_code, 400)
-                self.assertDictEqual({'message': 'A user with that username already exists'},
-                                     json.loads(response.data))
+    def test_succesful_login(self):
+        user_data = {'username': 'testusername1',
+                     'password': 'Ss$9Ly&2Rn$1'}
+        response = self.app.post("/auth/login", data=user_data)
+        print(response.data)
+        self.assertEqual(response.status_code, 200)
 
-    def test_register_and_login(self):
-        """Ensure that user can register and then login """
-        with self.app() as client:
-            with self.app_context():
-                client.post(
-                    '/register', data={'username': 'testusername', 'password': 'testpassword'})
-                auth_response = client.post('/auth',
-                                            data=json.dumps(
-                                                {'username': 'testusername', 'password': 'testpassword'}),
-                                            headers={'Content-Type': 'application/json'})
-
-                self.assertIn('access_token', json.loads(
-                    auth_response.data).keys())
+    def test_login_without_credentials(self):
+        user_data = {'username': '', 'password': ''}
+        response = self.app.post("/auth/login", data=user_data)
+        msg = json.loads(response.data)
+        self.assertIn(msg['message'], 'one or more fields is not complete')
+        self.assertEqual(response.status_code, 400)

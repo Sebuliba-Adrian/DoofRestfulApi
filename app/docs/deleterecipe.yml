@@ -1,0 +1,23 @@
+This method handles requests for deleting recipe by name
+---
+tags:
+  - Recipes
+parameters:
+  - in: path
+    name: category_id
+    required: true
+    description: The id of the recipe to delete
+    type: integer
+  - in: path
+    name: recipe_id
+    required: true
+    description: The id of the recipe to delete
+    type: integer  
+security:
+  TokenHeader: [] 
+
+responses:
+  200:
+    description: Successfully deleted
+  204:
+    description: No recipes

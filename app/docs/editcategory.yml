@@ -1,0 +1,33 @@
+This method updates a particular category from the storage
+---
+tags:
+  - Recipe Categories
+parameters:
+  - in: path
+    name: category_id
+    required: true
+    description: The id of the category to update
+    type: integer
+
+  - in: body
+    name: name
+    required: true
+    description:  The content of the category  to update
+    type: string  
+
+security:
+  - TokenHeader: []
+
+responses:
+  200:
+    description: The recipe category has been sucessfully changed
+    schema:
+      id: categories
+      properties:
+        name:
+          Type: string
+          default: Tea
+
+        description:
+          Type: string
+          default: For the early birds

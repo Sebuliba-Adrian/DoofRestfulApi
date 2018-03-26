@@ -1,0 +1,37 @@
+This method handles requests for retrieving a list of recipes
+---
+tags:
+  - Recipes
+parameters:
+
+  - in: path
+    name: category_id
+    description: The category id goes here
+    required: true
+    type: string
+
+  - in: query
+    name: q
+    description: The search term(s)
+    required: false
+    type: string
+
+  - in: query
+    name: page
+    description: The page to be displayed
+    required: false
+    type: string  
+
+  - in: query
+    name: limit
+    description: The number of recipes to be displayed in a single page
+    required: false
+    type: string
+
+security:
+  - TokenHeader: []
+responses:
+  200:
+    description: A list of recipes in a category
+  404:
+    description: Not found

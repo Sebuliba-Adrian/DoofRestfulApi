@@ -1,0 +1,17 @@
+This method deletes a particular category resource from the storage
+---
+tags:
+  - Recipe Categories
+parameters:
+  - in: path
+    name: category_id
+    required: true
+    description: The id of the recipe category to delete goes here
+    type: integer
+
+
+security: 
+  - TokenHeader: []
+responses:
+  200:
+    description: The recipe category has been successfully deleted

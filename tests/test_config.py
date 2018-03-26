@@ -1,8 +1,7 @@
-import unittest
-import os
-from flask import current_app
 from unittest import TestCase
-from config import basedir
+
+from flask import current_app
+
 from app import app
 
 
@@ -17,7 +16,7 @@ class TestDevelopmentConfig(TestCase):
     @staticmethod
     def create_app():
         """Application factory method"""
-        app.config.from_object('config.DevelopmentConfig')
+        app.config.from_object('config.config.DevelopmentConfig')
         return app
 
     def setUp(self):
@@ -38,7 +37,9 @@ class TestDevelopmentConfig(TestCase):
         self.assertTrue(self.app.config['DEBUG'] is True)
         self.assertFalse(current_app is None)
         self.assertTrue(self.app.config['SQLALCHEMY_DATABASE_URI'] ==
-                        'sqlite:///' + os.path.join(basedir, 'devdb.sqlite'))
+                        'postgresql://adrian2:andela@localhost/develop_db')
+        self.assertTrue(self.app.config['JWT_SECRET_KEY'] ==
+                        'my precious')
 
 
 class TestTestingConfig(TestCase):
@@ -50,7 +51,7 @@ class TestTestingConfig(TestCase):
     def create_app():
         """Application factory method"""
 
-        app.config.from_object('config.TestingConfig')
+        app.config.from_object('config.config.TestingConfig')
         return app
 
     def setUp(self):
@@ -70,7 +71,9 @@ class TestTestingConfig(TestCase):
         self.assertFalse(self.app.config['PRESERVE_CONTEXT_ON_EXCEPTION'])
         self.assertTrue(
             self.app.config['SQLALCHEMY_DATABASE_URI'] ==
-            'sqlite:///' + os.path.join(basedir, 'testdb.sqlite'))
+            'postgresql://adrian1:andela@localhost/test_db')
+        self.assertTrue(self.app.config['JWT_SECRET_KEY'] ==
+                        'my precious')
 
 
 class TestProductionConfig(TestCase):
@@ -81,7 +84,7 @@ class TestProductionConfig(TestCase):
     @staticmethod
     def create_app():
         """Application factory method"""
-        app.config.from_object('config.ProductionConfig')
+        app.config.from_object('config.config.ProductionConfig')
         return app
 
     def setUp(self):
@@ -98,8 +101,5 @@ class TestProductionConfig(TestCase):
                         'XMLZODSHE8N6NFOZDPZA2HULWSIYJU45K6N4ZO9M')
         self.assertFalse(self.app.config['DEBUG'])
         self.assertFalse(self.app.config['TESTING'])
-
-
-
-if __name__ == '__main__':
-    unittest.main()
+        self.assertTrue(self.app.config['JWT_SECRET_KEY'] ==
+                        'my precious')

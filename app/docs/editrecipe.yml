@@ -1,0 +1,35 @@
+
+This method handles requests for updating a recipe
+---
+tags:
+  - Recipes
+parameters:
+  - in: path
+    name: category_id
+    required: true
+    description: The category id of the recipe to update goes here
+    type: integer
+
+  - in: path
+    name: recipe_id
+    required: true
+    description: The id of the recipe to update goes here
+    type: integer  
+
+  - in: body
+    name: body
+    required: true
+    description: The details of the new recipe goes here
+    type: string  
+
+
+security:
+  - TokenHeader: []    
+
+responses:
+  200:
+    description: Successfuly updated
+  204:
+    description: No content
+    schema:
+      id: recipe
