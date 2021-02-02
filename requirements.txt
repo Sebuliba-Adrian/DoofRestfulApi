@@ -43,7 +43,7 @@ PyYAML==3.12
 rednose==1.2.3
 singledispatch==3.4.0.3
 six==1.11.0
-SQLAlchemy==1.2.0
+SQLAlchemy==1.3.0
 termstyle==0.1.11
 Werkzeug==0.14.1
 wrapt==1.10.11
