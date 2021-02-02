@@ -8,7 +8,7 @@ configparser==3.5.0
 coverage==4.4.2
 enum34==1.1.6
 flasgger==0.8.0
-Flask==0.12.2
+Flask==1.0
 Flask-Cors==3.0.3
 Flask-JWT==0.3.2
 Flask-JWT-Extended==3.3.4
