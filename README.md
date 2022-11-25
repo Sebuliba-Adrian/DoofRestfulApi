@@ -2,7 +2,6 @@
 [![Coverage Status](https://coveralls.io/repos/github/Sebuliba-Adrian/DoofRestfulApi/badge.svg?branch=develop)](https://coveralls.io/github/Sebuliba-Adrian/DoofRestfulApi?branch=develop)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/ed3fb4470ef140e68783a24de2d426ae)](https://www.codacy.com/app/Sebuliba-Adrian/DoofRestfulApi?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Sebuliba-Adrian/DoofRestfulApi&amp;utm_campaign=Badge_Grade)
 [![Code Health](https://landscape.io/github/Sebuliba-Adrian/DoofRestfulApi/develop/landscape.svg?style=flat)](https://landscape.io/github/Sebuliba-Adrian/DoofRestfulApi/develop)
-[![Maintainability](https://api.codeclimate.com/v1/badges/e2975d655ca0fb0fc8be/maintainability)](https://codeclimate.com/github/Sebuliba-Adrian/DoofRestfulApi/maintainability)
 
 
 # DoofRestfulApi
