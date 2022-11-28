@@ -183,8 +183,4 @@ class Blacklist(db.Model):
 
     @classmethod
     def get_or_create(cls, jti):
-        exists = db.session.query(Blacklist.id).filter_by(
-            jti=jti).scalar() is not None
-        if exists:
-            return True
-        return False
+        return db.session.query(Blacklist.id).filter_by(jti=jti).scalar() is not None

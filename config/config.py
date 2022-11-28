@@ -12,9 +12,9 @@ class BaseConfig:
     DEBUG = False
     TESTING = False
     SQLALCHEMY_DATABASE_URI = ""
-    SECRET_KEY = 'XMLZODSHE8N6NFOZDPZA2HULWSIYJU45K6N4ZO9M'
+    SECRET_KEY = os.environ.get('SECRET_KEY')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    JWT_SECRET_KEY = "my precious"
+    JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY')
 
 
 class DevelopmentConfig(BaseConfig):

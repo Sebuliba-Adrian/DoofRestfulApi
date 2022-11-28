@@ -1,0 +1,33 @@
+version: '3.9'
+
+services:
+    doof_app:
+          build:
+            context: .
+            dockerfile: Dockerfile
+          restart: always
+          ports:
+              - "8000:5001"
+          environment:
+                POSTGRES_USER: ${POSTGRES_USER}
+                POSTGRES_PASSWORD: ${POSTGRES_PASS}
+                POSTGRES_DB: ${POSTGRES_DB}
+          links:
+              - postgres
+          depends_on:
+              - postgres
+          container_name: doof_app
+        
+    postgres:
+        image: postgres:latest
+        restart: always
+        environment:
+            POSTGRES_USER: ${POSTGRES_USER}
+            POSTGRES_PASSWORD: ${POSTGRES_PASS}
+            POSTGRES_DB: ${POSTGRES_DB}
+        
+        volumes:
+            - pgdata:/var/lib/postgresql/data
+        container_name: doof_datastore
+volumes:
+  pgdata: {}

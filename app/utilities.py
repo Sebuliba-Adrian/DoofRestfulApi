@@ -140,10 +140,7 @@ def length_error(password):
     """ Validate that the password is over 3 characters
        and no more than 25 characters. """
 
-    if 3 < len(password) < 25:
-        return False
-    else:
-        return True
+    return not 3 < len(password) < 25
 
 
 def lower_error(password):
